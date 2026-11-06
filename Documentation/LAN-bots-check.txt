@@ -1,0 +1,7 @@
+PASS: One human starts with seven bots
+PASS: Bots navigate, acquire targets and fire during real arena simulation
+PASS: Bots can score kills in valley terrain
+PASS: Combatants stay on terrain / respawn
+PASS: Late join replaces a bot on requested team
+PASS: Late client loads and receives selected class
+PASS: Late guest disconnect restores bot

@@ -1,0 +1,19 @@
+PASS: Player stands on terrain
+PASS: Footstep clips trigger while walking
+PASS: W moves player relative to camera
+PASS: No footsteps in midair
+PASS: Jump gains height
+PASS: Jump lands on terrain
+PASS: Jump consumes stamina
+PASS: Q rotates camera
+PASS: Camera pitch is 45 degrees
+PASS: E rotates camera opposite direction
+PASS: Sprint consumes stamina
+PASS: Stamina regenerates after delay
+PASS: Defense 15 mitigates damage: 23 raw -> 20
+PASS: Health clamps at zero and death activates
+PASS: R respawns and restores stats
+PASS: Animation deforms visual only, not collision root
+PASS: Moonspire playing in loop
+PASS: Music fades to soft 12 percent volume
+PASS: Music uses streaming

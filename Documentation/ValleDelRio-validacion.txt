@@ -1,0 +1,4 @@
+Unique base cells: 91
+All 12 river connections checked against mesh water edges.
+All prefab meshes present.
+Bridge bounds: Center: (0.00, -0.38, 0.00), Extents: (0.67, 0.63, 0.96)

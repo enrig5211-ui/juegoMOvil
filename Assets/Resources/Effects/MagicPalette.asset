@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd140aa6c3c2647f6ba45c0c0109076d, type: 3}
+  m_Name: MagicPalette
+  m_EditorClassIdentifier: Assembly-CSharp::Valle.MagicPalette
+  windSpawn: {fileID: 8965073948912186943, guid: 1404b2bcb9aeb46c6aad6e2802c9f93e, type: 3}
+  earthSpawn: {fileID: 5801934152662489066, guid: 09744fdbb25bc4effa72dec82b1fb7b5, type: 3}
+  fireSpawn: {fileID: 2333428832391109285, guid: 19da12701e5ac40deb521ee98dd9d3e2, type: 3}
+  protection: {fileID: 1907776502763922531, guid: e00a4d3d6d9954d058ed1936c952170b, type: 3}
+  impact: {fileID: 2748876250267411903, guid: d1cf66dd16b2144898e686de025c4e62, type: 3}

@@ -1,0 +1,5 @@
+Removed dirt objects: 69
+Road prefabs: 7
+River crossing: 1
+Unique terrain cells: 331
+All road graph connections reciprocal; rotation multiples of 60 degrees.

@@ -1,0 +1,31 @@
+# Generado por Unity
+/Library/
+/Temp/
+/Logs/
+/obj/
+/UserSettings/
+/MemoryCaptures/
+*.csproj
+*.sln
+*.slnx
+
+# Exportaciones del juego
+/Builds/
+/juegoChapare/
+*.zip
+
+# Paquetes de terceros: pesados y se recuperan desde su tienda o proveedor.
+# Sus archivos .meta de carpeta si se conservan.
+/Assets/10 Fantasy Medieval Ambient Tracks/
+/Assets/Artsystack - Fantasy RPG GUI/
+/Assets/Footsteps Pack Expanded/
+/Assets/FreeWeaponSFX_v1.1/
+/Assets/Ishikawa1116/
+/Assets/KayKit/
+/Assets/PixPlays/
+/Assets/TutorialInfo/
+/Assets/WeatherMaker/
+
+# Sistema y editores
+.DS_Store
+/.vscode/

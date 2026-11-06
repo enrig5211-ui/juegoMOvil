@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a0e6dfb90ff42698ccf00694dcd5ed, type: 3}
+  m_Name: LanAssets
+  m_EditorClassIdentifier: Assembly-CSharp::Valle.Lan.LanAssets
+  bluePawn: {fileID: 216949577245521481, guid: 689d47e1d44924dd7916b298bc556f92, type: 3}
+  redPawn: {fileID: 3196010162536913885, guid: 5e2a277b1d665467a84ed98a898bc7d0, type: 3}
+  pistol: {fileID: 6829688132252604559, guid: b234eb7e485bc49e48ab4984a58105dd, type: 3}
+  rifle: {fileID: 3711343463117511529, guid: 391e6545f7d3145238883d33f2bef9ca, type: 3}
+  blueMaterial: {fileID: 2100000, guid: 6baee04a7294e4a988347aa1ac0e4e09, type: 2}
+  redMaterial: {fileID: 2100000, guid: 3364aea66f9da46d0ba7d0692bbd6cb2, type: 2}
+  glow: {fileID: 2100000, guid: ef68a75b6c69c4efeacc0d63deb9c328, type: 2}
+  pistolShots:
+  - {fileID: 8300000, guid: 99348524f0ef5b3469b6d1976f17370c, type: 3}
+  - {fileID: 8300000, guid: 0910b552636052c42a5d5fb6d168dc27, type: 3}
+  - {fileID: 8300000, guid: 8115c336b0fa59f41b1cb0af599a2271, type: 3}
+  rifleShots:
+  - {fileID: 8300000, guid: 7a1788b10a259394b9019d21bef463ae, type: 3}
+  - {fileID: 8300000, guid: 4ae73664f9fa52f41b51a2e050901696, type: 3}
+  - {fileID: 8300000, guid: ada2ae050ed4f114eba3fab31db4313e, type: 3}
+  steps:
+  - {fileID: 8300000, guid: f12cb3afbc0c76c4e9d217fe23b4d826, type: 3}
+  - {fileID: 8300000, guid: 60585fbffc767d04eadf8b56c87c3f67, type: 3}
+  - {fileID: 8300000, guid: c7af170ec6a3cd44586ffadf7329a83f, type: 3}
+  - {fileID: 8300000, guid: 8f7ac5b25f7748f44b80d434901af81c, type: 3}
+  - {fileID: 8300000, guid: 5c0147096a3f97844b58c2c0c5a53a20, type: 3}
+  - {fileID: 8300000, guid: 3ed4bd9b6be044c499f82ac38893c438, type: 3}
+  reload: {fileID: 8300000, guid: 84b8dc5699eea984d91a0a8e96178771, type: 3}
+  equip: {fileID: 8300000, guid: 43c1734fa36d1674caeee38cab0f249e, type: 3}
+  font: {fileID: 12800000, guid: 08d8923b7289ef6409ccc6bdf4c2fae4, type: 3}
+  button: {fileID: 21300000, guid: d95c657e37980b246999734db3f2cbf3, type: 3}

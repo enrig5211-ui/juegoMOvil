@@ -1,0 +1,15 @@
+PASS: Separate start scene
+PASS: Three main menu buttons
+PASS: Input System UI navigation
+PASS: Controls open
+PASS: Controls return
+PASS: Play loads valley
+PASS: HUD bound to player
+PASS: Pause blocks gameplay
+PASS: Pause controls
+PASS: Resume restores gameplay
+PASS: Health and stamina reflect stats
+PASS: Death UI replaces HUD
+PASS: Respawn button
+PASS: Return to menu resets pause
+PASS: Single audio listener after scene transition

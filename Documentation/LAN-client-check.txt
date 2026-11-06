@@ -1,0 +1,13 @@
+PASS: Client sends handshake and name
+PASS: Real client receives assigned red slot and lobby
+PASS: Ready and class changes sent to host
+PASS: Client builds eight avatars and received pickup
+PASS: Client cannot simulate authoritative controllers
+PASS: Client HUD receives ammo state
+PASS: Remote snapshots interpolate avatars
+PASS: Client sends movement/aim input packets
+PASS: Camera follows local client only
+PASS: Online options never pause shared world
+PASS: Client receives match results
+PASS: Client returns to lobby with host
+PASS: Host disconnect shows recovery message

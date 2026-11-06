@@ -1,0 +1,9 @@
+PASS: Five PixPlays URP variants assigned
+PASS: All VFX materials and shaders supported
+PASS: Visual prefabs contain no gameplay or vendor controllers
+PASS: Spawn/shield/impact effects activate during LAN match
+PASS: Particles actually emit
+PASS: Protection follows the player
+PASS: Protection ends when gameplay protection ends
+PASS: Impact burst respects 24-instance cap
+PASS: Expired one-shot effects are released for reuse

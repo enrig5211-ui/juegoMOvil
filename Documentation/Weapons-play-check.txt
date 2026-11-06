@@ -1,0 +1,25 @@
+PASS Four pickups exist
+PASS Pickup floats and rotates
+PASS F picks up nearby weapon
+PASS Held marker hidden and pickup unavailable
+PASS Screen cursor projects toward target
+PASS Weapon fires
+PASS Shot ray damages practice target
+Shot hit: Diana de practica 2 direction (0.00, 0.00, 1.00)
+PASS Shot consumes one round
+PASS Fire rate limits repeated shot
+PASS Weapon audio plays
+PASS Reload starts
+PASS Reload transfers reserve ammunition
+PASS Second shot fires toward cover
+PASS Obstacle blocks damage to target
+PASS G drops weapon
+PASS Dropping cancels reload and preserves ammo
+PASS Dropped weapon becomes visible pickup
+PASS Dropped weapon can be picked up again
+PASS Death drops weapon immediately
+PASS Dead player cannot pick up
+PASS Pickup after revive
+PASS Swapping equips second weapon
+PASS Swapping returns previous weapon to world
+PASS No weapon duplicated or lost

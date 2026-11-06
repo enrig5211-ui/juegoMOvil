@@ -1,0 +1,10 @@
+Terrain cells: 271
+Lake water tiles: 7
+Coast tiles: 11
+Renderers: 516
+Triangles (all scene meshes): 105851
+Batching static renderers: 516
+Small decoration shadow casters disabled: 103
+SRP Batcher: already enabled in PC pipeline
+Unique terrain coordinates checked: 271
+Terrain shadow casters disabled: 271

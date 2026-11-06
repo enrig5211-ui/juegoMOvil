@@ -1,0 +1,4 @@
+Unique terrain cells: 331
+Yellow buildings: 13
+Total new settlement renderers: 105
+Cleared decoration objects: 27

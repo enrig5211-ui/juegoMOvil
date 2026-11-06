@@ -1,0 +1,5 @@
+PASS: Fragmented header/body and UTF-8 decoded correctly
+PASS: Length-prefixed outgoing frames
+PASS: Oversized message closes peer
+PASS: Only local target addresses accepted
+4 transport checks passed

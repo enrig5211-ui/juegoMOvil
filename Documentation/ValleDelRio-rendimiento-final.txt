@@ -1,0 +1,8 @@
+Play mode editor sample (not a standalone benchmark)
+Renderers: 516
+Static batched renderers: 516
+drawCalls: 1122
+triangles: 258643
+vertices: 398489
+setPassCalls: 32
+screenRes: 807x596
