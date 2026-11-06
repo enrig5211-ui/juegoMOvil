@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/ValleMultijugador.unity
-    guid: c6cb643eff7ec4ceaa4296315b5d636d
+    path: Assets/Scenes/NocheChapare.unity
+    guid: 8b98840e84a3242589b2a6f735d2f237
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

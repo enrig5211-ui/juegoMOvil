@@ -6,12 +6,12 @@ No se ha generado todavía un archivo .exe.
 1. Abre Unity Hub → Installs / Instalaciones → engranaje o menú de Unity 6000.4.0f1
    → Add modules / Añadir módulos → **Windows Build Support (Mono)** → Install.
 2. Vuelve al proyecto. Puedes usar **Tools → Exportar → Windows x64**: configura
-   Mono, incluye MenuInicio, ValleDelRio y ValleMultijugador y escribe
+   Mono, incluye MenuInicio, ValleDelRio y NocheChapare y escribe
    `Builds/Windows/ValleDelRio.exe`.
 3. Alternativa manual: **File → Build Profiles → Add Build Profile → Windows**,
    arquitectura **Intel 64-bit / x86_64**, activa el perfil y usa scripting backend
    **Mono** en Player Settings. MenuInicio debe ser la primera escena, seguida por
-   ValleDelRio y ValleMultijugador. Pulsa **Build** y elige una carpeta vacía.
+   ValleDelRio y NocheChapare. Pulsa **Build** y elige una carpeta vacía.
 4. Comprime y comparte **toda la carpeta de salida**, no únicamente el .exe:
    necesita la carpeta `ValleDelRio_Data`, UnityPlayer.dll, MonoBleedingEdge y los
    demás archivos que Unity genere. En Windows se descomprime y se ejecuta el .exe.

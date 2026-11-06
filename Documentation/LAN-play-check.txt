@@ -5,7 +5,9 @@ PASS: Unique server-assigned slots
 PASS: Host waits for ready players
 PASS: Ninth connection rejected
 PASS: All ready enables start
+PASS: Organization player claims leader and DEA claim is refused
 PASS: Eight network combatants in arena
+PASS: Match opens in deployment
 PASS: Match start reaches every client
 PASS: Snapshots include all actors
 PASS: Remote input moves authoritative controller
@@ -20,10 +22,10 @@ PASS: Pickup preserves ammunition without duplication
 PASS: Cover blocks network damage
 PASS: No friendly fire
 PASS: Kill scores once and drops weapon
-PASS: Automatic team respawn restores class loadout
-PASS: Disconnected human becomes bot
-PASS: Bot follows baked navigation toward enemies
-PASS: Score limit finishes round
+PASS: Reinforcement wave restores class loadout and spends one
+PASS: Disconnected leader continues as bot
+PASS: Bot leader moves using baked navigation
+PASS: Dawn finishes round
 PASS: Results replicated to clients
 PASS: Return to lobby retains session
 PASS: Bot replacement persists in room

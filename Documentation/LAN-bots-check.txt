@@ -1,7 +1,14 @@
 PASS: One human starts with seven bots
-PASS: Bots navigate, acquire targets and fire during real arena simulation
-PASS: Bots can score kills in valley terrain
-PASS: Combatants stay on terrain / respawn
-PASS: Late join replaces a bot on requested team
+INFO: Noche 1: DeaSpent a los 348 s · disparos 1008 · bajas DEA 10 / Org 16 · refuerzos DEA 0 / Org 0
+INFO: Noche 2: DeaSpent a los 263 s · disparos 1089 · bajas DEA 11 / Org 16 · refuerzos DEA 0 / Org 0
+INFO: Noche 3: DeaSpent a los 252 s · disparos 1151 · bajas DEA 13 / Org 16 · refuerzos DEA 0 / Org 0
+INFO: Noche 4: Captured a los 157 s · disparos 636 · bajas DEA 6 / Org 8 · refuerzos DEA 5 / Org 3
+INFO: Noche 5: Captured a los 79 s · disparos 540 · bajas DEA 6 / Org 7 · refuerzos DEA 6 / Org 7
+INFO: Noche 6: DeaSpent a los 247 s · disparos 1161 · bajas DEA 12 / Org 16 · refuerzos DEA 0 / Org 0
+PASS: Every night reaches an outcome
+PASS: Bots navigate, find enemies and fire
+PASS: Bots can reduce and handcuff the leader
+PASS: Combatants stay inside the map
+PASS: Late join replaces a guard bot, never the leader
 PASS: Late client loads and receives selected class
 PASS: Late guest disconnect restores bot

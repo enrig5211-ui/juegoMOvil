@@ -2,6 +2,9 @@
 
 Nombre de trabajo, pendiente de confirmar. Plan armado el 2026-11-06.
 
+**Estado (2026-11-06):** etapas 0 y 1 terminadas, pendientes de prueba manual. Sigue la Etapa 2.
+La rama de trabajo es `etapa-1-reglas`.
+
 ## El juego
 
 Dos bandos en red local, y cada partida es una noche. La DEA debe capturar al líder
@@ -93,6 +96,19 @@ Todos los valores se ajustarán al probar.
 **Terminada cuando:** una partida solo con bots termina tanto por captura como por
 amanecer, un bot reemplaza a un líder desconectado, entrar a mitad de partida no
 revive a nadie y las comprobaciones pasan.
+
+Resultado: 93 comprobaciones aprobadas. Detalle en `MultijugadorLAN.md`.
+
+Ajustes respecto a lo previsto:
+
+- Un jugador humano puede dejar el rol de líder antes de empezar, y el mapa táctico de la
+  DEA es la propia escena vista desde arriba, sin los rivales.
+- El agente que esposa no puede disparar.
+- El líder usa pistola desde esta etapa.
+
+Para ajustar en la Etapa 2: los bots terminan la mayoría de las noches entre el minuto 3 y
+el 6, sobre todo porque la DEA agota sus refuerzos. Falta ver si pasa igual con personas y
+si 8 minutos es la duración correcta.
 
 ### Etapa 2 · Noche, visión e items
 

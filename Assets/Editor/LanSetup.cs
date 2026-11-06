@@ -29,9 +29,9 @@ public static class LanSetup {
   var navigation=new GameObject("Navegacion - LAN").AddComponent<NavMeshSurface>();navigation.useGeometry=NavMeshCollectGeometry.PhysicsColliders;navigation.overrideVoxelSize=true;navigation.voxelSize=.1f;navigation.BuildNavMesh();
   if(!navigation.navMeshData||NavMesh.CalculateTriangulation().vertices.Length==0)throw new Exception("Empty navigation mesh");
   string navPath="Assets/Resources/Multiplayer/ValleNavMesh.asset";if(File.Exists(navPath))AssetDatabase.DeleteAsset(navPath);AssetDatabase.CreateAsset(navigation.navMeshData,navPath);
-  var world=new GameObject("PARTIDA - 4 contra 4").AddComponent<LanWorld>();world.blueSpawns=new Transform[4];world.redSpawns=new Transform[4];
+  var world=new GameObject("PARTIDA - 4 contra 4").AddComponent<LanWorld>();world.deaEntries=new Transform[4];world.orgSpawns=new Transform[4];
   if(!NavMesh.SamplePosition(new Vector3(0,0,-3.46f),out var center,8,NavMesh.AllAreas))throw new Exception("No central ground");
-  for(int id=0;id<8;id++){var desired=new Vector3(id<4?-8:8,0,-3+id%4*1.2f);var point=FindSpawn(desired,center.position);var spawn=new GameObject((id<4?"Azul ":"Rojo ")+(id%4+1)).transform;spawn.SetParent(world.transform);spawn.position=point+Vector3.up*.05f;if(id<4)world.blueSpawns[id]=spawn;else world.redSpawns[id-4]=spawn;}
+  for(int id=0;id<8;id++){var desired=new Vector3(id<4?-8:8,0,-3+id%4*1.2f);var point=FindSpawn(desired,center.position);var spawn=new GameObject((id<4?"Azul ":"Rojo ")+(id%4+1)).transform;spawn.SetParent(world.transform);spawn.position=point+Vector3.up*.05f;if(id<4)world.deaEntries[id]=spawn;else world.orgSpawns[id-4]=spawn;}
   EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
   EditorSceneManager.OpenScene(Menu);if(!File.Exists("Assets/Scenes/MenuInicio_AntesDeLAN.unity"))EditorSceneManager.SaveScene(SceneManager.GetActiveScene(),"Assets/Scenes/MenuInicio_AntesDeLAN.unity",true);
   var ui=UnityEngine.Object.FindAnyObjectByType<ValleInterface>();if(!ui.playButton.transform.parent.Find("Multijugador LAN")){var button=UnityEngine.Object.Instantiate(ui.playButton,ui.playButton.transform.parent);button.name="Multijugador LAN";button.GetComponent<RectTransform>().anchoredPosition=new Vector2(0,30);button.GetComponentInChildren<Text>().text="Multijugador LAN";button.gameObject.AddComponent<LanMenuEntry>();}

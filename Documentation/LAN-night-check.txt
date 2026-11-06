@@ -1,0 +1,31 @@
+PASS: Bot takes the leader when nobody claims it
+PASS: Leader uses its own class and pistol
+PASS: Deployment holds the night clock
+PASS: Map provides entries, hideouts and search zones
+PASS: DEA agent moves to the chosen entry point
+PASS: Nobody fires during deployment
+PASS: DEA stays off the field during deployment
+PASS: Organization moves during deployment
+PASS: Night clock starts after deployment
+PASS: Guard falls and drops its weapon
+PASS: Fallen guard waits for the wave
+PASS: Wave returns the guard and spends one reinforcement
+PASS: Leader without health is reduced
+PASS: Reducing the leader neither ends the night nor drops the weapon
+PASS: Leader recovers if nobody handcuffs in time
+PASS: Leader recovery spends no reinforcements
+PASS: Late join never takes the leader
+PASS: Late join does not revive a fallen guard
+PASS: Late join does not revive a reduced leader
+PASS: Holding next to the leader advances the handcuffs
+PASS: Leader does not recover while being handcuffed
+PASS: Two seconds are not enough to handcuff
+PASS: Hitting the agent interrupts the handcuffs
+PASS: Finishing the handcuffs wins for the DEA
+PASS: Guest stays connected through the night
+PASS: Outcome reaches clients
+PASS: DEA cannot claim the leader
+PASS: Organization player claims the leader
+PASS: Human keeps the leader in the match
+PASS: Dawn wins for the organization
+PASS: DEA without agents or reinforcements loses
