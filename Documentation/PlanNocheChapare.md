@@ -2,7 +2,7 @@
 
 Nombre de trabajo, pendiente de confirmar. Plan armado el 2026-11-06.
 
-**Estado (2026-11-07):** etapas 0, 1 y 2 construidas, pendientes de prueba con personas.
+**Estado (2026-11-07):** etapas 0 a 3 construidas, pendientes de prueba con personas.
 El mapa ya es hexagonal (ver "Cambio de mapa").
 La rama de trabajo es `etapa-1-reglas`.
 
@@ -147,6 +147,11 @@ oscuridad bajó las victorias de la DEA de 6 a 4 de cada 6 noches.
 
 **Terminada cuando:** cada habilidad funciona en red, también usada por bots, y ninguna
 domina la partida.
+
+**Estado (2026-11-07):** construida y verificada (152 comprobaciones). Los bots usan 6 de las 7
+habilidades en 2 minutos. Con bots, la DEA gana unas 2 de cada 3 noches; queda pendiente
+ver con personas si alguna habilidad domina. Cambio respecto al plan: las alarmas también
+marcan al intruso durante 4 s.
 
 ### Etapa 4 · Modelos animados y selección arcade
 

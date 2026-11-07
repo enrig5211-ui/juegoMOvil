@@ -1,0 +1,26 @@
+PASS: DEA characters
+PASS: Organization characters
+PASS: Characters keep the class statistics
+PASS: DEA abilities by character
+PASS: Organization and leader abilities
+PASS: Right click triggers the ability over the network
+PASS: Burst doubles the fire rate
+PASS: Cooldown reaches the client
+INFO: Recarga de Ráfaga tras activarla: 11.6 s
+PASS: Pressing again during cooldown does nothing
+INFO: Avance recorrió 4.0 unidades
+PASS: Dash moves a short distance fast
+INFO: Daño al Pesado: sin escudo 11.4, de frente 2.3, por detrás 11.4
+PASS: The shield blocks most frontal damage
+PASS: The shield does not cover the back
+PASS: Pulse marks enemies behind cover
+PASS: Pulse only reaches 18 units
+PASS: Marked enemies are visible to the whole DEA team
+INFO: Daño al líder: sin protección 13.3, protegido 5.3
+PASS: A nearby bodyguard protects the leader
+PASS: The lookout places an alarm without items
+PASS: A triggered alarm marks the intruder
+PASS: Reinforcements are not spent with nobody down
+PASS: The leader brings fallen guards back early
+INFO: Habilidades usadas por bots en 2 min: Avance, Escudo, Pulso, Refuerzos, Alarma, Proteger · usos 10
+PASS: Bots use their abilities

@@ -101,7 +101,7 @@ public static class LanVisionCheck {
     g.State.aim=Vector3.right;guest.Input.use++;break;}
    case 10:{var g=G(s);var flare=s.World.Marks.FirstOrDefault(m=>m.kind==LanItems.FlareMark);
     Check(flare!=null&&g.State.item==0&&Vector3.Distance(flare.position,g.transform.position+Vector3.right*LanNightRules.FlareThrow)<1.5f,"A flare is thrown ahead");
-    Run(s,LanNightRules.FlareSeconds+.5f);Check(!s.World.Marks.Any(m=>m.kind==LanItems.FlareMark),"Flares burn out");
+    int thrown=flare!=null?flare.id:-1;Run(s,LanNightRules.FlareSeconds+.5f);Check(!s.World.Marks.Any(m=>m.id==thrown),"Flares burn out");
     g.State.item=LanItems.NightVision;guest.Input.use++;break;}
    case 11:{var g=G(s);Check(g.State.vision>LanNightRules.NightVisionSeconds-3,"Night vision goggles activate");
     g.State.item=LanItems.Alarm;guest.Input.use++;break;}

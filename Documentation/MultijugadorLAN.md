@@ -77,12 +77,19 @@ Los guardias ven en pantalla dónde está su líder cuando sale de la vista.
 
 Todos estos valores están en `LanNightRules.cs`.
 
-| Clase | Vida | Estamina | Defensa | Velocidad base | Cargador | Reserva |
-|---|---:|---:|---:|---:|---:|---:|
-| Explorador | 90 | 130 | 10 | 4,2 | 24 | 90 |
-| Guardián | 160 | 85 | 40 | 2,8 | 24 | 90 |
-| Artillero | 110 | 100 | 15 | 3,3 | 40 | 210 |
-| Líder | 120 | 100 | 20 | 3,3 | 12 (pistola) | 60 |
+**Personajes.** Cada uno tiene una habilidad con **clic derecho** y su tiempo de recarga.
+
+| Bando | Personaje | Base | Vida | Defensa | Velocidad | Cargador / reserva | Habilidad (recarga) |
+|---|---|---|---:|---:|---:|---:|---|
+| DEA | Asaltante | Explorador | 90 | 10 | 4,2 | 24 / 90 | Avance: carrera de 0,35 s a 3,2× velocidad (8 s) |
+| DEA | Pesado | Guardián | 160 | 40 | 2,8 | 24 / 90 | Escudo: −80 % de daño de frente durante 4 s (14 s) |
+| DEA | Rastreador | Artillero | 110 | 15 | 3,3 | 40 / 210 | Pulso: marca 4 s a los rivales a 18 unidades, visibles tras paredes (16 s) |
+| Org | Pistolero | Explorador | 90 | 10 | 4,2 | 24 / 90 | Ráfaga: dispara el doble de rápido durante 3 s (12 s) |
+| Org | Guardaespaldas | Guardián | 160 | 40 | 2,8 | 24 / 90 | Proteger: el líder a 6 unidades recibe −60 % de daño durante 5 s (15 s) |
+| Org | Vigía | Artillero | 110 | 15 | 3,3 | 40 / 210 | Coloca una alarma sin gastar items (20 s) |
+| Org | Líder | Propio | 120 | 20 | 3,3 | 12 / 60 (pistola) | Refuerzos: trae a los guardias caídos gastando refuerzos (60 s) |
+
+Una alarma que salta marca al intruso durante 4 s. Los valores están en `LanAbilities.cs`.
 
 La defensa reduce el daño mediante `daño × 100 / (100 + defensa)`.
 Correr multiplica la velocidad por 1,5 y consume estamina. El salto también consume.
@@ -119,8 +126,8 @@ esposan al líder reducido.
 
 ## Verificación
 
-Validación del 2026-11-07, en el mapa hexagonal y en el editor de Unity:
-**131 comprobaciones aprobadas**, sin errores en consola.
+Validación del 2026-11-07, en el mapa hexagonal:
+**152 comprobaciones aprobadas**, sin errores en consola.
 
 | Archivo | Aprobadas | Qué cubre |
 |---|---:|---|
@@ -130,20 +137,26 @@ Validación del 2026-11-07, en el mapa hexagonal y en el editor de Unity:
 | `LAN-bots-check.txt` | 8 | Seis noches completas solo con bots, con despliegue real, y entrada tardía |
 | `Magic-play-check.txt` | 9 | Efectos visuales durante la partida |
 | `LAN-vision-check.txt` | 38 | Luz, visión, linternas por red, items, bengalas, alarmas y qué se dibuja |
+| `LAN-ability-check.txt` | 21 | Personajes por bando, cada habilidad medida, activación por red y uso por bots |
 
 Comandos en **Tools > Multijugador**: *Comprobar reglas de la noche*, *Comprobar noches
-con bots*, *Comprobar noche, vision e items* y *Comprobar LAN en Play*.
+con bots*, *Comprobar noche, vision e items*, *Comprobar habilidades* y *Comprobar LAN en Play*.
 
-Con la noche, las seis noches con bots terminaron así: 4 capturas (entre los 55 y los 260
-segundos de noche) y 2 derrotas de la DEA por agotar refuerzos. Ninguna llegó al amanecer.
-Antes de la oscuridad la DEA ganaba 6 de 6. No mide el equilibrio entre personas.
+Con noche y habilidades, dos tandas de seis noches con bots terminaron así: 8 capturas,
+2 amaneceres y 2 derrotas de la DEA por agotar refuerzos. Sin oscuridad la DEA ganaba 6 de 6.
+No mide el equilibrio entre personas.
+
+Mediciones de `LAN-ability-check.txt`: el escudo deja 2,3 de daño de frente frente a 11,4 sin
+él, el líder protegido recibe 5,3 en vez de 13,3, y el Avance recorre 4 unidades.
 
 La prueba acelerada avanza la física en cada paso. Sin eso, disparos y visión usan
 posiciones antiguas y los resultados no son válidos.
 
 Capturas del mapa: `NocheChapare-mapa.png`, `NocheChapare-campamento.png` y
 `NocheChapare-puente.png`. `LAN-match.png` muestra una partida en el mapa hexagonal, y
-`Noche-linterna.png` y `Noche-bengala.png` muestran la noche con linterna y faroles. Las
+`Noche-linterna.png` y `Noche-bengala.png` muestran la noche con linterna y faroles.
+`Personajes-sala.png` y `Personajes-hud.png` muestran los personajes en la sala y la
+habilidad en el HUD. Las
 capturas `Noche-*.png` de la interfaz son del mapa gris anterior.
 
 Escala del mapa: 5.156 piezas visibles, unos 1,26 millones de triángulos en total y 1.445

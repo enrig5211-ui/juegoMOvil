@@ -39,7 +39,7 @@ namespace Valle.Lan {
   public void Fire(LanPawn pawn,Vector3 aim){var state=pawn.State;var origin=pawn.transform.position+Vector3.up*.35f;var end=origin+aim*24;float distance=24;LanPawn victim=null;
    foreach(var hit in Physics.RaycastAll(origin,aim,24,LanNightRules.SightMask,QueryTriggerInteraction.Ignore)){if(hit.collider.gameObject==pawn.gameObject)continue;if(hit.distance<distance){distance=hit.distance;end=hit.point;victim=hit.collider.GetComponent<LanPawn>();}}
    state.shot++;pawn.MarkShot();state.hit=end;state.impact=distance<24;
-   if(victim&&victim.Team!=pawn.Team&&victim.State.hp>0&&victim.State.shield<=0){victim.State.hp=Mathf.Max(0,victim.State.hp-(state.weapon==1?24:16)*100/(100+victim.Class.Defense));session.Night.Interrupt(victim.Id);if(victim.State.hp<=0){victim.Fall();session.ScoreKill(pawn.Id,victim.Id);}}
+   if(victim&&victim.Team!=pawn.Team&&victim.State.hp>0&&victim.State.shield<=0){victim.State.hp=Mathf.Max(0,victim.State.hp-(state.weapon==1?24:16)*100/(100+victim.Class.Defense)*LanAbilities.DamageTaken(this,pawn,victim));session.Night.Interrupt(victim.Id);if(victim.State.hp<=0){victim.Fall();session.ScoreKill(pawn.Id,victim.Id);}}
   }
   public void Drop(LanPawn p){if(p.State.weapon==0)return;Vector3 pos=p.transform.position;if(NavMesh.SamplePosition(pos+p.transform.right*.7f,out var nav,2,NavMesh.AllAreas))pos=nav.position;
    AddDrop(new LanDrop{weapon=p.State.weapon,ammo=p.State.ammo,reserve=p.State.reserve,position=pos+Vector3.up*.025f});p.State.weapon=0;p.State.ammo=p.State.reserve=0;p.State.reload=0;
@@ -83,7 +83,8 @@ namespace Valle.Lan {
     var mark=Marks[i];
     if(mark.kind==LanItems.FlareMark||mark.fired){mark.time-=dt;if(mark.time<=0)Marks.RemoveAt(i);continue;}
     if(session.Night.Deploying)continue;
-    if(Pawns.Values.Any(p=>p.Team!=mark.team&&p.State.hp>0&&Flat(p.transform.position-mark.position)<=LanNightRules.AlarmRadius)){mark.fired=true;mark.time=LanNightRules.AlarmAlertSeconds;}
+    var intruders=Pawns.Values.Where(p=>p.Team!=mark.team&&p.State.hp>0&&Flat(p.transform.position-mark.position)<=LanNightRules.AlarmRadius).ToList();
+    if(intruders.Count>0){mark.fired=true;mark.time=LanNightRules.AlarmAlertSeconds;foreach(var p in intruders)p.State.marked=LanAbilities.MarkSeconds;}
    }
   }
   public bool IsLit(Vector3 at){
@@ -121,7 +122,8 @@ namespace Valle.Lan {
   static float Flat(Vector3 v){v.y=0;return v.magnitude;}
  }
  public sealed class LanPawn:MonoBehaviour {
-  public LanActorState State=new LanActorState();public int Id{get;private set;}public int Team=>Id/4;public LanClass Class=>IsLeader?LanClass.Leader:LanClass.Get(session.Slots[Id].role);
+  public LanActorState State=new LanActorState();public int Id{get;private set;}public int Team=>Id/4;public LanClass Class=>IsLeader?LanClass.Leader:LanClass.For(Team,session.Slots[Id].role);
+  public int Role=>session.Slots[Id].role;public int Ability=>LanAbilities.For(this);public Vector3 DashDirection;public int AbilityUses;float renderedCooldown;
   public bool IsLeader=>session.Night.Leader==Id;public bool Holding{get;private set;}
   public bool Seen=true;public Light LampLight=>lamp;float firedAt=-99;Light lamp,halo;
   public bool FiredRecently=>session.Night.Clock-firedAt<LanNightRules.FiredReveal;
@@ -146,28 +148,28 @@ namespace Valle.Lan {
    bool goggles=State.vision>0;halo.enabled=alive&&day<.95f;
    halo.range=(goggles?LanNightRules.NightVisionRange:LanNightRules.NearVision)+2;halo.intensity=(goggles?3:1.6f)*(1-day);halo.color=goggles?new Color(.55f,1,.6f):new Color(.75f,.8f,1);
   }
-  public void ResetLife(Vector3 position){State.hp=Class.Health;State.stamina=Class.Stamina;State.weapon=IsLeader?1:2;State.ammo=Capacity;State.reserve=Class.Reserve;State.down=0;State.reload=0;State.lamp=false;State.vision=0;State.shield=2;State.position=position;State.aim=Team==0?Vector3.right:Vector3.left;controller.enabled=false;transform.position=position;controller.enabled=session.IsHost;vertical=0;shotCooldown=.3f;brain.Reset();var previous=session.InputFor(Id);consumed=new LanInput{jump=previous.jump,reload=previous.reload,pickup=previous.pickup,drop=previous.drop,lamp=previous.lamp,use=previous.use};}
+  public void ResetLife(Vector3 position){State.hp=Class.Health;State.stamina=Class.Stamina;State.weapon=IsLeader?1:2;State.ammo=Capacity;State.reserve=Class.Reserve;State.down=0;State.reload=0;State.lamp=false;State.vision=0;State.ability=State.active=State.marked=0;State.shield=2;State.position=position;State.aim=Team==0?Vector3.right:Vector3.left;controller.enabled=false;transform.position=position;controller.enabled=session.IsHost;vertical=0;shotCooldown=.3f;brain.Reset();var previous=session.InputFor(Id);consumed=new LanInput{jump=previous.jump,reload=previous.reload,pickup=previous.pickup,drop=previous.drop,lamp=previous.lamp,use=previous.use,ability=previous.ability};}
   // Un líder sin vida queda reducido; los demás caen y esperan su oleada.
   public void Fall(){State.lamp=false;State.vision=0;if(IsLeader){State.down=LanNightRules.ReducedSeconds;return;}world.Drop(this);world.DropItem(this);}
   public void Recover(){State.down=0;State.hp=Class.Health*LanNightRules.RecoverFraction;State.shield=1;}
   public void ClampToClass(){State.hp=Mathf.Min(State.hp,Class.Health);State.stamina=Mathf.Min(State.stamina,Class.Stamina);}
   public void Apply(LanActorState state){State=state;if((transform.position-state.position).sqrMagnitude>9)transform.position=state.position;}
   public void ServerTick(float dt){Holding=false;if(!session.Slots[Id].bot&&!session.Slots[Id].loaded){State.shield=2;return;}if(Team==LanNightRules.Dea&&session.Night.Deploying){State.shield=2;return;}if(State.hp<=0){controller.enabled=false;return;}controller.enabled=true;State.shield=Mathf.Max(0,State.shield-dt);State.vision=Mathf.Max(0,State.vision-dt);
-   var input=session.Slots[Id].bot?BotInput():session.InputFor(Id);if(input==null||!input.Valid())input=new LanInput();Holding=input.hold;var movement=Vector3.ClampMagnitude(new Vector3(input.x,0,input.z),1);var aim=new Vector3(input.ax,0,input.az);if(aim.sqrMagnitude>.01f)State.aim=aim.normalized;
-   bool run=input.sprint&&State.stamina>2&&movement.sqrMagnitude>.01f;float speed=Class.Speed*(run?1.5f:1);if(run){State.stamina=Mathf.Max(0,State.stamina-dt*18);regenDelay=.8f;}else if((regenDelay-=dt)<=0)State.stamina=Mathf.Min(Class.Stamina,State.stamina+dt*22);
+   var input=session.Slots[Id].bot?BotInput():session.InputFor(Id);if(input==null||!input.Valid())input=new LanInput();Holding=input.hold;State.ability=Mathf.Max(0,State.ability-dt);State.active=Mathf.Max(0,State.active-dt);State.marked=Mathf.Max(0,State.marked-dt);if(input.ability!=consumed.ability)LanAbilities.Trigger(world,this,input);var movement=Vector3.ClampMagnitude(new Vector3(input.x,0,input.z),1);var aim=new Vector3(input.ax,0,input.az);if(aim.sqrMagnitude>.01f)State.aim=aim.normalized;
+   bool run=input.sprint&&State.stamina>2&&movement.sqrMagnitude>.01f;float speed=Class.Speed*(run?1.5f:1);if(LanAbilities.Active(this,LanAbilities.Dash)){movement=DashDirection;speed=Class.Speed*LanAbilities.DashSpeed;run=false;}if(run){State.stamina=Mathf.Max(0,State.stamina-dt*18);regenDelay=.8f;}else if((regenDelay-=dt)<=0)State.stamina=Mathf.Min(Class.Stamina,State.stamina+dt*22);
    if(controller.isGrounded&&vertical<0)vertical=-2;if(input.jump!=consumed.jump&&controller.isGrounded&&State.stamina>=12){vertical=7;State.stamina-=12;regenDelay=.8f;}
    vertical-=22*dt;controller.Move((movement*speed+Vector3.up*vertical)*dt);State.grounded=controller.isGrounded;State.position=transform.position;
    if(transform.position.y < -5){if(IsLeader){ResetLife(world.Spawn(Id));return;}world.Drop(this);State.hp=0;session.Slots[Id].deaths++;return;}
    if(State.reload>0){State.reload-=dt;if(State.reload<=0){int n=Mathf.Min(Capacity-State.ammo,State.reserve);State.ammo+=n;State.reserve-=n;}}
    if(input.reload!=consumed.reload&&State.weapon!=0&&State.reload<=0&&State.ammo<Capacity&&State.reserve>0)State.reload=1.7f;
    if(input.drop!=consumed.drop)world.Drop(this);if(input.pickup!=consumed.pickup)world.Pickup(this);if(input.lamp!=consumed.lamp)State.lamp=!State.lamp;if(input.use!=consumed.use&&State.item!=0&&LanItems.Use(world,this))State.item=0;
-   shotCooldown-=dt;if(input.fire&&!session.Night.Deploying&&session.Night.Capturer!=Id&&State.weapon!=0&&State.reload<=0&&State.ammo>0&&shotCooldown<=0){State.ammo--;shotCooldown=State.weapon==1?.3f:.16f;world.Fire(this,State.aim);}
-   consumed.jump=input.jump;consumed.reload=input.reload;consumed.pickup=input.pickup;consumed.drop=input.drop;consumed.lamp=input.lamp;consumed.use=input.use;
+   shotCooldown-=dt;if(input.fire&&!session.Night.Deploying&&session.Night.Capturer!=Id&&State.weapon!=0&&State.reload<=0&&State.ammo>0&&shotCooldown<=0){State.ammo--;shotCooldown=(State.weapon==1?.3f:.16f)*LanAbilities.FireDelay(this);world.Fire(this,State.aim);}
+   consumed.jump=input.jump;consumed.reload=input.reload;consumed.pickup=input.pickup;consumed.drop=input.drop;consumed.lamp=input.lamp;consumed.use=input.use;consumed.ability=input.ability;
   }
   public int Capacity=>State.weapon==1?12:Class.Magazine;
-  LanInput BotInput()=>brain.Think(new LanInput{jump=consumed.jump,reload=consumed.reload,pickup=consumed.pickup,drop=consumed.drop,lamp=consumed.lamp,use=consumed.use});
+  LanInput BotInput()=>brain.Think(new LanInput{jump=consumed.jump,reload=consumed.reload,pickup=consumed.pickup,drop=consumed.drop,lamp=consumed.lamp,use=consumed.use,ability=consumed.ability});
   void Update(){if(!session||session.Slots==null)return;if(!session.IsHost)transform.position=Vector3.Lerp(transform.position,State.position,1-Mathf.Exp(-18*Time.unscaledDeltaTime));
-   bool alive=State.hp>0,shown=(alive||State.down>0)&&world.Shows(this);if(alive&&shown&&!wasAlive)MagicFx.Spawn(transform.position,session.Slots[Id].role);wasAlive=alive;if(alive&&shown&&State.shield>0&&!shieldFx)shieldFx=MagicFx.Protect(transform,State.shield);if(shieldFx&&(!alive||!shown||State.shield<=0)){shieldFx.StopEffect();shieldFx=null;}visual.gameObject.SetActive(shown);ring.SetActive(shown);label.gameObject.SetActive(shown);label.text=LabelText();UpdateLights(alive,shown);if(Camera.main)label.transform.rotation=Camera.main.transform.rotation;
+   bool alive=State.hp>0,shown=(alive||State.down>0)&&world.Shows(this);if(alive&&shown&&!wasAlive)MagicFx.Spawn(transform.position,session.Slots[Id].role);wasAlive=alive;bool guarded=State.shield>0||LanAbilities.Active(this,LanAbilities.Shield);if(State.ability>renderedCooldown+.5f&&alive&&shown)MagicFx.Spawn(transform.position,Role);renderedCooldown=State.ability;if(alive&&shown&&guarded&&!shieldFx)shieldFx=MagicFx.Protect(transform,Mathf.Max(State.shield,State.active));if(shieldFx&&(!alive||!shown||!guarded)){shieldFx.StopEffect();shieldFx=null;}visual.gameObject.SetActive(shown);ring.SetActive(shown);label.gameObject.SetActive(shown);label.text=LabelText();UpdateLights(alive,shown);if(Camera.main)label.transform.rotation=Camera.main.transform.rotation;
    float speed=(transform.position-lastPosition).magnitude/Mathf.Max(.001f,Time.unscaledDeltaTime);lastPosition=transform.position;stepPhase+=Time.deltaTime*(speed>4?18:12);visual.localPosition=visualBase+Vector3.up*(alive&&speed>.2f?Mathf.Abs(Mathf.Sin(stepPhase))*.07f:0);visual.localRotation=Quaternion.LookRotation(State.aim.sqrMagnitude>.01f?State.aim:Vector3.forward)*Quaternion.Euler(alive?5:75,0,speed>.2f?Mathf.Sin(stepPhase)*7:0);
    if(State.reload>0&&!renderedReload&&assets.reload)sound.PlayOneShot(assets.reload,.25f);renderedReload=State.reload>0;
    if(renderedWeapon!=State.weapon){if(renderedWeapon>=0&&State.weapon>0&&assets.equip)sound.PlayOneShot(assets.equip,.25f);if(gun)Destroy(gun.gameObject);gun=State.weapon==0?null:MakeWeapon(State.weapon,transform,assets);renderedWeapon=State.weapon;}
@@ -176,7 +178,7 @@ namespace Valle.Lan {
    tracer.enabled=Time.time<flash;
    if(alive&&State.grounded&&speed>.3f&&Time.time>stepAt&&assets.steps.Length>0){stepAt=Time.time+(speed>4?.28f:.4f);sound.PlayOneShot(assets.steps[Random.Range(0,assets.steps.Length)],.15f);}
   }
-  string LabelText(){var slot=session.Slots[Id];string text=slot.name+(slot.bot?" · BOT":"")+(State.shield>0?" ◇":"");bool ally=session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==Team;return IsLeader&&(ally||State.down>0)?"LÍDER · "+text:text;}
+  string LabelText(){var slot=session.Slots[Id];string text=slot.name+(slot.bot?" · BOT":"")+(State.shield>0?" ◇":"");bool ally=session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==Team;if(!ally&&State.marked>0)text+=" · MARCADO";return IsLeader&&(ally||State.down>0)?"LÍDER · "+text:text;}
   public static Transform MakeWeapon(int kind,Transform parent,LanAssets assets){var root=new GameObject("Arma visible").transform;root.SetParent(parent,false);Instantiate(kind==1?assets.pistol:assets.rifle,root);return root;}
   public static GameObject Ring(Transform parent,Material material,Color color,float radius){var go=new GameObject("Anillo de equipo");go.transform.SetParent(parent,false);var line=go.AddComponent<LineRenderer>();line.sharedMaterial=material;line.useWorldSpace=false;line.loop=true;line.positionCount=32;line.widthMultiplier=.025f;line.startColor=line.endColor=color;for(int i=0;i<32;i++){float a=i*Mathf.PI*2/32;line.SetPosition(i,new Vector3(Mathf.Cos(a)*radius,.025f,Mathf.Sin(a)*radius));}return go;}
  }

@@ -28,6 +28,7 @@ namespace Valle.Lan {
    if(!enemy&&direction.sqrMagnitude>.01f){input.ax=direction.x;input.az=direction.z;}
    input.x=direction.x;input.z=direction.z;
    Equip(input,enemy,enemyDistance);
+   if(WantsAbility(enemy,enemyDistance))input.ability++;
    return input;
   }
   // Linterna e items. La DEA busca con linterna; los guardias la encienden solo si están alerta.
@@ -37,6 +38,20 @@ namespace Valle.Lan {
    if(lamp!=state.lamp)input.lamp++;
    if(state.item==0){var drop=world.Nearest(pawn);if(drop!=null&&drop.item>0)input.pickup++;}
    else if(Wants(state.item,enemy,enemyDistance,day))input.use++;
+  }
+  bool WantsAbility(LanPawn enemy,float distance){
+   if(pawn.State.ability>0)return false;
+   var leader=world.LeaderPawn;bool nearLeader=leader&&leader!=pawn&&Vector3.Distance(leader.transform.position,pawn.transform.position)<=LanAbilities.GuardRange;
+   switch(pawn.Ability){
+    case LanAbilities.Dash:return enemy&&distance>5&&distance<12;
+    case LanAbilities.Shield:return enemy;
+    case LanAbilities.Pulse:return !enemy&&!session.Night.Deploying;
+    case LanAbilities.Burst:return enemy&&distance<12;
+    case LanAbilities.Guard:return enemy&&nearLeader;
+    case LanAbilities.Watch:return nearLeader&&!world.Marks.Any(m=>m.kind==LanItems.AlarmMark&&m.team==pawn.Team&&Vector3.Distance(m.position,pawn.transform.position)<8);
+    case LanAbilities.Rally:return session.Night.OrgLeft>0&&world.Pawns.Values.Count(p=>p.Team==pawn.Team&&p!=pawn&&p.State.hp<=0)>=2;
+   }
+   return false;
   }
   bool Wants(int item,LanPawn enemy,float enemyDistance,float day){
    var state=pawn.State;
