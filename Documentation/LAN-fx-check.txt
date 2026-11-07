@@ -1,0 +1,12 @@
+PASS: The main menu plays the tension music
+PASS: Interface buttons use the night style
+PASS: Night ambience and music play during the match
+PASS: The DEA arrives with a helicopter when the night starts
+PASS: Impacts, muzzle flashes and dust emit particles and light
+PASS: The heavy's shield is drawn in front of him
+PASS: No magic effects appear during the match
+PASS: Flares hiss while they burn
+PASS: A triggered alarm sounds for its team
+PASS: The radio reports the reduced leader
+PASS: Handcuffs click when the capture starts
+PASS: The radio announces reinforcements

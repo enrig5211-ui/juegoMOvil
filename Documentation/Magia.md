@@ -1,3 +1,6 @@
+> **Ya no se usa en la partida.** Desde la Etapa 5, los efectos son `LanFx` (polvo, chispas y
+> fogonazos). Este documento describe el sistema anterior, que sigue en el proyecto sin usarse.
+
 # Efectos mágicos PixPlays
 
 Se añadieron las variantes URP incluidas en los paquetes originales, conservando

@@ -8,18 +8,18 @@ namespace Valle.Lan {
   GameObject select;Text selectTitle,selectClock,selectHint,selectRival,lockLabel;Button lockButton;Image flash;AudioSource sfx;
   readonly GameObject[] cards=new GameObject[3];readonly Image[] frames=new Image[3];readonly RawImage[] portraits=new RawImage[3];
   readonly Text[] cardNames=new Text[3],cardInfo=new Text[3],cardTags=new Text[3];
-  LanPortraits studio;bool wasLocked;
+  LanPortraits studio;bool wasLocked;int lastRole=-1;
   void BuildSelect(){
    select=Screen("Selección");
-   selectTitle=Label(select.transform,"",new Vector2(0,300),new Vector2(900,60),40,Gold);selectTitle.font=art.font;
-   selectClock=Label(select.transform,"",new Vector2(540,300),new Vector2(140,70),50,Gold);selectClock.font=art.font;
+   selectTitle=Label(select.transform,"",new Vector2(0,300),new Vector2(900,60),40,Gold);selectTitle.font=body;selectTitle.fontStyle=FontStyle.Bold;
+   selectClock=Label(select.transform,"",new Vector2(540,300),new Vector2(140,70),50,Gold);selectClock.font=body;selectClock.fontStyle=FontStyle.Bold;
    selectRival=Label(select.transform,"",new Vector2(0,258),new Vector2(900,30),17);
    for(int i=0;i<3;i++){
     int index=i;var card=Panel(select.transform,"Personaje "+i,new Vector2(-330+i*330,18),new Vector2(290,430));
     cards[i]=card.gameObject;frames[i]=card.GetComponent<Image>();
     var portrait=new GameObject("Retrato",typeof(RectTransform),typeof(RawImage)).GetComponent<RawImage>();
     portrait.rectTransform.SetParent(card,false);portrait.rectTransform.sizeDelta=new Vector2(256,300);portrait.rectTransform.anchoredPosition=new Vector2(0,50);portraits[i]=portrait;
-    cardNames[i]=Label(card,"",new Vector2(0,-128),new Vector2(270,40),28,Gold);cardNames[i].font=art.font;
+    cardNames[i]=Label(card,"",new Vector2(0,-128),new Vector2(270,40),28,Gold);cardNames[i].font=body;cardNames[i].fontStyle=FontStyle.Bold;
     cardInfo[i]=Label(card,"",new Vector2(0,-165),new Vector2(270,36),15);
     cardTags[i]=Label(card,"",new Vector2(0,-196),new Vector2(270,28),15,new Color(.45f,.85f,1));
     var click=card.gameObject.AddComponent<Button>();click.transition=Selectable.Transition.None;click.onClick.AddListener(()=>session.ChooseClass(index));
@@ -32,7 +32,7 @@ namespace Valle.Lan {
   void UpdateSelect(){
    bool active=session.Phase=="select"&&session.Slots!=null&&session.LocalSlot>=0;
    select.SetActive(active);
-   if(!active){if(studio){Destroy(studio.gameObject);studio=null;}wasLocked=false;return;}
+   if(!active){if(studio){Destroy(studio.gameObject);studio=null;}wasLocked=false;lastRole=-1;return;}
    var mine=session.Slots[session.LocalSlot];int team=mine.team;bool leader=mine.id==session.Night.Leader;
    if(!studio||studio.Team!=team||studio.Leader!=leader){if(studio)Destroy(studio.gameObject);studio=new GameObject("Retratos de selección").AddComponent<LanPortraits>();studio.Build(art,team,leader);}
    var keyboard=Keyboard.current;
@@ -59,7 +59,8 @@ namespace Valle.Lan {
    }
    lockButton.gameObject.SetActive(!leader);lockButton.interactable=!mine.locked;lockLabel.text=mine.locked?"ESPERANDO A LOS DEMÁS…":"¡LISTO!";
    selectHint.gameObject.SetActive(!leader&&!mine.locked);
-   if(mine.locked&&!wasLocked){flash.color=new Color(1,1,1,.85f);if(art.equip)sfx.PlayOneShot(art.equip,.7f);}
+   if(lastRole>=0&&mine.role!=lastRole&&art.selectMove)sfx.PlayOneShot(art.selectMove,.5f);lastRole=mine.role;
+   if(mine.locked&&!wasLocked){flash.color=new Color(1,1,1,.85f);var confirm=art.selectConfirm?art.selectConfirm:art.equip;if(confirm)sfx.PlayOneShot(confirm,.7f);}
    wasLocked=mine.locked;
    flash.color=new Color(1,1,1,Mathf.MoveTowards(flash.color.a,0,Time.unscaledDeltaTime*2.5f));
   }

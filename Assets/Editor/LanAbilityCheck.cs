@@ -105,6 +105,8 @@ public static class LanAbilityCheck {
     Check(alarm.fired&&intruder.State.marked>0,"A triggered alarm marks the intruder");
     // Refuerzos del líder
     var leader=w.LeaderPawn;leader.State.ability=0;leader.State.hp=leader.Class.Health;
+    // Los demás bots siguen peleando: se reanima a cualquier guardia caído para medir solo los de la prueba.
+    foreach(var p in w.Pawns.Values)if(p.Team==LanNightRules.Org&&!p.IsLeader&&p.State.hp<=0)p.ResetLife(w.Spawn(p.Id));
     LanAbilities.Trigger(w,leader,new LanInput());Check(leader.State.ability==0,"Reinforcements are not spent with nobody down");
     var a=w.Pawns[6];var b=w.Pawns[7];a.State.hp=0;a.Fall();b.State.hp=0;b.Fall();int left=s.Night.OrgLeft;
     LanAbilities.Trigger(w,leader,new LanInput());

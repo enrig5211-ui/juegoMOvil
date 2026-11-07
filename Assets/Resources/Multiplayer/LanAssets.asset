@@ -37,7 +37,7 @@ MonoBehaviour:
   reload: {fileID: 8300000, guid: 84b8dc5699eea984d91a0a8e96178771, type: 3}
   equip: {fileID: 8300000, guid: 43c1734fa36d1674caeee38cab0f249e, type: 3}
   font: {fileID: 12800000, guid: 08d8923b7289ef6409ccc6bdf4c2fae4, type: 3}
-  button: {fileID: 21300000, guid: d95c657e37980b246999734db3f2cbf3, type: 3}
+  button: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   characters:
   - {fileID: 1086188506723234312, guid: 17729672910504f2484556e73f282eca, type: 3}
   - {fileID: 8023635712298027479, guid: 15484ff2f1e094958a0e8391afc7acbe, type: 3}
@@ -46,3 +46,14 @@ MonoBehaviour:
   - {fileID: 6865588330744859199, guid: bb5e70fa81b134524ae4ba35b8baeffc, type: 3}
   - {fileID: 7402366843715608579, guid: 66ec3285d8e634b03aecd5bee85ef68c, type: 3}
   - {fileID: 5288878223670047512, guid: 2c89044a0ba314ba0bc1e0477e79948f, type: 3}
+  fxAlpha: {fileID: 2100000, guid: 40036a6efc10f4ef88f293d41865efee, type: 2}
+  fxAdditive: {fileID: 2100000, guid: a8216ecffe8fc4b8098e0f9165427d07, type: 2}
+  nightLoop: {fileID: 8300000, guid: 2347f4c5d797f44adb2ee59f54b2692f, type: 3}
+  tensionMusic: {fileID: 8300000, guid: 90dedcb3eec804c3a80fb3dd0e75b705, type: 3}
+  helicopter: {fileID: 8300000, guid: ec64e7250994d4d89ad22abadfe22fce, type: 3}
+  radio: {fileID: 8300000, guid: d7554e740c1cf45759b6ae9b5c6db700, type: 3}
+  alarm: {fileID: 8300000, guid: ca6cdccefbcb447898b1dba15ca94fff, type: 3}
+  flare: {fileID: 8300000, guid: 85cce108864924d6e91ac96cbd2a5467, type: 3}
+  cuffs: {fileID: 8300000, guid: bb427e7f662544d8a95c225d197dd3d1, type: 3}
+  selectMove: {fileID: 8300000, guid: 67983154e178e4fb3b84ecef79cfeb49, type: 3}
+  selectConfirm: {fileID: 8300000, guid: c2f8ab679c9954b29a2214762feca498, type: 3}

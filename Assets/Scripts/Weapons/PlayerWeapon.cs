@@ -38,7 +38,7 @@ namespace Valle {
    Vector3 origin=transform.position+Vector3.up*.3f,dir=AimDirection(screenPosition),end=origin+dir*Held.range;int count=Physics.RaycastNonAlloc(origin,dir,hits,Held.range,~0,QueryTriggerInteraction.Ignore);float closest=Held.range;Collider collider=null;
    for(int i=0;i<count;i++)if(!hits[i].collider.transform.IsChildOf(transform)&&hits[i].distance<closest){closest=hits[i].distance;end=hits[i].point;collider=hits[i].collider;}
    LastHit=collider;LastShotDirection=dir;
-   if(collider){MagicFx.Impact(end);var target=collider.GetComponentInParent<PlayerStats>();if(target&&target!=stats)target.TakeDamage(Held.damage);var practice=collider.GetComponentInParent<WeaponTarget>();if(practice)practice.TakeDamage(Held.damage);}
+   if(collider){Valle.Lan.LanFx.Impact(end);var target=collider.GetComponentInParent<PlayerStats>();if(target&&target!=stats)target.TakeDamage(Held.damage);var practice=collider.GetComponentInParent<WeaponTarget>();if(practice)practice.TakeDamage(Held.damage);}
    if(tracer){tracer.SetPosition(0,Held.muzzle?Held.muzzle.position:origin);tracer.SetPosition(1,end);flashEnds=Time.time+.055f;tracer.enabled=true;}return true;
   }
  }

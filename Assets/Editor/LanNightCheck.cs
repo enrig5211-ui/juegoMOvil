@@ -86,7 +86,7 @@ public static class LanNightCheck {
    case 5:{
     var agent=s.World.Pawns[1];var leader=s.World.LeaderPawn;
     Place(agent,Arena);Place(leader,Arena+Vector3.right*2);
-    drops=s.World.Drops.Count;reinforcements=s.Night.OrgLeft;Shoot(s,agent,leader);
+    leader.State.item=0;drops=s.World.Drops.Count;reinforcements=s.Night.OrgLeft;Shoot(s,agent,leader);
     Check(leader.State.hp<=0&&leader.State.down==LanNightRules.ReducedSeconds,"Leader without health is reduced");
     Check(s.Phase=="match"&&s.Night.Outcome==LanOutcome.None&&s.World.Drops.Count==drops,"Reducing the leader neither ends the night nor drops the weapon");
     Place(agent,Arena+Vector3.left*3);

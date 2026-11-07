@@ -1,3 +1,7 @@
+> **Estilo actual:** el menú usa el estilo *Noche en el Chapare* (fuente en negrita, botones
+> planos y fondo nocturno), aplicado con Tools > Interfaz > Aplicar estilo Noche en el Chapare.
+> Volver a ejecutar *Crear menu y HUD* recuperaría el estilo de fantasía anterior.
+
 # Interfaz del valle
 
 Inicio: Assets/Scenes/MenuInicio.unity. Primera escena en Build Settings.

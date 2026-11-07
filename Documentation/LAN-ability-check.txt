@@ -6,7 +6,7 @@ PASS: Organization and leader abilities
 PASS: Right click triggers the ability over the network
 PASS: Burst doubles the fire rate
 PASS: Cooldown reaches the client
-INFO: Recarga de Ráfaga tras activarla: 11.6 s
+INFO: Recarga de Ráfaga tras activarla: 11.7 s
 PASS: Pressing again during cooldown does nothing
 INFO: Avance recorrió 4.0 unidades
 PASS: Dash moves a short distance fast
@@ -22,5 +22,5 @@ PASS: The lookout places an alarm without items
 PASS: A triggered alarm marks the intruder
 PASS: Reinforcements are not spent with nobody down
 PASS: The leader brings fallen guards back early
-INFO: Habilidades usadas por bots en 2 min: Avance, Escudo, Pulso, Alarma, Proteger · usos 15
+INFO: Habilidades usadas por bots en 2 min: Avance, Escudo, Pulso, Refuerzos, Alarma, Proteger · usos 25
 PASS: Bots use their abilities

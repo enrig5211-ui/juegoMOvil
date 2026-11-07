@@ -2,7 +2,7 @@
 
 Nombre de trabajo, pendiente de confirmar. Plan armado el 2026-11-06.
 
-**Estado (2026-11-07):** etapas 0 a 4 construidas, pendientes de prueba con personas.
+**Estado (2026-11-07):** etapas 0 a 5 construidas, pendientes de prueba con personas.
 El mapa ya es hexagonal (ver "Cambio de mapa").
 La rama de trabajo es `etapa-1-reglas`.
 
@@ -182,6 +182,10 @@ retratos en pixel art. También se añadieron caballos al campamento.
 - Reemplazar los efectos de magia por disparos, polvo y chispas.
 
 **Terminada cuando:** ya no queda nada medieval ni mágico en la partida.
+
+**Estado (2026-11-07):** construida y verificada (170 comprobaciones). El estilo medieval de
+KayKit se mantiene por decisión del usuario; lo que se quitó es la magia: efectos de
+combate propios, sonidos originales generados y menús con estilo de operación nocturna.
 
 ### Etapa 6 · Cierre
 

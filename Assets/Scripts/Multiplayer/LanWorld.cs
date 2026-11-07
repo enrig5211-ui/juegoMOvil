@@ -23,7 +23,7 @@ namespace Valle.Lan {
   public void Initialize(LanSession owner){session=owner;assets=Resources.Load<LanAssets>("Multiplayer/LanAssets");
    for(int i=0;i<8;i++){var go=new GameObject("Combatiente "+i);var pawn=go.AddComponent<LanPawn>();Pawns.Add(i,pawn);pawn.Initialize(this,owner,i,assets);}
    if(session.IsHost){foreach(var slot in session.Slots)if(slot.bot&&slot.team==LanNightRules.Dea)slot.point=Random.Range(0,deaEntries.Length);for(int i=0;i<8;i++)Respawn(i);SpawnItems();}
-   BuildMarkers();gameObject.AddComponent<LanNightCycle>().Initialize(owner,this);
+   BuildMarkers();gameObject.AddComponent<LanNightCycle>().Initialize(owner,this);gameObject.AddComponent<LanAudio>().Initialize(owner,this,assets);
    var camera=Camera.main.GetComponent<Valle.PlayerCamera>();if(!camera)camera=Camera.main.gameObject.AddComponent<Valle.PlayerCamera>();camera.target=Pawns[session.LocalSlot].transform;camera.pitch=45;camera.distance=10;Camera.main.orthographic=true;Camera.main.orthographicSize=LanNightRules.CameraSize;
   }
   public int ClampEntry(int point)=>Mathf.Clamp(point,0,deaEntries.Length-1);
@@ -106,7 +106,8 @@ namespace Valle.Lan {
    var go=new GameObject(flare?"Bengala":"Alarma");go.transform.SetParent(transform);
    var core=GameObject.CreatePrimitive(flare?PrimitiveType.Sphere:PrimitiveType.Cube);DestroyImmediate(core.GetComponent<Collider>());core.transform.SetParent(go.transform,false);core.transform.localPosition=Vector3.up*.15f;core.transform.localScale=Vector3.one*.22f;core.GetComponent<Renderer>().material.color=color;
    LanPawn.Ring(go.transform,assets.glow,color,flare?.5f:.4f);
-   if(flare){var light=new GameObject("Luz").AddComponent<Light>();light.transform.SetParent(go.transform,false);light.transform.localPosition=Vector3.up*1.6f;light.type=LightType.Point;light.range=LanNightRules.FlareRadius+3;light.intensity=6;light.color=new Color(1,.45f,.25f);light.shadows=LightShadows.None;}
+   if(flare){var light=new GameObject("Luz").AddComponent<Light>();light.transform.SetParent(go.transform,false);light.transform.localPosition=Vector3.up*1.6f;light.type=LightType.Point;light.range=LanNightRules.FlareRadius+3;light.intensity=6;light.color=new Color(1,.45f,.25f);light.shadows=LightShadows.None;
+    var hiss=go.AddComponent<AudioSource>();hiss.clip=assets.flare;hiss.loop=true;hiss.spatialBlend=1;hiss.minDistance=2;hiss.maxDistance=25;hiss.rolloffMode=AudioRolloffMode.Linear;hiss.volume=.5f;if(hiss.clip)hiss.Play();}
    return go;
   }
   // ---------- Qué ve el equipo local ----------
@@ -129,7 +130,7 @@ namespace Valle.Lan {
   public bool FiredRecently=>session.Night.Clock-firedAt<LanNightRules.FiredReveal;
   public void MarkShot()=>firedAt=session.Night.Clock;
   LanSession session;LanWorld world;LanAssets assets;CharacterController controller;Transform visual,gun;GameObject ring;TextMesh label;AudioSource sound;LineRenderer tracer;
-  LanBotBrain brain;Vector3 lastPosition;readonly LanCartoon cartoon=new LanCartoon();string lookKey;float vertical,shotCooldown,regenDelay,stepPhase,flash,stepAt;int renderedWeapon=-1,renderedShot;bool renderedReload,wasAlive;MagicFx shieldFx;LanInput consumed=new LanInput();
+  LanBotBrain brain;Vector3 lastPosition;readonly LanCartoon cartoon=new LanCartoon();string lookKey;float vertical,shotCooldown,regenDelay,stepPhase,flash,stepAt;int renderedWeapon=-1,renderedShot;bool renderedReload,wasAlive;LineRenderer shieldArc;float nextDust;LanInput consumed=new LanInput();
   public void Initialize(LanWorld w,LanSession owner,int id,LanAssets art){Id=id;State.id=id;world=w;session=owner;assets=art;brain=new LanBotBrain(this,w,owner);
    controller=gameObject.AddComponent<CharacterController>();controller.height=.65f;controller.radius=.2f;controller.center=new Vector3(0,.325f,0);controller.stepOffset=.18f;controller.skinWidth=.025f;controller.enabled=session.IsHost;
    BuildLook();
@@ -169,16 +170,27 @@ namespace Valle.Lan {
   public int Capacity=>State.weapon==1?12:Class.Magazine;
   LanInput BotInput()=>brain.Think(new LanInput{jump=consumed.jump,reload=consumed.reload,pickup=consumed.pickup,drop=consumed.drop,lamp=consumed.lamp,use=consumed.use,ability=consumed.ability});
   void Update(){if(!session||session.Slots==null)return;if(!session.IsHost)transform.position=Vector3.Lerp(transform.position,State.position,1-Mathf.Exp(-18*Time.unscaledDeltaTime));
-   if(LookKey()!=lookKey)BuildLook();bool alive=State.hp>0,dying=!alive&&State.down<=0&&cartoon.Dying,shown=(alive||State.down>0||dying)&&world.Shows(this);if(alive&&shown&&!wasAlive)MagicFx.Spawn(transform.position,session.Slots[Id].role);wasAlive=alive;bool guarded=State.shield>0||LanAbilities.Active(this,LanAbilities.Shield);if(State.ability>renderedCooldown+.5f&&alive&&shown)MagicFx.Spawn(transform.position,Role);renderedCooldown=State.ability;if(alive&&shown&&guarded&&!shieldFx)shieldFx=MagicFx.Protect(transform,Mathf.Max(State.shield,State.active));if(shieldFx&&(!alive||!shown||!guarded)){shieldFx.StopEffect();shieldFx=null;}visual.gameObject.SetActive(shown);ring.SetActive(shown&&!dying);label.gameObject.SetActive(shown&&!dying);label.text=LabelText();UpdateLights(alive,shown);if(Camera.main)label.transform.rotation=Camera.main.transform.rotation;
-   float speed=(transform.position-lastPosition).magnitude/Mathf.Max(.001f,Time.unscaledDeltaTime);lastPosition=transform.position;stepPhase+=Time.deltaTime*(speed>4?18:12);bool over=session.Phase=="result",teamWon=(Team==LanNightRules.Dea)==(session.Night.Outcome==LanOutcome.Captured);cartoon.Pose(this,speed,over&&teamWon,over&&!teamWon);
+   if(LookKey()!=lookKey)BuildLook();bool alive=State.hp>0,dying=!alive&&State.down<=0&&cartoon.Dying,shown=(alive||State.down>0||dying)&&world.Shows(this);if(alive&&shown&&!wasAlive)LanFx.Dust(transform.position,14);if(!alive&&wasAlive&&State.down<=0&&shown)LanFx.Dust(transform.position,10);wasAlive=alive;if(State.ability>renderedCooldown+.5f&&alive&&shown){LanFx.Dust(transform.position,8);LanFx.Flash(transform.position+Vector3.up*.6f,new Color(1,.85f,.55f),.12f);}renderedCooldown=State.ability;UpdateGuard(alive&&shown);visual.gameObject.SetActive(shown);ring.SetActive(shown&&!dying);label.gameObject.SetActive(shown&&!dying);label.text=LabelText();UpdateLights(alive,shown);if(Camera.main)label.transform.rotation=Camera.main.transform.rotation;
+   float speed=(transform.position-lastPosition).magnitude/Mathf.Max(.001f,Time.unscaledDeltaTime);lastPosition=transform.position;stepPhase+=Time.deltaTime*(speed>4?18:12);bool over=session.Phase=="result",teamWon=(Team==LanNightRules.Dea)==(session.Night.Outcome==LanOutcome.Captured);cartoon.Pose(this,speed,over&&teamWon,over&&!teamWon);if(alive&&shown&&LanAbilities.Active(this,LanAbilities.Dash)&&Time.time>=nextDust){nextDust=Time.time+.05f;LanFx.Dust(transform.position,2);}
    if(State.reload>0&&!renderedReload&&assets.reload)sound.PlayOneShot(assets.reload,.25f);renderedReload=State.reload>0;
    if(renderedWeapon!=State.weapon){if(renderedWeapon>=0&&State.weapon>0&&assets.equip)sound.PlayOneShot(assets.equip,.25f);if(gun)Destroy(gun.gameObject);gun=State.weapon==0?null:MakeWeapon(State.weapon,transform,assets);renderedWeapon=State.weapon;}
    if(gun){gun.gameObject.SetActive(alive&&shown);gun.localPosition=new Vector3(.2f,.34f,.04f);gun.rotation=Quaternion.LookRotation(State.aim.sqrMagnitude>.01f?State.aim:Vector3.forward);}
-   if(State.shot!=renderedShot){renderedShot=State.shot;if(!session.IsHost)MarkShot();if(State.impact)MagicFx.Impact(State.hit);tracer.SetPosition(0,transform.position+Vector3.up*.35f);tracer.SetPosition(1,State.hit);flash=Time.time+.08f;var clips=State.weapon==1?assets.pistolShots:assets.rifleShots;if(clips.Length>0)sound.PlayOneShot(clips[Random.Range(0,clips.Length)],.35f);}
+   if(State.shot!=renderedShot){renderedShot=State.shot;if(!session.IsHost)MarkShot();if(State.impact)LanFx.Impact(State.hit);LanFx.Muzzle(transform.position+Vector3.up*.35f+(State.aim.sqrMagnitude>.01f?State.aim:Vector3.forward)*.45f);tracer.SetPosition(0,transform.position+Vector3.up*.35f);tracer.SetPosition(1,State.hit);flash=Time.time+.08f;var clips=State.weapon==1?assets.pistolShots:assets.rifleShots;if(clips.Length>0)sound.PlayOneShot(clips[Random.Range(0,clips.Length)],.35f);}
    tracer.enabled=Time.time<flash;
    if(alive&&State.grounded&&speed>.3f&&Time.time>stepAt&&assets.steps.Length>0){stepAt=Time.time+(speed>4?.28f:.4f);sound.PlayOneShot(assets.steps[Random.Range(0,assets.steps.Length)],.15f);}
   }
   string LabelText(){var slot=session.Slots[Id];string text=slot.name+(slot.bot?" · BOT":"")+(State.shield>0?" ◇":"");bool ally=session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==Team;if(!ally&&State.marked>0)text+=" · MARCADO";return IsLeader&&(ally||State.down>0)?"LÍDER · "+text:text;}
+  // Protección al aparecer: el anillo parpadea en celeste. Escudo del Pesado: un arco al frente.
+  void UpdateGuard(bool visible){
+   var line=ring.GetComponent<LineRenderer>();line.startColor=line.endColor=visible&&State.shield>0&&Mathf.Repeat(Time.time,.4f)<.2f?new Color(.4f,.9f,1):Color.white;
+   bool shielding=visible&&LanAbilities.Active(this,LanAbilities.Shield);
+   if(shielding&&!shieldArc){
+    shieldArc=new GameObject("Escudo").AddComponent<LineRenderer>();shieldArc.transform.SetParent(transform,false);shieldArc.useWorldSpace=false;shieldArc.sharedMaterial=assets.glow;shieldArc.widthMultiplier=.05f;shieldArc.positionCount=15;
+    for(int i=0;i<15;i++){float a=Mathf.Deg2Rad*Mathf.Lerp(-70,70,i/14f);shieldArc.SetPosition(i,new Vector3(Mathf.Sin(a)*.5f,.32f,Mathf.Cos(a)*.5f));}
+    shieldArc.startColor=shieldArc.endColor=new Color(.45f,.8f,1,.9f);
+   }
+   if(shieldArc){shieldArc.enabled=shielding;if(shielding)shieldArc.transform.rotation=Quaternion.LookRotation(State.aim.sqrMagnitude>.01f?State.aim:Vector3.forward);}
+  }
   // El modelo depende del bando, del personaje y de si es el líder; se rehace si cambia.
   string LookKey()=>$"{Team}:{Role}:{IsLeader}";
   void BuildLook(){if(visual)Destroy(visual.gameObject);visual=Instantiate(assets.Character(Team,IsLeader,Role),transform).transform;cartoon.Bind(visual);lookKey=LookKey();}

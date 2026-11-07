@@ -124,6 +124,26 @@ todo se hace moviendo, girando y deformando el modelo:
 Todo sale del estado de red, así que se ve igual en cada pantalla. Los retratos de la
 selección se dibujan en baja resolución, con aire de pixel art arcade (`LanPortraits.cs`).
 
+**Efectos y sonido.** No hay efectos mágicos: los disparos tienen fogonazo con destello de luz,
+los impactos sueltan chispas y polvo, aparecer, morir y usar habilidades levanta polvo, la
+protección al aparecer hace parpadear el anillo, y el escudo del Pesado es un arco azul al
+frente (`LanFx.cs`).
+
+El sonido (`LanAudio.cs`) incluye:
+
+- Grillos y viento que se apagan al amanecer, y música de tensión.
+- Helicóptero cuando entra la DEA.
+- Radio en cada oleada y cuando cae el líder.
+- Esposas al empezar la captura y alarma para el equipo que la colocó.
+- Siseo de las bengalas y sonidos propios de la selección.
+
+Todos los sonidos son originales, generados con `Tools/generar_sonidos.py` en
+`Assets/Audio/Generado`.
+
+**Estilo.** Paneles azul noche, ámbar y botones planos en negrita. El menú principal usa
+una foto nocturna del campamento y conserva el título del juego. Se aplica con
+**Tools > Interfaz > Aplicar estilo Noche en el Chapare** (`StyleSetup.cs`).
+
 La defensa reduce el daño mediante `daño × 100 / (100 + defensa)`.
 Correr multiplica la velocidad por 1,5 y consume estamina. El salto también consume.
 
@@ -160,7 +180,7 @@ esposan al líder reducido.
 ## Verificación
 
 Validación del 2026-11-07, en el mapa hexagonal:
-**167 comprobaciones aprobadas**, sin errores en consola.
+**170 comprobaciones aprobadas**, sin errores en consola.
 
 | Archivo | Aprobadas | Qué cubre |
 |---|---:|---|
@@ -168,17 +188,18 @@ Validación del 2026-11-07, en el mapa hexagonal:
 | `LAN-play-check.txt` | 32 | Anfitrión con siete clientes por sockets reales de loopback, combate y bot por desconexión |
 | `LAN-client-check.txt` | 13 | Cliente Unity contra un servidor local de prueba |
 | `LAN-bots-check.txt` | 8 | Seis noches completas solo con bots, con despliegue real, y entrada tardía |
-| `Magic-play-check.txt` | 9 | Efectos visuales durante la partida |
+| `LAN-fx-check.txt` | 12 | Efectos sin magia, sonidos de cada evento y estilo de la interfaz |
 | `LAN-vision-check.txt` | 38 | Luz, visión, linternas por red, items, bengalas, alarmas y qué se dibuja |
 | `LAN-ability-check.txt` | 21 | Personajes por bando, cada habilidad medida, activación por red y uso por bots |
 | `LAN-select-check.txt` | 15 | Selección arcade por red, bots que eligen solos y modelos de cada personaje |
 
 Comandos en **Tools > Multijugador**: *Comprobar reglas de la noche*, *Comprobar noches
-con bots*, *Comprobar noche, vision e items*, *Comprobar habilidades*, *Comprobar seleccion y personajes* y *Comprobar LAN en Play*.
+con bots*, *Comprobar noche, vision e items*, *Comprobar habilidades*, *Comprobar seleccion y personajes*, *Comprobar efectos y sonido* y *Comprobar LAN en Play*.
 
-Con noche y habilidades, tres tandas de seis noches con bots terminaron así: 13 capturas,
-2 amaneceres y 3 derrotas de la DEA por agotar refuerzos. Sin oscuridad la DEA ganaba 6 de 6.
-Con bots la DEA está favorecida; no mide el equilibrio entre personas.
+Con noche y habilidades, cuatro tandas de seis noches con bots terminaron así: 19 capturas,
+2 amaneceres y 3 derrotas de la DEA por agotar refuerzos. En la última tanda la DEA capturó
+en las 6 noches, entre 1 y 4,5 minutos. Los bots de la DEA están favorecidos: conocen los
+refugios y el Pulso los encuentra. Esto no mide el equilibrio entre personas.
 
 Mediciones de `LAN-ability-check.txt`: el escudo deja 2,3 de daño de frente frente a 11,4 sin
 él, el líder protegido recibe 5,3 en vez de 13,3, y el Avance recorre 4 unidades.
@@ -191,7 +212,7 @@ Capturas del mapa: `NocheChapare-mapa.png`, `NocheChapare-campamento.png` y
 `Noche-linterna.png` y `Noche-bengala.png` muestran la noche con linterna y faroles.
 `Personajes-sala.png` y `Personajes-hud.png` muestran los personajes en la sala y la
 habilidad en el HUD. `Seleccion.png` muestra la selección arcade y `Personajes-partida.png`,
-los modelos en partida. Las
+los modelos en partida. `Menu-principal.png` muestra el menú con el estilo nuevo. Las
 capturas `Noche-*.png` de la interfaz son del mapa gris anterior.
 
 Escala del mapa: 5.156 piezas visibles, unos 1,26 millones de triángulos en total y 1.445
