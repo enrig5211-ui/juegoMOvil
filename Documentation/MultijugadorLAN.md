@@ -67,9 +67,14 @@ Correr multiplica la velocidad por 1,5 y consume estamina. El salto también con
 
 - `MenuInicio`: entrada al juego solo y a la sala LAN.
 - `ValleDelRio`: experiencia individual, conservada.
-- `NocheChapare`: mapa gris provisional de 120 × 100 unidades, con selva, refugios,
-  coberturas y navegación. Se regenera con **Tools > Multijugador > Crear mapa gris del
-  Chapare**, que usa `ChapareSetup.cs`.
+- `NocheChapare`: mapa hexagonal hecho con las piezas de KayKit. Tiene radio 30
+  (unas 120 × 105 unidades) y 3.367 hexágonos, con montañas como borde. Incluye río con
+  3 puentes, campamento rojo, caminos, pista de tierra, selva (36 %) y 6 refugios entre los
+  árboles. Se regenera con **Tools > Multijugador > Crear mapa del Chapare**, que usa
+  `ChapareSetup.cs`. Las piezas son prefabs editables; las colisiones son cilindros y cajas
+  simples dentro de `COLISIONES`.
+- El río no se cruza caminando, solo por los puentes. Sus colisiones usan la capa *Water*,
+  que la vista y las balas ignoran, así que se puede disparar a la otra orilla.
 - `ValleMultijugador`: arena anterior. Ya no se carga ni entra en la exportación.
 - `Assets/Resources/Multiplayer/LanAssets.asset`: modelos, sonidos y recursos UI.
 - `LanNightRules.cs`: valores y reglas de la noche.
@@ -90,30 +95,35 @@ esposan al líder reducido.
 
 ## Verificación
 
-Validación del 2026-11-06, en Unity sin ventana: **93 comprobaciones aprobadas**, sin
-excepciones en consola.
+Validación del 2026-11-07, en el mapa hexagonal y en el editor de Unity:
+**93 comprobaciones aprobadas**, sin errores en consola.
 
 | Archivo | Aprobadas | Qué cubre |
 |---|---:|---|
 | `LAN-night-check.txt` | 31 | Despliegue, oleadas, reducción, esposas, entrada tardía y los tres finales |
 | `LAN-play-check.txt` | 32 | Anfitrión con siete clientes por sockets reales de loopback, combate y bot por desconexión |
 | `LAN-client-check.txt` | 13 | Cliente Unity contra un servidor local de prueba |
-| `LAN-bots-check.txt` | 8 | Seis noches completas solo con bots y entrada tardía |
+| `LAN-bots-check.txt` | 8 | Seis noches completas solo con bots, con despliegue real, y entrada tardía |
 | `Magic-play-check.txt` | 9 | Efectos visuales durante la partida |
 
 Comandos en **Tools > Multijugador**: *Comprobar reglas de la noche*, *Comprobar noches
 con bots* y *Comprobar LAN en Play*.
 
-En las dos últimas tandas de noches con bots, sobre el mismo trazado, hubo 4 capturas,
-7 derrotas de la DEA por quedarse sin refuerzos y 1 amanecer. Sirve para comprobar que los
-tres finales ocurren sin forzarlos. No mide el equilibrio entre personas.
+En el mapa hexagonal, las seis noches con bots terminaron en captura, entre los 45 y los
+326 segundos de noche. Los bots de la DEA conocen todos los puntos de búsqueda y todavía es
+de día, así que por ahora la DEA está favorecida. La oscuridad de la Etapa 2 debe
+equilibrarlo; no mide el equilibrio entre personas.
 
 La prueba acelerada avanza la física en cada paso. Sin eso, disparos y visión usan
 posiciones antiguas y los resultados no son válidos.
 
-Capturas: `Noche-sala.png`, `Noche-despliegue.png`, `Noche-partida.png`,
-`Noche-resultado.png` y `NocheChapare-mapa.png`. Las imágenes `LAN-*.png` son de la
-versión anterior.
+Capturas del mapa: `NocheChapare-mapa.png`, `NocheChapare-campamento.png` y
+`NocheChapare-puente.png`. `LAN-match.png` muestra una partida en el mapa hexagonal. Las
+capturas `Noche-*.png` de la interfaz son del mapa gris anterior.
+
+Escala del mapa: 5.156 piezas visibles, unos 1,26 millones de triángulos en total y 1.445
+colisiones. La cámara solo ve una pequeña parte a la vez. El rendimiento en un ejecutable
+todavía no se ha medido.
 
 **Sin probar todavía:** teclado y ratón reales (mantener F y pulsar los botones de
 entrada), y una red física entre varios ordenadores. Las pruebas llaman a las funciones

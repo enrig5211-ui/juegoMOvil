@@ -11,6 +11,8 @@ namespace Valle.Lan {
   public const float WaveSeconds=30;
   public const int DeaReinforcements=12,OrgReinforcements=8;
   public const float CameraSize=7,BotVision=14;
+  // La vista y las balas pasan sobre el agua; las cajas del río solo bloquean el paso.
+  public const int SightMask=~(1<<4);
  }
  public enum LanOutcome{None,Captured,Dawn,DeaSpent}
  // Estado de la noche. El anfitrión lo decide; los clientes solo lo reciben.

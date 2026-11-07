@@ -110,6 +110,13 @@ Para ajustar en la Etapa 2: los bots terminan la mayoría de las noches entre el
 el 6, sobre todo porque la DEA agota sus refuerzos. Falta ver si pasa igual con personas y
 si 8 minutos es la duración correcta.
 
+### Cambio de mapa (2026-11-07)
+
+A pedido del usuario, el mapa gris se reemplazó por un mapa hexagonal amplio hecho con las
+piezas de KayKit. Conserva el trazado probado: río al oeste con puentes, campamento
+central, caminos, pista al este, selva y refugios. Adelanta parte de la Etapa 5, aunque el
+estilo sigue siendo el medieval del paquete.
+
 ### Etapa 2 · Noche, visión e items
 
 - `NightCycle`: luna, ambiente oscuro y amanecer gradual según `Remaining`.

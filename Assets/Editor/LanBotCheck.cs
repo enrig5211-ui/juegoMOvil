@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using Valle.Lan;
-// Juega noches completas solo con bots, acelerando la simulación, y comprueba cómo terminan.
+// Juega noches completas solo con bots, con despliegue real, acelerando la simulación, y comprueba cómo terminan.
 // La física avanza junto a cada paso: sin eso, disparos y visión usarían posiciones antiguas.
 [InitializeOnLoad]
 public static class LanBotCheck {
@@ -42,7 +42,7 @@ public static class LanBotCheck {
    case 0:LanSession.Open();s=LanSession.Instance;s.Host();s.StartMatch();stage=1;break;
    case 1:if(!s.World)return;
     if(night==0)Check(s.Slots.Count(x=>x.bot)==7,"One human starts with seven bots");
-    s.Slots[0].bot=true;s.Night.Deploy=5;stage=2;break;
+    s.Slots[0].bot=true;stage=2;break;
    case 2:
     Physics.simulationMode=SimulationMode.Script;
     for(int i=0;i<StepsPerUpdate&&s.Phase=="match";i++){s.Step(.05f);Physics.Simulate(.05f);}
@@ -71,7 +71,7 @@ public static class LanBotCheck {
   var outcome=s.Night.Outcome;
   if(outcome==LanOutcome.Captured)captures++;if(outcome==LanOutcome.Dawn)dawns++;if(outcome==LanOutcome.DeaSpent)spent++;
   int fired=s.World.Pawns.Values.Sum(p=>p.State.shot);shots+=fired;
-  Line($"INFO: Noche {night+1}: {outcome} a los {LanNightRules.NightSeconds-s.Remaining:0} s · disparos {fired} · bajas DEA {s.BlueScore} / Org {s.RedScore} · refuerzos DEA {s.Night.DeaLeft} / Org {s.Night.OrgLeft}");
+  Line($"INFO: Noche {night+1}: {outcome} a los {LanNightRules.NightSeconds-s.Remaining:0} s de noche · disparos {fired} · bajas DEA {s.BlueScore} / Org {s.RedScore} · refuerzos DEA {s.Night.DeaLeft} / Org {s.Night.OrgLeft}");
  }
  static void Summarize(){
   Check(captures+dawns+spent==Nights,"Every night reaches an outcome");
