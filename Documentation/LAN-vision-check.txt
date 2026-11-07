@@ -1,0 +1,38 @@
+PASS: Items appear on every spot (18)
+PASS: Camp lamp posts light their area
+PASS: Deployment happens at dusk
+PASS: Night is fully dark
+PASS: Dawn brightens during the last minutes
+PASS: Close enemies are visible in the dark
+PASS: Without light, enemies beyond 5 units stay hidden
+PASS: A flashlight reveals enemies inside its cone
+PASS: A flashlight does not reveal outside its cone
+PASS: A lit flashlight gives away its carrier
+PASS: Flashlights give away their carrier only up to 20 units
+PASS: Night vision extends sight
+PASS: Cover blocks sight
+PASS: Firing reveals the shooter
+PASS: The muzzle flash reveals only briefly
+PASS: Flares reveal enemies near them
+PASS: Bots cannot see beyond 5 units in the dark
+PASS: Bots see close enemies
+PASS: Picking up stores the item
+PASS: A medkit is kept at full health
+PASS: A medkit heals and is spent
+PASS: Ammunition can be picked up
+PASS: Picking up another item swaps it
+PASS: A flare is thrown ahead
+PASS: Flares burn out
+PASS: Night vision goggles activate
+PASS: An alarm is placed for its team
+PASS: Allies do not trigger their own alarm
+PASS: An enemy triggers the alarm
+PASS: Fallen players drop their item
+PASS: Each wave restocks empty item spots
+PASS: T toggles the flashlight over the network
+PASS: Clients receive items and marks
+PASS: Snapshots skip unchanged items
+PASS: Hidden enemies are not drawn
+PASS: An enemy's flashlight is drawn and reveals them
+PASS: The scene is dark at night
+PASS: Dawn lights the scene

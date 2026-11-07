@@ -11,6 +11,14 @@ namespace Valle.Lan {
   public const float WaveSeconds=30;
   public const int DeaReinforcements=12,OrgReinforcements=8;
   public const float CameraSize=7,BotVision=14;
+  // Luz y visión. De día se ve hasta BotVision.
+  public const float DawnSeconds=90,DuskLight=.55f;
+  public const float NearVision=5,LampRange=13,LampHalfAngle=30,ExposedRange=20,FiredReveal=.6f;
+  public const float NightVisionRange=12,NightVisionSeconds=25;
+  public const float FlareRadius=10,FlareSeconds=20,FlareThrow=8;
+  public const float AlarmRadius=4.5f,AlarmAlertSeconds=8,LampPostRadius=7;
+  public const float MedkitHeal=45;
+  public const int MaxDrops=48,RefillPerWave=2;
   // La vista y las balas pasan sobre el agua; las cajas del río solo bloquean el paso.
   public const int SightMask=~(1<<4);
  }
@@ -62,6 +70,7 @@ namespace Valle.Lan {
     else{if(OrgLeft<=0)continue;OrgLeft--;}
     world.Respawn(pawn.Id);
    }
+   world.RefillItems(LanNightRules.RefillPerWave);
   }
   void TickLeader(float dt,LanWorld world){
    var leader=world.Pawns[Leader];

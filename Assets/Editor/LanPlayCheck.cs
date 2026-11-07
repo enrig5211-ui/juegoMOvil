@@ -11,10 +11,10 @@ using Valle.Lan;
 [InitializeOnLoad]
 public static class LanPlayCheck {
  sealed class Client:IDisposable {
-  public LanPeer Peer;public int Slot=-1;public LanPacket Last;public LanInput Input=new LanInput();public bool Loaded;double nextSend;
+  public LanPeer Peer;public int Slot=-1;public LanPacket Last;public LanInput Input=new LanInput();public bool Loaded;public LanDrop[] Drops=new LanDrop[0];double nextSend;
   public Client(int index){var socket=new TcpClient();socket.Connect("127.0.0.1",7777);Peer=new LanPeer(socket);Send(new LanPacket{type="hello",name="Prueba "+index,team=index<3?0:1,role=index%3});}
   public void Send(LanPacket p)=>Peer.Send(JsonUtility.ToJson(p));
-  public void Tick(){while(Peer.Incoming.TryDequeue(out var json)){var p=JsonUtility.FromJson<LanPacket>(json);if(p.type=="welcome")Slot=p.slot;if(p.type=="snapshot"){Last=p;if(p.phase=="match"&&!Loaded){Loaded=true;Send(new LanPacket{type="loaded"});}}}if(EditorApplication.timeSinceStartup<nextSend)return;nextSend=EditorApplication.timeSinceStartup+.05;Send(new LanPacket{type=Loaded?"input":"ping",input=Input});}
+  public void Tick(){while(Peer.Incoming.TryDequeue(out var json)){var p=JsonUtility.FromJson<LanPacket>(json);if(p.type=="welcome")Slot=p.slot;if(p.type=="snapshot"){Last=p;if(p.hasDrops)Drops=p.drops??new LanDrop[0];if(p.phase=="match"&&!Loaded){Loaded=true;Send(new LanPacket{type="loaded"});}}}if(EditorApplication.timeSinceStartup<nextSend)return;nextSend=EditorApplication.timeSinceStartup+.05;Send(new LanPacket{type=Loaded?"input":"ping",input=Input});}
   public void Dispose()=>Peer.Dispose();
  }
  static List<Client> clients=new List<Client>();static Client extra;static StringBuilder log=new StringBuilder();static int stage;static double next,started;static Vector3 before;static float healthBefore;static GameObject ground,cover;static int storedAmmo,reinforcements;
@@ -38,12 +38,12 @@ public static class LanPlayCheck {
     case 6:Check(s.World.Pawns[4].State.hp<healthBefore,"Remote fire damages enemy on host");Check(s.World.Pawns[clients[0].Slot].State.ammo<s.World.Pawns[clients[0].Slot].Class.Magazine,"Server consumes ammunition");clients[0].Input.fire=false;clients[0].Input.reload++;break;
     case 7:Check(s.World.Pawns[clients[0].Slot].State.reload>0,"Reload synchronized");next=EditorApplication.timeSinceStartup+1.8;break;
     case 8:var shooter=s.World.Pawns[clients[0].Slot];Check(shooter.State.ammo==shooter.Class.Magazine&&shooter.State.reserve<shooter.Class.Reserve,"Reload transfers reserve on host");storedAmmo=shooter.State.ammo;clients[0].Input.drop++;break;
-    case 9:Check(s.World.Pawns[clients[0].Slot].State.weapon==0&&s.World.Drops.Count==1,"Remote drop replicated");Check(clients[1].Last.drops.Length==1,"Other clients receive dropped weapon");clients[0].Input.pickup++;break;
+    case 9:Check(s.World.Pawns[clients[0].Slot].State.weapon==0&&Weapons(s)==1,"Remote drop replicated");Check(clients[1].Drops.Count(d=>d.item==0)==1,"Other clients receive dropped weapon");clients[0].Input.pickup++;break;
     case 10:Check(s.World.Pawns[clients[0].Slot].State.weapon==2&&s.World.Pawns[clients[0].Slot].State.ammo==storedAmmo,"Pickup preserves ammunition without duplication");
      cover=GameObject.CreatePrimitive(PrimitiveType.Cube);cover.transform.position=new Vector3(101,.5f,100);cover.transform.localScale=new Vector3(.2f,1,1);Physics.SyncTransforms();healthBefore=s.World.Pawns[4].State.hp;clients[0].Input.fire=true;break;
     case 11:Check(s.World.Pawns[4].State.hp==healthBefore,"Cover blocks network damage");clients[0].Input.fire=false;UnityEngine.Object.DestroyImmediate(cover);
      var ally=s.World.Pawns[2];ally.ResetLife(new Vector3(101,.05f,100));ally.State.shield=0;healthBefore=ally.State.hp;s.World.Fire(s.World.Pawns[clients[0].Slot],Vector3.right);Check(ally.State.hp==healthBefore,"No friendly fire");ally.ResetLife(s.World.Spawn(2));
-     var victim=s.World.Pawns[4];victim.State.shield=0;for(int i=0;i<20&&victim.State.hp>0;i++)s.World.Fire(s.World.Pawns[clients[0].Slot],Vector3.right);Check(victim.State.hp<=0&&s.BlueScore==1&&s.World.Drops.Count==1,"Kill scores once and drops weapon");reinforcements=s.Night.OrgLeft;s.Night.Wave=.1f;break;
+     var victim=s.World.Pawns[4];victim.State.shield=0;for(int i=0;i<20&&victim.State.hp>0;i++)s.World.Fire(s.World.Pawns[clients[0].Slot],Vector3.right);Check(victim.State.hp<=0&&s.BlueScore==1&&Weapons(s)==1,"Kill scores once and drops weapon");reinforcements=s.Night.OrgLeft;s.Night.Wave=.1f;break;
     case 12:Check(s.World.Pawns[4].State.hp>0&&s.World.Pawns[4].State.weapon==2&&s.Night.OrgLeft==reinforcements-1,"Reinforcement wave restores class loadout and spends one");foreach(var pawn in s.World.Pawns.Values)pawn.ResetLife(s.World.Spawn(pawn.Id));clients[6].Dispose();before=s.World.Pawns[clients[6].Slot].State.position;UnityEngine.Object.DestroyImmediate(ground);break;
     case 13:Check(s.Slots[clients[6].Slot].bot&&s.Night.Leader==clients[6].Slot,"Disconnected leader continues as bot");next=EditorApplication.timeSinceStartup+3;break;
     case 14:Check(Vector3.Distance(before,s.World.Pawns[clients[6].Slot].State.position)>.3f,"Bot leader moves using baked navigation");ScreenCapture.CaptureScreenshot("Documentation/LAN-match.png");s.Remaining=.01f;break;
@@ -53,5 +53,6 @@ public static class LanPlayCheck {
    }
   }catch(Exception e){Check(false,e.ToString());Finish();}
  }
+ static int Weapons(LanSession s)=>s.World.Drops.Count(d=>d.item==0);
  static void Finish(){foreach(var c in clients)c.Dispose();extra?.Dispose();if(LanSession.Instance)LanSession.Instance.Leave();SessionState.SetBool("LanTest",false);EditorApplication.isPlaying=false;}
 }

@@ -45,6 +45,30 @@ Si nadie lo esposa a tiempo, vuelve con el 40 % de su vida. Usa pistola y su pro
 **Refuerzos.** Los caídos esperan a la oleada, que llega cada 30 s. La DEA tiene 12
 refuerzos y la organización 8. El líder no gasta refuerzos.
 
+**Noche y visión.** El despliegue es el atardecer, la noche es oscura y en los últimos
+90 s amanece poco a poco. De noche:
+
+- Sin luz se ve a 5 unidades.
+- La linterna (**T**) deja ver hasta 13 dentro de su cono, pero quien la lleva se ve desde 20.
+- Disparar delata durante un instante.
+- Los faroles del campamento y las bengalas iluminan su zona.
+
+Los rivales, sus nombres y sus anillos solo se dibujan si alguien de tu equipo los ve.
+Los bots siguen las mismas reglas.
+
+**Items.** Hay 18 puntos repartidos por el mapa y cada oleada repone dos vacíos. Se lleva
+uno a la vez: **F** recoge o cambia, **C** usa y caer lo suelta.
+
+| Item | Efecto |
+|---|---|
+| Botiquín | +45 de vida; no se gasta con la vida llena |
+| Munición | Recarga la reserva del arma que llevas |
+| Visor nocturno | 25 s viendo a 12 unidades sin linterna |
+| Bengala | Se lanza 8 unidades al frente e ilumina 10 durante 20 s |
+| Alarma | Se coloca a tus pies y avisa a tu equipo cuando pasa un rival |
+
+Los guardias ven en pantalla dónde está su líder cuando sale de la vista.
+
 - Sin daño entre compañeros. Los obstáculos bloquean disparos.
 - Cada vida comienza con un rifle. Al caer o pulsar G, se suelta el arma conservando
   la munición; puede recogerse con F. Las armas del suelo flotan y giran.
@@ -96,7 +120,7 @@ esposan al líder reducido.
 ## Verificación
 
 Validación del 2026-11-07, en el mapa hexagonal y en el editor de Unity:
-**93 comprobaciones aprobadas**, sin errores en consola.
+**131 comprobaciones aprobadas**, sin errores en consola.
 
 | Archivo | Aprobadas | Qué cubre |
 |---|---:|---|
@@ -105,20 +129,21 @@ Validación del 2026-11-07, en el mapa hexagonal y en el editor de Unity:
 | `LAN-client-check.txt` | 13 | Cliente Unity contra un servidor local de prueba |
 | `LAN-bots-check.txt` | 8 | Seis noches completas solo con bots, con despliegue real, y entrada tardía |
 | `Magic-play-check.txt` | 9 | Efectos visuales durante la partida |
+| `LAN-vision-check.txt` | 38 | Luz, visión, linternas por red, items, bengalas, alarmas y qué se dibuja |
 
 Comandos en **Tools > Multijugador**: *Comprobar reglas de la noche*, *Comprobar noches
-con bots* y *Comprobar LAN en Play*.
+con bots*, *Comprobar noche, vision e items* y *Comprobar LAN en Play*.
 
-En el mapa hexagonal, las seis noches con bots terminaron en captura, entre los 45 y los
-326 segundos de noche. Los bots de la DEA conocen todos los puntos de búsqueda y todavía es
-de día, así que por ahora la DEA está favorecida. La oscuridad de la Etapa 2 debe
-equilibrarlo; no mide el equilibrio entre personas.
+Con la noche, las seis noches con bots terminaron así: 4 capturas (entre los 55 y los 260
+segundos de noche) y 2 derrotas de la DEA por agotar refuerzos. Ninguna llegó al amanecer.
+Antes de la oscuridad la DEA ganaba 6 de 6. No mide el equilibrio entre personas.
 
 La prueba acelerada avanza la física en cada paso. Sin eso, disparos y visión usan
 posiciones antiguas y los resultados no son válidos.
 
 Capturas del mapa: `NocheChapare-mapa.png`, `NocheChapare-campamento.png` y
-`NocheChapare-puente.png`. `LAN-match.png` muestra una partida en el mapa hexagonal. Las
+`NocheChapare-puente.png`. `LAN-match.png` muestra una partida en el mapa hexagonal, y
+`Noche-linterna.png` y `Noche-bengala.png` muestran la noche con linterna y faroles. Las
 capturas `Noche-*.png` de la interfaz son del mapa gris anterior.
 
 Escala del mapa: 5.156 piezas visibles, unos 1,26 millones de triángulos en total y 1.445

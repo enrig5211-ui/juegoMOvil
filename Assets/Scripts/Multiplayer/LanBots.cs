@@ -27,7 +27,27 @@ namespace Valle.Lan {
    if(enemy&&enemyDistance<StrafeRange&&!pawn.IsLeader&&!input.hold)direction=Strafe(enemy,position);
    if(!enemy&&direction.sqrMagnitude>.01f){input.ax=direction.x;input.az=direction.z;}
    input.x=direction.x;input.z=direction.z;
+   Equip(input,enemy,enemyDistance);
    return input;
+  }
+  // Linterna e items. La DEA busca con linterna; los guardias la encienden solo si están alerta.
+  void Equip(LanInput input,LanPawn enemy,float enemyDistance){
+   var state=pawn.State;float day=LanVision.Daylight(session);
+   bool lamp=day<.5f&&(pawn.Team==LanNightRules.Dea||!pawn.IsLeader&&Now<rememberUntil);
+   if(lamp!=state.lamp)input.lamp++;
+   if(state.item==0){var drop=world.Nearest(pawn);if(drop!=null&&drop.item>0)input.pickup++;}
+   else if(Wants(state.item,enemy,enemyDistance,day))input.use++;
+  }
+  bool Wants(int item,LanPawn enemy,float enemyDistance,float day){
+   var state=pawn.State;
+   switch(item){
+    case LanItems.Medkit:return state.hp<pawn.Class.Health*.6f;
+    case LanItems.Ammo:return state.weapon!=0&&state.reserve<pawn.Capacity;
+    case LanItems.NightVision:return day<.5f&&state.vision<=0;
+    case LanItems.Flare:return enemy&&enemyDistance>6;
+    case LanItems.Alarm:return !pawn.IsLeader;
+   }
+   return false;
   }
   Vector3 LeaderGoal(LanPawn enemy){
    if(!hasDestination||(enemy&&Now>=nextChoice)){destination=ChooseHideout(enemy);hasDestination=true;nextChoice=Now+FleeSeconds;}

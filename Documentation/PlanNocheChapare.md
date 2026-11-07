@@ -2,7 +2,8 @@
 
 Nombre de trabajo, pendiente de confirmar. Plan armado el 2026-11-06.
 
-**Estado (2026-11-06):** etapas 0 y 1 terminadas, pendientes de prueba manual. Sigue la Etapa 2.
+**Estado (2026-11-07):** etapas 0, 1 y 2 construidas, pendientes de prueba con personas.
+El mapa ya es hexagonal (ver "Cambio de mapa").
 La rama de trabajo es `etapa-1-reglas`.
 
 ## El juego
@@ -128,6 +129,10 @@ estilo sigue siendo el medieval del paquete.
 
 **Terminada cuando:** al menos 3 personas juegan por LAN real y responden si la
 partida es divertida. **Es el punto de decisión antes de invertir en arte.**
+
+**Estado (2026-11-07):** construida y verificada en el editor (131 comprobaciones). Falta
+la prueba con al menos 3 personas por LAN real, que es el punto de decisión. Con bots, la
+oscuridad bajó las victorias de la DEA de 6 a 4 de cada 6 noches.
 
 ### Etapa 3 · Personajes con habilidades
 

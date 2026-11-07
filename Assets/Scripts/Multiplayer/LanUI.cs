@@ -7,7 +7,7 @@ namespace Valle.Lan {
   LanSession session;LanAssets art;Font body;Transform root;GameObject connection,lobby,hud,pause,results,deployment,statsPanel,ammoPanel;InputField nameField,ipField;
   Sprite fillSprite;
   Text status,roleLabel,teamLabel,rosterBlue,rosterRed,lobbyClass,lobbyStatus,score,health,stamina,ammo,hint,resultText;
-  Image healthBar,staminaBar;Button start,ready,resultLobby,leaderButton;Text readyLabel,leaderLabel;string previousPhase;
+  Image healthBar,staminaBar,nightVision;Text alarmMark,leaderMark;Button start,ready,resultLobby,leaderButton;Text readyLabel,leaderLabel;string previousPhase;
   readonly Button[] entryButtons=new Button[4];readonly Text[] entryLabels=new Text[4];
   static readonly Color Gold=new Color(.84f,.7f,.43f),Paper=new Color(.94f,.91f,.82f),Ink=new Color(.035f,.065f,.075f,.97f);
   void Start(){session=GetComponent<LanSession>();art=Resources.Load<LanAssets>("Multiplayer/LanAssets");body=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");Build();}
@@ -28,13 +28,15 @@ namespace Valle.Lan {
    start=Button(room,"Iniciar partida",new Vector2(0,-225),new Vector2(300,46),()=>session.StartMatch());ready=Button(room,"Estoy listo",new Vector2(0,-225),new Vector2(300,46),()=>session.Ready());readyLabel=ready.GetComponentInChildren<Text>();
    Button(room,"Abandonar sala",new Vector2(330,-225),new Vector2(250,46),()=>session.Leave());Label(room,"Los puestos libres juegan como bots · Captura al líder antes del amanecer · Sin fuego amigo",new Vector2(0,-285),new Vector2(980,28),16);
    hud=Rect("HUD LAN",root,Vector2.zero,new Vector2(1280,720)).gameObject;
+   nightVision=Panel(hud.transform,"Visor nocturno",Vector2.zero,new Vector2(4000,4000)).GetComponent<Image>();nightVision.color=new Color(.2f,1,.35f,.14f);nightVision.raycastTarget=false;
    var scoreboard=Panel(hud.transform,"Marcador",new Vector2(0,310),new Vector2(390,72));score=Label(scoreboard,"",Vector2.zero,new Vector2(360,60),24);
    var stats=Panel(hud.transform,"Estado",new Vector2(-435,-262),new Vector2(360,135));statsPanel=stats.gameObject;health=Label(stats,"",new Vector2(0,37),new Vector2(320,28),19);healthBar=Bar(stats,14,new Color(.8f,.23f,.27f));stamina=Label(stats,"",new Vector2(0,-14),new Vector2(320,28),17);staminaBar=Bar(stats,-37,new Color(.24f,.75f,.53f));
-   var weapons=Panel(hud.transform,"Munición",new Vector2(445,-264),new Vector2(340,130));ammoPanel=weapons.gameObject;ammo=Label(weapons,"",new Vector2(0,12),new Vector2(310,100),22);
+   var weapons=Panel(hud.transform,"Munición",new Vector2(445,-264),new Vector2(360,130));ammoPanel=weapons.gameObject;ammo=Label(weapons,"",new Vector2(0,4),new Vector2(340,116),21);
    hint=Label(hud.transform,"",new Vector2(0,-275),new Vector2(470,100),20);Label(hud.transform,"ESC  ·  Opciones",new Vector2(500,320),new Vector2(220,30),17);
    deployment=Panel(hud.transform,"Puntos de entrada",new Vector2(510,-20),new Vector2(230,340)).gameObject;Label(deployment.transform,"PUNTO DE ENTRADA",new Vector2(0,136),new Vector2(214,30),17,Gold);for(int i=0;i<entryButtons.Length;i++){int point=i;entryButtons[i]=Button(deployment.transform,"",new Vector2(0,80-i*64),new Vector2(190,52),()=>session.ChoosePoint(point));entryLabels[i]=entryButtons[i].GetComponentInChildren<Text>();}
+   alarmMark=Label(hud.transform,"",Vector2.zero,new Vector2(240,30),19,new Color(1,.4f,.35f));leaderMark=Label(hud.transform,"",Vector2.zero,new Vector2(240,30),17,Gold);
    pause=Screen("Opciones de partida");var options=Panel(pause.transform,"Opciones",Vector2.zero,new Vector2(580,540));Title(options,"EN PARTIDA",211);Label(options,"La partida continúa mientras consultas este menú.",new Vector2(0,158),new Vector2(530,42),17);
-   Label(options,"WASD / Flechas   Mover      Shift   Correr\nEspacio   Saltar      Q / E   Girar cámara\nClic   Disparar      R   Recargar\nF   Recoger / cambiar      G   Soltar\nMantener F   Esposar al líder",new Vector2(0,34),new Vector2(530,150),20);Button(options,"Continuar",new Vector2(0,-112),new Vector2(320,48),()=>session.MenuOpen=false);Button(options,"Salir de la partida",new Vector2(0,-181),new Vector2(320,48),()=>session.Leave());
+   Label(options,"WASD / Flechas   Mover      Shift   Correr\nEspacio   Saltar      Q / E   Girar cámara\nClic   Disparar      R   Recargar\nF   Recoger / cambiar      G   Soltar\nMantener F   Esposar al líder\nT   Linterna      C   Usar item",new Vector2(0,34),new Vector2(530,150),20);Button(options,"Continuar",new Vector2(0,-112),new Vector2(320,48),()=>session.MenuOpen=false);Button(options,"Salir de la partida",new Vector2(0,-181),new Vector2(320,48),()=>session.Leave());
    results=Screen("Resultado");var end=Panel(results.transform,"Fin de partida",Vector2.zero,new Vector2(680,580));Title(end,"FIN DE LA PARTIDA",230);resultText=Label(end,"",new Vector2(0,50),new Vector2(610,275),23);resultLobby=Button(end,"Volver a la sala",new Vector2(0,-155),new Vector2(330,48),()=>{if(session.IsHost)session.ReturnLobby();});Button(end,"Salir al inicio",new Vector2(0,-222),new Vector2(330,44),()=>session.Leave());
   }
   void Update(){if(!session||!connection)return;string phase=session.Phase;connection.SetActive(phase=="offline"||phase=="connecting");lobby.SetActive(phase=="lobby");hud.SetActive(phase=="match");deployment.SetActive(phase=="match"&&session.Night.Deploying&&session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==LanNightRules.Dea);statsPanel.SetActive(!deployment.activeSelf);ammoPanel.SetActive(!deployment.activeSelf);pause.SetActive(phase=="match"&&session.MenuOpen);results.SetActive(phase=="result");resultLobby.interactable=session.IsHost;
@@ -42,8 +44,8 @@ namespace Valle.Lan {
    if(phase=="lobby"&&session.Slots!=null){rosterBlue.text=Roster(0);rosterRed.text=Roster(1);lobbyStatus.text=session.IsHost?"Comparte tu IP: "+session.LocalAddress+"  ·  Puerto 7777":"Conectado · "+(session.LocalSlot<4?"DEA":"Organización");lobbyClass.text=LobbyRole();UpdateLeaderButton();start.gameObject.SetActive(session.IsHost);start.interactable=session.CanStart;ready.gameObject.SetActive(!session.IsHost);readyLabel.text=session.Slots[session.LocalSlot].ready?"Listo ✓ (cambiar)":"Estoy listo";}
    if((phase=="match"||phase=="result")&&session.World&&session.LocalSlot>=0){var pawn=session.World.Pawns[session.LocalSlot];var state=pawn.State;var role=pawn.Class;score.text=Clock();if(deployment.activeSelf)UpdateEntries();
     health.text=$"{role.Name.ToUpper()}  ·  VIDA {state.hp:0}/{role.Health:0}";stamina.text=$"ESTAMINA {state.stamina:0}   ·   DEF {role.Defense:0}";healthBar.fillAmount=state.hp/role.Health;staminaBar.fillAmount=state.stamina/role.Stamina;
-    ammo.text=state.weapon==0?"SIN ARMA\n<size=16>F · Recoger del suelo</size>":$"{(state.weapon==1?"PISTOLA":"RIFLE")}   {state.ammo} / {state.reserve}\n<size=16>{(state.reload>0?"Recargando…":"CLIC Disparar   R Recargar   G Soltar")}</size>";
-    hint.text=Hint(pawn);
+    ammo.text=AmmoText(state);
+    hint.text=Hint(pawn);UpdateNight(pawn);
     if(phase=="result")resultText.text=ResultText();
    }
    if(phase!=previousPhase){previousPhase=phase;if(EventSystem.current)EventSystem.current.SetSelectedGameObject(null);if(phase=="offline")nameField.Select();if(phase=="lobby"){if(session.IsHost)start.Select();else ready.Select();}}
@@ -90,8 +92,31 @@ namespace Valle.Lan {
    if(state.hp<=0)return (dea?night.DeaLeft:night.OrgLeft)>0?$"Refuerzos en {Mathf.CeilToInt(night.Wave)}…":"Sin refuerzos";
    if(progress>0)return dea?$"Esposando al líder  {progress} %":$"¡Están esposando al líder!  {progress} %";
    if(dea&&leader&&leader.State.down>0&&Vector3.Distance(leader.transform.position,pawn.transform.position)<=LanNightRules.CuffRange)return "[ Mantén F ]  Esposar al líder";
-   if(session.World.Nearest(pawn)!=null)return "[ F ]  Recoger / cambiar arma";
+   var drop=session.World.Nearest(pawn);
+   if(drop!=null)return drop.item>0?$"[ F ]  Recoger {LanItems.Name(drop.item).ToLower()}":"[ F ]  Recoger / cambiar arma";
    return state.shield>0&&!night.Deploying?"Protección":"";
+  }
+  string AmmoText(LanActorState state){
+   string weapon=state.weapon==0?"SIN ARMA\n<size=16>F · Recoger del suelo</size>":$"{(state.weapon==1?"PISTOLA":"RIFLE")}   {state.ammo} / {state.reserve}\n<size=16>{(state.reload>0?"Recargando…":"CLIC Disparar   R Recargar   G Soltar")}</size>";
+   string item=state.item>0?$"C · {LanItems.Name(state.item)}":"Sin item";
+   return $"{weapon}\n<size=16>{item}   ·   T · Linterna {(state.lamp?"encendida":"apagada")}</size>";
+  }
+  // Visor nocturno, aviso de alarma del equipo y, para los guardias, dónde está el líder.
+  void UpdateNight(LanPawn pawn){
+   nightVision.gameObject.SetActive(pawn.State.vision>0&&pawn.State.hp>0);
+   var world=session.World;LanMark alarm=null;
+   foreach(var mark in world.Marks)if(mark.kind==LanItems.AlarmMark&&mark.fired&&mark.team==pawn.Team){alarm=mark;break;}
+   Point(alarmMark,alarm!=null?alarm.position:(Vector3?)null,"¡ALARMA!",false);
+   var leader=world.LeaderPawn;bool guard=pawn.Team==LanNightRules.Org&&leader&&leader!=pawn;
+   Point(leaderMark,guard?leader.transform.position:(Vector3?)null,guard&&leader.State.down>0?"¡LÍDER REDUCIDO!":"LÍDER",true);
+  }
+  void Point(Text mark,Vector3? target,string text,bool onlyOffscreen){
+   var camera=Camera.main;if(target==null||!camera){mark.gameObject.SetActive(false);return;}
+   var view=camera.WorldToViewportPoint(target.Value);var offset=new Vector2(view.x-.5f,view.y-.5f);
+   bool inside=view.z>0&&Mathf.Abs(offset.x)<.44f&&Mathf.Abs(offset.y)<.4f;
+   if(onlyOffscreen&&inside){mark.gameObject.SetActive(false);return;}
+   if(view.z<0)offset=-offset;offset/=Mathf.Max(Mathf.Abs(offset.x)/.44f,Mathf.Abs(offset.y)/.4f,1);
+   var size=((RectTransform)root).rect.size;mark.gameObject.SetActive(true);mark.text=text;mark.rectTransform.anchoredPosition=new Vector2(offset.x*size.x,offset.y*size.y);
   }
   string ResultText(){
    var outcome=session.Night.Outcome;

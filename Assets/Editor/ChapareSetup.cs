@@ -55,11 +55,13 @@ public static class ChapareSetup {
   world.hideouts=Hideouts.Select((p,i)=>Point(world.transform,"Refugio "+(i+1),Snap(p))).ToArray();
   world.zones=world.hideouts.Concat(ExtraZones.Select((p,i)=>Point(world.transform,"Zona "+(i+1),Snap(p)))).ToArray();
   world.tacticalCenter=Vector3.forward*4.5f;world.tacticalSize=62.5f;
+  world.itemSpots=spotCells.Select((c,i)=>Point(world.transform,"Item "+(i+1),World(c)+Vector3.up*.05f)).ToArray();
+  world.lamps=CreateLamps(root);
   Validate(world);
   if(!EditorSceneManager.SaveScene(scene,ScenePath))throw new Exception("No se pudo guardar "+ScenePath);
   EnsureBuildList();AssetDatabase.SaveAssets();
   var counts=map.Values.GroupBy(k=>k).OrderBy(g=>g.Key).Select(g=>$"{g.Key} {g.Count()}");
-  Debug.Log($"Mapa del Chapare creado: {ScenePath} · {map.Count} hexágonos · "+string.Join(", ",counts));
+  Debug.Log($"Mapa del Chapare creado: {ScenePath} · {map.Count} hexágonos · {world.itemSpots.Length} puntos de items · "+string.Join(", ",counts));
  }
 
  // ---------- Diseño ----------
@@ -94,7 +96,32 @@ public static class ChapareSetup {
    if(noise>.46f||ring&&rng.NextDouble()<.8)map[c]=Kind.Forest;
   }
   Connect(map);
+  ChooseSpots(map);
   return map;
+ }
+ // Puntos de items: en hexágonos transitables, cerca de lugares de interés.
+ static readonly Vector3[] SpotHints={new Vector3(0,0,-5),new Vector3(-5,0,-1),new Vector3(5,0,-1),new Vector3(0,0,4),new Vector3(40,0,8),new Vector3(42,0,-6),new Vector3(2,0,-20),new Vector3(2,0,-32),new Vector3(-48,0,-8),new Vector3(-46,0,16),new Vector3(-8,0,30),new Vector3(14,0,36),new Vector3(24,0,0),new Vector3(20,0,-12),new Vector3(-14,0,8),new Vector3(-12,0,-12)};
+ static readonly List<Vector2Int> spotCells=new List<Vector2Int>();
+ static void ChooseSpots(Dictionary<Vector2Int,Kind> map){
+  spotCells.Clear();
+  var avoid=Entries.Select(e=>Cell(e.at)).Concat(OrgSpawns.Select(Cell)).ToList();
+  var hints=SpotHints.Concat(Hideouts.Select(h=>h+new Vector3(-2,0,0)));
+  foreach(var hint in hints){
+   var c=Cell(hint);
+   if(!map.TryGetValue(c,out var k)||k!=Kind.Grass&&k!=Kind.Road&&k!=Kind.Dirt||Dist(c)>=Radius-1||avoid.Any(a=>Dist(a-c)<=1)||spotCells.Contains(c))continue;
+   spotCells.Add(c);
+  }
+ }
+ // Faroles del campamento: iluminan la zona de noche, así que también delatan a quien pase.
+ static readonly Vector3[] LampSpots={new Vector3(-3,0,-3.5f),new Vector3(3,0,-3.5f),new Vector3(-5,0,2),new Vector3(5,0,2)};
+ static Transform[] CreateLamps(Transform root){
+  var group=Group(root,"08 - Faroles");
+  return LampSpots.Select((p,i)=>{
+   var post=Place("decoration/props/flag_red",group,p,i*60,1.4f);post.name="Farol "+(i+1);
+   var light=new GameObject("Luz").AddComponent<Light>();light.transform.SetParent(post.transform,false);light.transform.position=p+Vector3.up*1.6f;
+   light.type=LightType.Point;light.range=LanNightRules.LampPostRadius+2;light.intensity=4;light.color=new Color(1,.75f,.45f);light.shadows=LightShadows.None;
+   return post.transform;
+  }).ToArray();
  }
  static bool Straight(List<Vector2Int> river,int i){var a=Direction(river[i-1]-river[i]);var b=Direction(river[i+1]-river[i]);return (a+3)%6==b;}
  // Dirección libre (sin río) que más apunta al este (+1) o al oeste (-1).
@@ -173,7 +200,7 @@ public static class ChapareSetup {
   foreach(var b in Camp){var p=World(Cell(b.at));Place("buildings/red/"+b.prefab,camp,p,180+rng.Next(3)*60-60);Pillar(colliders,"Edificio",p,.9f,0);}
   // Coberturas del campamento y de la pista.
   string[] cover={"crate_A_big","crate_B_big","barrel","crate_long_A","haybale","sack"};
-  var reserved=OrgSpawns.Concat(Entries.Select(e=>Snap(e.at))).Concat(Hideouts.Select(Snap)).Concat(ExtraZones.Select(Snap)).ToList();
+  var reserved=OrgSpawns.Concat(Entries.Select(e=>Snap(e.at))).Concat(Hideouts.Select(Snap)).Concat(ExtraZones.Select(Snap)).Concat(spotCells.Select(World)).Concat(LampSpots).ToList();
   void Cover(Vector3 at){if(reserved.Any(r=>Vector3.Distance(r,at)<2.4f))return;var c=Cell(at);if(!map.TryGetValue(c,out var k)||k==Kind.Building||k==Kind.Forest||k==Kind.River)return;Place("decoration/props/"+cover[rng.Next(cover.Length)],camp,at,rng.Next(12)*30,2.6f);Box(colliders,"Cobertura",at+Vector3.up*.4f,new Vector3(.8f,.8f,.8f),0);}
   for(int i=0;i<14;i++){float angle=i*Mathf.PI*2/14;float radius=6.5f+(float)rng.NextDouble()*4.5f;Cover(new Vector3(Mathf.Cos(angle)*radius,0,Mathf.Sin(angle)*radius));}
   for(int i=0;i<10;i++)Cover(new Vector3(Mathf.Lerp(Strip.xMin+1,Strip.xMax-1,(float)rng.NextDouble()),0,Mathf.Lerp(Strip.yMin+1,Strip.yMax-1,(float)rng.NextDouble())));
@@ -185,7 +212,7 @@ public static class ChapareSetup {
  // Árboles sueltos y rocas: algo de cobertura en el pasto abierto.
  static void Scatter(Vector2Int c,Vector3 p,Transform detail,Transform colliders){
   if(Dist(c)>=Radius-1||rng.NextDouble()>.07)return;
-  var near=Entries.Select(e=>Cell(e.at)).Concat(Hideouts.Select(Cell)).Concat(ExtraZones.Select(Cell)).Concat(OrgSpawns.Select(Cell));
+  var near=Entries.Select(e=>Cell(e.at)).Concat(Hideouts.Select(Cell)).Concat(ExtraZones.Select(Cell)).Concat(OrgSpawns.Select(Cell)).Concat(spotCells);
   if(near.Any(n=>Dist(n-c)<=1))return;
   var offset=new Vector3((float)rng.NextDouble()-.5f,0,(float)rng.NextDouble()-.5f);
   bool tree=rng.NextDouble()<.6;
@@ -208,7 +235,8 @@ public static class ChapareSetup {
  }
  static void Validate(LanWorld world){
   if(!NavMesh.SamplePosition(Vector3.zero,out var center,3,NavMesh.AllAreas))throw new Exception("El centro no tiene navegación");
-  foreach(var point in world.deaEntries.Concat(world.orgSpawns).Concat(world.zones)){
+  if(world.itemSpots.Length<12)throw new Exception("Muy pocos puntos de items: "+world.itemSpots.Length);
+  foreach(var point in world.deaEntries.Concat(world.orgSpawns).Concat(world.zones).Concat(world.itemSpots)){
    var path=new NavMeshPath();
    bool ok=NavMesh.SamplePosition(point.position,out var hit,1.5f,NavMesh.AllAreas)&&NavMesh.CalculatePath(center.position,hit.position,NavMesh.AllAreas,path)&&path.status==NavMeshPathStatus.PathComplete;
    if(!ok)throw new Exception("Punto sin conexión: "+point.name);
