@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 namespace Valle.Lan {
- public sealed class LanUI:MonoBehaviour {
+ public sealed partial class LanUI:MonoBehaviour {
   LanSession session;LanAssets art;Font body;Transform root;GameObject connection,lobby,hud,pause,results,deployment,statsPanel,ammoPanel;InputField nameField,ipField;
   Sprite fillSprite;
   Text status,abilityLabel,roleLabel,teamLabel,rosterBlue,rosterRed,lobbyClass,lobbyStatus,score,health,stamina,ammo,hint,resultText;
@@ -25,7 +25,7 @@ namespace Valle.Lan {
    var blue=Panel(room,"Azul",new Vector2(-245,30),new Vector2(460,320));var red=Panel(room,"Rojo",new Vector2(245,30),new Vector2(460,320));Title(blue,"DEA",125,new Color(.35f,.75f,1));Title(red,"ORGANIZACIÓN",125,new Color(1,.44f,.36f));
    rosterBlue=Label(blue,"",new Vector2(0,-25),new Vector2(410,238),21);rosterRed=Label(red,"",new Vector2(0,-25),new Vector2(410,238),21);rosterBlue.alignment=rosterRed.alignment=TextAnchor.UpperLeft;
    lobbyClass=Label(room,"",new Vector2(-165,-168),new Vector2(600,40),16);leaderButton=Button(room,"Ser el líder",new Vector2(330,-168),new Vector2(250,40),()=>session.ChooseLeader());leaderLabel=leaderButton.GetComponentInChildren<Text>();Button(room,"Cambiar clase",new Vector2(-330,-225),new Vector2(250,46),()=>session.ChooseClass((session.Role+1)%3));
-   start=Button(room,"Iniciar partida",new Vector2(0,-225),new Vector2(300,46),()=>session.StartMatch());ready=Button(room,"Estoy listo",new Vector2(0,-225),new Vector2(300,46),()=>session.Ready());readyLabel=ready.GetComponentInChildren<Text>();
+   start=Button(room,"Iniciar partida",new Vector2(0,-225),new Vector2(300,46),()=>session.BeginSelect());ready=Button(room,"Estoy listo",new Vector2(0,-225),new Vector2(300,46),()=>session.Ready());readyLabel=ready.GetComponentInChildren<Text>();
    Button(room,"Abandonar sala",new Vector2(330,-225),new Vector2(250,46),()=>session.Leave());Label(room,"Los puestos libres juegan como bots · Captura al líder antes del amanecer · Sin fuego amigo",new Vector2(0,-285),new Vector2(980,28),16);
    hud=Rect("HUD LAN",root,Vector2.zero,new Vector2(1280,720)).gameObject;
    nightVision=Panel(hud.transform,"Visor nocturno",Vector2.zero,new Vector2(4000,4000)).GetComponent<Image>();nightVision.color=new Color(.2f,1,.35f,.14f);nightVision.raycastTarget=false;
@@ -38,8 +38,9 @@ namespace Valle.Lan {
    pause=Screen("Opciones de partida");var options=Panel(pause.transform,"Opciones",Vector2.zero,new Vector2(580,540));Title(options,"EN PARTIDA",211);Label(options,"La partida continúa mientras consultas este menú.",new Vector2(0,158),new Vector2(530,42),17);
    Label(options,"WASD / Flechas   Mover      Shift   Correr\nEspacio   Saltar      Q / E   Girar cámara\nClic   Disparar      R   Recargar\nF   Recoger / cambiar      G   Soltar\nMantener F   Esposar al líder\nT   Linterna      C   Usar item      Clic derecho   Habilidad",new Vector2(0,34),new Vector2(530,150),20);Button(options,"Continuar",new Vector2(0,-112),new Vector2(320,48),()=>session.MenuOpen=false);Button(options,"Salir de la partida",new Vector2(0,-181),new Vector2(320,48),()=>session.Leave());
    results=Screen("Resultado");var end=Panel(results.transform,"Fin de partida",Vector2.zero,new Vector2(680,580));Title(end,"FIN DE LA PARTIDA",230);resultText=Label(end,"",new Vector2(0,50),new Vector2(610,275),23);resultLobby=Button(end,"Volver a la sala",new Vector2(0,-155),new Vector2(330,48),()=>{if(session.IsHost)session.ReturnLobby();});Button(end,"Salir al inicio",new Vector2(0,-222),new Vector2(330,44),()=>session.Leave());
+   BuildSelect();
   }
-  void Update(){if(!session||!connection)return;string phase=session.Phase;connection.SetActive(phase=="offline"||phase=="connecting");lobby.SetActive(phase=="lobby");hud.SetActive(phase=="match");deployment.SetActive(phase=="match"&&session.Night.Deploying&&session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==LanNightRules.Dea);statsPanel.SetActive(!deployment.activeSelf);ammoPanel.SetActive(!deployment.activeSelf);pause.SetActive(phase=="match"&&session.MenuOpen);results.SetActive(phase=="result");resultLobby.interactable=session.IsHost;
+  void Update(){if(!session||!connection)return;string phase=session.Phase;connection.SetActive(phase=="offline"||phase=="connecting");lobby.SetActive(phase=="lobby");UpdateSelect();hud.SetActive(phase=="match");deployment.SetActive(phase=="match"&&session.Night.Deploying&&session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==LanNightRules.Dea);statsPanel.SetActive(!deployment.activeSelf);ammoPanel.SetActive(!deployment.activeSelf);pause.SetActive(phase=="match"&&session.MenuOpen);results.SetActive(phase=="result");resultLobby.interactable=session.IsHost;
    status.text=session.Status;var chosen=LanClass.For(session.Team,session.Role);roleLabel.text=chosen.Name+"\n"+chosen.Description;teamLabel.text="Bando: "+(session.Team==LanNightRules.Dea?"DEA":"Organización");
    if(phase=="lobby"&&session.Slots!=null){rosterBlue.text=Roster(0);rosterRed.text=Roster(1);lobbyStatus.text=session.IsHost?"Comparte tu IP: "+session.LocalAddress+"  ·  Puerto 7777":"Conectado · "+(session.LocalSlot<4?"DEA":"Organización");lobbyClass.text=LobbyRole();UpdateLeaderButton();start.gameObject.SetActive(session.IsHost);start.interactable=session.CanStart;ready.gameObject.SetActive(!session.IsHost);readyLabel.text=session.Slots[session.LocalSlot].ready?"Listo ✓ (cambiar)":"Estoy listo";}
    if((phase=="match"||phase=="result")&&session.World&&session.LocalSlot>=0){var pawn=session.World.Pawns[session.LocalSlot];var state=pawn.State;var role=pawn.Class;score.text=Clock();if(deployment.activeSelf)UpdateEntries();

@@ -2,7 +2,7 @@
 
 Nombre de trabajo, pendiente de confirmar. Plan armado el 2026-11-06.
 
-**Estado (2026-11-07):** etapas 0 a 3 construidas, pendientes de prueba con personas.
+**Estado (2026-11-07):** etapas 0 a 4 construidas, pendientes de prueba con personas.
 El mapa ya es hexagonal (ver "Cambio de mapa").
 La rama de trabajo es `etapa-1-reglas`.
 
@@ -166,6 +166,12 @@ personaje animado en partida.
 
 Va aquí porque esta pantalla depende de los modelos. Si se adelanta, usaría imágenes
 provisionales que luego habría que rehacer.
+
+**Estado (2026-11-07):** construida y verificada (167 comprobaciones). Cambio de enfoque a
+pedido del usuario: en lugar de importar personajes con esqueleto, se usan las unidades de
+KayKit con piezas del paquete y accesorios 3D creados por código, y la animación tipo
+caricatura es procedural (`LanCartoon.cs`). La selección arcade funciona por red, con
+retratos en pixel art. También se añadieron caballos al campamento.
 
 ### Etapa 5 · Vestir el Chapare
 

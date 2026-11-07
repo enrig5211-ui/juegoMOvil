@@ -38,3 +38,11 @@ MonoBehaviour:
   equip: {fileID: 8300000, guid: 43c1734fa36d1674caeee38cab0f249e, type: 3}
   font: {fileID: 12800000, guid: 08d8923b7289ef6409ccc6bdf4c2fae4, type: 3}
   button: {fileID: 21300000, guid: d95c657e37980b246999734db3f2cbf3, type: 3}
+  characters:
+  - {fileID: 1086188506723234312, guid: 17729672910504f2484556e73f282eca, type: 3}
+  - {fileID: 8023635712298027479, guid: 15484ff2f1e094958a0e8391afc7acbe, type: 3}
+  - {fileID: 3051857320201034636, guid: cc19903dd9f9f4824a6cfaa572ca4749, type: 3}
+  - {fileID: 8485313903115140095, guid: 3bd25801b1c60427ca211c9eb3fa7d49, type: 3}
+  - {fileID: 6865588330744859199, guid: bb5e70fa81b134524ae4ba35b8baeffc, type: 3}
+  - {fileID: 7402366843715608579, guid: 66ec3285d8e634b03aecd5bee85ef68c, type: 3}
+  - {fileID: 5288878223670047512, guid: 2c89044a0ba314ba0bc1e0477e79948f, type: 3}

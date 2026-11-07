@@ -7,7 +7,7 @@ namespace Valle.Lan {
   static bool Finite(float v)=>!float.IsNaN(v)&&!float.IsInfinity(v);
  }
  [Serializable] public class LanSlot {
-  public int id,team,role,kills,deaths,point;public string name;public bool bot=true,ready,loaded;
+  public int id,team,role,kills,deaths,point;public string name;public bool bot=true,ready,loaded,locked;
  }
  [Serializable] public class LanActorState {
   public int id,weapon,ammo,reserve,shot,item;public Vector3 position,aim,hit;public float hp,stamina,reload,shield,down,vision,ability,active,marked;public bool grounded,impact,lamp;
@@ -20,7 +20,7 @@ namespace Valle.Lan {
   public int id,kind,team;public Vector3 position;public float time;public bool fired;
  }
  [Serializable] public class LanPacket {
-  public const int Version=4;
+  public const int Version=5;
   public string type,name,error,phase;public int version=Version,slot,team,role,blue,red,point,leader=-1,deaLeft,orgLeft,outcome;public float remaining,deploy,wave,capture;public bool hasDrops;
   public LanInput input;public LanSlot[] slots;public LanActorState[] actors;public LanDrop[] drops;public LanMark[] marks;
  }

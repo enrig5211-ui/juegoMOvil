@@ -29,6 +29,7 @@ namespace Valle.Lan {
    }
    if(Phase=="match"&&World&&LocalSlot>=0)ReadInput();
    if(now>=nextSend){nextSend=now+.05f;if(IsHost){if(LocalSlot>=0){inputs[LocalSlot]=localInput;inputAt[LocalSlot]=now;}Broadcast();}else if(server!=null)Send(server,new LanPacket{type=World&&Phase=="match"?"input":"ping",input=localInput});}
+   if(IsHost&&Phase=="select")TickSelect(Mathf.Min(Time.unscaledDeltaTime,.15f));
    if(IsHost&&Phase=="match"&&World){accumulator+=Mathf.Min(Time.unscaledDeltaTime,.15f);while(accumulator>=.05f&&Phase=="match"){accumulator-=.05f;Step(.05f);}}
   }
   public void Step(float dt){World.Tick(dt);Night.Tick(dt,this);if(Night.Outcome!=LanOutcome.None)Phase="result";}
@@ -38,14 +39,15 @@ namespace Valle.Lan {
    if(p.type=="loaded")Slots[peer.Slot].loaded=true;
    if(p.type=="input"&&Phase=="match"&&p.input!=null&&p.input.Valid()){inputs[peer.Slot]=p.input;inputAt[peer.Slot]=Time.realtimeSinceStartup;}
    if(p.type=="ready"&&Phase=="lobby")Slots[peer.Slot].ready=!Slots[peer.Slot].ready;
-   if(p.type=="class"&&Phase=="lobby"){Slots[peer.Slot].role=Mathf.Clamp(p.role,0,2);Slots[peer.Slot].ready=false;}
+   if(p.type=="class"&&(Phase=="lobby"||Phase=="select"&&!Slots[peer.Slot].locked)){Slots[peer.Slot].role=Mathf.Clamp(p.role,0,2);if(Phase=="lobby")Slots[peer.Slot].ready=false;}
+   if(p.type=="lock"&&Phase=="select")Slots[peer.Slot].locked=true;
    if(p.type=="leader"&&Phase=="lobby")ToggleLeader(peer.Slot);
    if(p.type=="point"&&Phase=="match")SetPoint(peer.Slot,p.point);
   }
   void HandleServer(LanPacket p){if(p.type=="welcome"){if(p.slot<0||p.slot>7)throw new Exception("slot");LocalSlot=p.slot;return;}if(p.type!="snapshot"||p.slots==null||p.slots.Length!=8||LocalSlot<0)return;
    Slots=p.slots;BlueScore=p.blue;RedScore=p.red;Remaining=p.remaining;Phase=p.phase;Night.Read(p);
    if(Phase=="match"||Phase=="result"){if(SceneManager.GetActiveScene().name!=LanNightRules.Scene){Load(LanNightRules.Scene);}else if(World)World.Apply(p);}
-   else if(Phase=="lobby"&&SceneManager.GetActiveScene().name!="MenuInicio")Load("MenuInicio");
+   else if((Phase=="lobby"||Phase=="select")&&SceneManager.GetActiveScene().name!="MenuInicio")Load("MenuInicio");
   }
   void SendSnapshot(LanPeer peer)=>Send(peer,Snapshot(true));
   // Los objetos del suelo solo viajan cuando cambian (y una vez por segundo): ahorra tráfico por Wi-Fi.
@@ -53,14 +55,29 @@ namespace Valle.Lan {
   void Broadcast(){if(Slots==null)return;bool full=World&&(World.DropsDirty||Time.realtimeSinceStartup>=nextFull);if(full){nextFull=Time.realtimeSinceStartup+1;World.DropsDirty=false;}var json=JsonUtility.ToJson(Snapshot(full));foreach(var p in peers)if(p.Slot>=0&&!p.Closed)p.Send(json);}
   static void Send(LanPeer peer,LanPacket packet){peer?.Send(JsonUtility.ToJson(packet));}
   public bool CanStart=>IsHost&&Phase=="lobby"&&Slots.All(s=>s.bot||s.ready);
-  public void StartMatch(){if(!CanStart)return;BlueScore=RedScore=0;Remaining=LanNightRules.NightSeconds;Night.Begin(Slots);foreach(var s in Slots){s.kills=s.deaths=0;s.loaded=false;}inputs.Clear();localInput=new LanInput();Phase="match";Broadcast();Load(LanNightRules.Scene);}
+  public void StartMatch(){if(!CanStart)return;Launch();}
+  void Launch(){BlueScore=RedScore=0;Remaining=LanNightRules.NightSeconds;Night.Begin(Slots);foreach(var s in Slots){s.kills=s.deaths=0;s.loaded=false;}inputs.Clear();localInput=new LanInput();Phase="match";Broadcast();Load(LanNightRules.Scene);}
   public void Ready(){if(IsHost){Slots[LocalSlot].ready=!Slots[LocalSlot].ready;}else Send(server,new LanPacket{type="ready"});}
-  public void ChooseClass(int value){Role=Mathf.Clamp(value,0,2);if(Phase!="lobby")return;if(IsHost)Slots[LocalSlot].role=Role;else Send(server,new LanPacket{type="class",role=Role});}
+  public void ChooseClass(int value){if(Phase=="select"&&LocalSlot>=0&&Slots[LocalSlot].locked)return;Role=Mathf.Clamp(value,0,2);if(Phase!="lobby"&&Phase!="select")return;if(IsHost)Slots[LocalSlot].role=Role;else Send(server,new LanPacket{type="class",role=Role});}
   public void ChooseLeader(){if(Phase!="lobby")return;if(IsHost)ToggleLeader(LocalSlot);else Send(server,new LanPacket{type="leader"});}
   public void ChoosePoint(int point){if(Phase!="match")return;if(IsHost)SetPoint(LocalSlot,point);else Send(server,new LanPacket{type="point",point=point});}
   void ToggleLeader(int slot){if(Slots[slot].team!=LanNightRules.Org)return;if(Night.Leader==slot)Night.Leader=-1;else if(Night.Leader<0)Night.Leader=slot;}
   void SetPoint(int slot,int point){if(!World||!Night.Deploying||Slots[slot].team!=LanNightRules.Dea)return;Slots[slot].point=World.ClampEntry(point);World.Respawn(slot);}
-  public void ReturnLobby(){if(!IsHost)return;Phase="lobby";Night.Outcome=LanOutcome.None;if(Night.Leader>=0&&Slots[Night.Leader].bot)Night.Leader=-1;foreach(var s in Slots)s.ready=s.bot||s.id==LocalSlot;Broadcast();Load("MenuInicio");}
+  // Selección arcade: 20 s para elegir personaje. Los bots eligen al azar y confirman solos.
+  readonly Dictionary<int,float> botLockAt=new Dictionary<int,float>();
+  public void BeginSelect(){
+   if(!CanStart)return;
+   Night.AssignLeader(Slots);Phase="select";Remaining=LanNightRules.SelectSeconds;botLockAt.Clear();
+   foreach(var s in Slots){s.locked=s.id==Night.Leader;if(s.bot&&!s.locked){s.role=UnityEngine.Random.Range(0,3);botLockAt[s.id]=Time.realtimeSinceStartup+UnityEngine.Random.Range(1.5f,5f);}}
+   Broadcast();
+  }
+  public void LockCharacter(){if(Phase!="select"||LocalSlot<0)return;if(IsHost)Slots[LocalSlot].locked=true;else Send(server,new LanPacket{type="lock"});}
+  void TickSelect(float dt){
+   Remaining=Mathf.Max(0,Remaining-dt);float now=Time.realtimeSinceStartup;
+   foreach(var s in Slots)if(s.bot&&(!botLockAt.TryGetValue(s.id,out var at)||now>=at))s.locked=true;
+   if(Remaining<=0||Slots.All(s=>s.locked))Launch();
+  }
+  public void ReturnLobby(){if(!IsHost)return;Phase="lobby";foreach(var s in Slots)s.locked=false;Night.Outcome=LanOutcome.None;if(Night.Leader>=0&&Slots[Night.Leader].bot)Night.Leader=-1;foreach(var s in Slots)s.ready=s.bot||s.id==LocalSlot;Broadcast();Load("MenuInicio");}
   void Load(string name){if(loading)return;loading=true;MenuOpen=false;Time.timeScale=1;SceneManager.LoadSceneAsync(name);}
   void SceneLoaded(Scene scene,LoadSceneMode mode){loading=false;World=null;if(scene.name==LanNightRules.Scene){World=FindAnyObjectByType<LanWorld>();if(World&&LocalSlot>=0){World.Initialize(this);if(IsHost)Slots[LocalSlot].loaded=true;else Send(server,new LanPacket{type="loaded"});}else Disconnect("No se pudo cargar el escenario de la partida.");}}
   public LanInput InputFor(int slot){if(!inputs.TryGetValue(slot,out var value))return new LanInput();if(!inputAt.TryGetValue(slot,out float t)||Time.realtimeSinceStartup-t>.5f)return new LanInput{jump=value.jump,reload=value.reload,pickup=value.pickup,drop=value.drop,lamp=value.lamp,use=value.use,ability=value.ability};return value;}

@@ -10,7 +10,7 @@ namespace Valle.Lan {
   public const float CuffSeconds=5,CuffRange=1.5f;
   public const float WaveSeconds=30;
   public const int DeaReinforcements=12,OrgReinforcements=8;
-  public const float CameraSize=7,BotVision=14;
+  public const float CameraSize=7,BotVision=14,SelectSeconds=20;
   // Luz y visión. De día se ve hasta BotVision.
   public const float DawnSeconds=90,DuskLight=.55f;
   public const float NearVision=5,LampRange=13,LampHalfAngle=30,ExposedRange=20,FiredReveal=.6f;
@@ -40,6 +40,8 @@ namespace Valle.Lan {
     Leader=slot.id;
    }
   }
+  // El líder se decide al empezar la selección: si nadie lo pidió, un bot de la organización.
+  public void AssignLeader(LanSlot[] slots){if(Leader>=0&&Leader<slots.Length&&slots[Leader].team==LanNightRules.Org)return;var slot=slots.FirstOrDefault(s=>s.team==LanNightRules.Org&&s.bot)??slots.First(s=>s.team==LanNightRules.Org);Leader=slot.id;}
   public void Write(LanPacket packet){
    packet.leader=Leader;packet.deaLeft=DeaLeft;packet.orgLeft=OrgLeft;packet.outcome=(int)Outcome;
    packet.deploy=Deploy;packet.wave=Wave;packet.capture=Capture;

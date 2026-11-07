@@ -22,5 +22,5 @@ PASS: The lookout places an alarm without items
 PASS: A triggered alarm marks the intruder
 PASS: Reinforcements are not spent with nobody down
 PASS: The leader brings fallen guards back early
-INFO: Habilidades usadas por bots en 2 min: Avance, Escudo, Pulso, Refuerzos, Alarma, Proteger · usos 10
+INFO: Habilidades usadas por bots en 2 min: Avance, Escudo, Pulso, Alarma, Proteger · usos 15
 PASS: Bots use their abilities

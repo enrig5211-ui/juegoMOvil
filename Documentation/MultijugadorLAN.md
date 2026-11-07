@@ -12,6 +12,10 @@ Abre `Assets/Scenes/MenuInicio.unity`, pulsa Play y elige **Multijugador LAN**.
 4. En la organización, un jugador puede pulsar **Ser el líder**. Si nadie lo hace, el líder
    es un bot.
 5. Los invitados pulsan **Estoy listo**. El anfitrión pulsa **Iniciar partida**.
+6. **Selección (20 s).** Cada jugador elige uno de los tres personajes de su bando con
+   ← → o clic, y confirma con ENTER o **¡LISTO!**. Ve en vivo qué miran sus compañeros y
+   quién confirmó; del otro bando solo sabe cuántos están listos. Los bots eligen solos y
+   el líder no elige. La noche empieza cuando todos confirman o se acaba el tiempo.
 
 No hace falta tener ocho personas: los espacios vacíos los ocupan bots.
 Se puede entrar durante una partida, reemplazando a un guardia o agente bot en su
@@ -91,6 +95,35 @@ Todos estos valores están en `LanNightRules.cs`.
 
 Una alarma que salta marca al intruso durante 4 s. Los valores están en `LanAbilities.cs`.
 
+**Aspecto.** Los personajes son las unidades de KayKit (azul para la DEA, rojo para la
+organización) con piezas del paquete y accesorios 3D propios:
+
+| Personaje | Aspecto |
+|---|---|
+| Asaltante | Gorra y chaleco con franja amarilla |
+| Pesado | Casco y escudo de KayKit, chaleco |
+| Rastreador | Gorra, chaleco y mochila con antena de radio |
+| Pistolero | Pañuelo y gafas oscuras |
+| Guardaespaldas | Traje negro con corbata y gafas oscuras |
+| Vigía | Estandarte de KayKit y binoculares |
+| Líder | Sombrero y cadena de oro |
+
+Se generan con **Tools > Multijugador > Crear personajes** (`CharacterSetup.cs`). Los
+accesorios están en `Assets/Art/Personajes` y los personajes en
+`Assets/Resources/Multiplayer/Personajes`.
+
+**Animación tipo caricatura** (`LanCartoon.cs`). Como las unidades no tienen esqueleto,
+todo se hace moviendo, girando y deformando el modelo:
+
+- Respira en reposo y rebota al correr, estirándose y aplastándose.
+- Retrocede al disparar, se sacude al recibir daño y se estira al usar el Avance.
+- Aparece con un salto elástico, cae de bruces al morir y luego se encoge.
+- El líder reducido queda tumbado y tambaleándose.
+- Al terminar, el bando ganador salta girando y el perdedor se desanima.
+
+Todo sale del estado de red, así que se ve igual en cada pantalla. Los retratos de la
+selección se dibujan en baja resolución, con aire de pixel art arcade (`LanPortraits.cs`).
+
 La defensa reduce el daño mediante `daño × 100 / (100 + defensa)`.
 Correr multiplica la velocidad por 1,5 y consume estamina. El salto también consume.
 
@@ -127,7 +160,7 @@ esposan al líder reducido.
 ## Verificación
 
 Validación del 2026-11-07, en el mapa hexagonal:
-**152 comprobaciones aprobadas**, sin errores en consola.
+**167 comprobaciones aprobadas**, sin errores en consola.
 
 | Archivo | Aprobadas | Qué cubre |
 |---|---:|---|
@@ -138,13 +171,14 @@ Validación del 2026-11-07, en el mapa hexagonal:
 | `Magic-play-check.txt` | 9 | Efectos visuales durante la partida |
 | `LAN-vision-check.txt` | 38 | Luz, visión, linternas por red, items, bengalas, alarmas y qué se dibuja |
 | `LAN-ability-check.txt` | 21 | Personajes por bando, cada habilidad medida, activación por red y uso por bots |
+| `LAN-select-check.txt` | 15 | Selección arcade por red, bots que eligen solos y modelos de cada personaje |
 
 Comandos en **Tools > Multijugador**: *Comprobar reglas de la noche*, *Comprobar noches
-con bots*, *Comprobar noche, vision e items*, *Comprobar habilidades* y *Comprobar LAN en Play*.
+con bots*, *Comprobar noche, vision e items*, *Comprobar habilidades*, *Comprobar seleccion y personajes* y *Comprobar LAN en Play*.
 
-Con noche y habilidades, dos tandas de seis noches con bots terminaron así: 8 capturas,
-2 amaneceres y 2 derrotas de la DEA por agotar refuerzos. Sin oscuridad la DEA ganaba 6 de 6.
-No mide el equilibrio entre personas.
+Con noche y habilidades, tres tandas de seis noches con bots terminaron así: 13 capturas,
+2 amaneceres y 3 derrotas de la DEA por agotar refuerzos. Sin oscuridad la DEA ganaba 6 de 6.
+Con bots la DEA está favorecida; no mide el equilibrio entre personas.
 
 Mediciones de `LAN-ability-check.txt`: el escudo deja 2,3 de daño de frente frente a 11,4 sin
 él, el líder protegido recibe 5,3 en vez de 13,3, y el Avance recorre 4 unidades.
@@ -156,7 +190,8 @@ Capturas del mapa: `NocheChapare-mapa.png`, `NocheChapare-campamento.png` y
 `NocheChapare-puente.png`. `LAN-match.png` muestra una partida en el mapa hexagonal, y
 `Noche-linterna.png` y `Noche-bengala.png` muestran la noche con linterna y faroles.
 `Personajes-sala.png` y `Personajes-hud.png` muestran los personajes en la sala y la
-habilidad en el HUD. Las
+habilidad en el HUD. `Seleccion.png` muestra la selección arcade y `Personajes-partida.png`,
+los modelos en partida. Las
 capturas `Noche-*.png` de la interfaz son del mapa gris anterior.
 
 Escala del mapa: 5.156 piezas visibles, unos 1,26 millones de triángulos en total y 1.445

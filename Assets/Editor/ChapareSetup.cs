@@ -205,6 +205,12 @@ public static class ChapareSetup {
   for(int i=0;i<14;i++){float angle=i*Mathf.PI*2/14;float radius=6.5f+(float)rng.NextDouble()*4.5f;Cover(new Vector3(Mathf.Cos(angle)*radius,0,Mathf.Sin(angle)*radius));}
   for(int i=0;i<10;i++)Cover(new Vector3(Mathf.Lerp(Strip.xMin+1,Strip.xMax-1,(float)rng.NextDouble()),0,Mathf.Lerp(Strip.yMin+1,Strip.yMax-1,(float)rng.NextDouble())));
   foreach(var h in Hideouts){var p=Snap(h);Place("decoration/props/tent",camp,p+new Vector3(.7f,0,.6f),rng.Next(6)*60,1.8f);Box(colliders,"Tienda",p+new Vector3(.7f,.4f,.6f),new Vector3(.8f,.8f,.8f),0);}
+  // Animales y carreta del campamento, a la escala de los personajes.
+  foreach(var (prefab,at,yaw) in new[]{("units/neutral/horse_A",new Vector3(11,0,8),40f),("units/neutral/horse_C",new Vector3(12.5f,0,6.5f),200f),("units/neutral/horse_B",new Vector3(-12,0,-9),120f),("units/neutral/cart_merchant",new Vector3(-10,0,-11),80f)}){
+   var cell=Cell(at);if(!map.TryGetValue(cell,out var kind)||kind!=Kind.Grass&&kind!=Kind.Road||reserved.Any(r=>Vector3.Distance(r,at)<2.4f))continue;
+   Place(prefab,camp,at,yaw,1.6f).name=prefab.Contains("horse")?"Caballo":"Carreta";
+   var block=Box(colliders,"Animal",at+Vector3.up*.5f,new Vector3(.45f,1,1.2f),0);block.transform.rotation=Quaternion.Euler(0,yaw,0);
+  }
   StaticFlags(root);
  }
  // Solo hay adornos con colisión donde los 6 vecinos son transitables: nunca cierran un pasillo.
