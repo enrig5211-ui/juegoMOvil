@@ -101,7 +101,8 @@ namespace Valle.Lan {
   }
   // La DEA no sabe dónde están los refugios: busca en zonas generales y puntos de items.
   Vector3 ChooseZone(){
-   var places=world.zones.Where(z=>world.hideouts==null||!world.hideouts.Contains(z)).Concat(world.itemSpots??new Transform[0]).ToArray();
+   bool NearHideout(Transform t)=>world.hideouts!=null&&world.hideouts.Any(h=>Vector3.Distance(h.position,t.position)<7);
+   var places=world.zones.Concat(world.itemSpots??new Transform[0]).Where(z=>!NearHideout(z)).ToArray();
    if(places==null||places.Length==0)return pawn.transform.position;
    return places[Random.Range(0,places.Length)].position;
   }

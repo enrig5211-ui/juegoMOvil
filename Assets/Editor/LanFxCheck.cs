@@ -12,7 +12,7 @@ using Valle.Lan;
 [InitializeOnLoad]
 public static class LanFxCheck {
  static readonly StringBuilder log=new StringBuilder();
- static int stage,mark;static double next,started;static LanAudio sound;static LanPawn leader,agent;
+ static int stage,mark;static bool menuShot;static double next,started;static LanAudio sound;static LanPawn leader,agent;
  static LanFxCheck(){EditorApplication.update+=Tick;}
  [MenuItem("Tools/Multijugador/Comprobar efectos y sonido")]
  static void Request(){File.WriteAllText("Temp/fx-test.request","");}
@@ -31,6 +31,8 @@ public static class LanFxCheck {
  static void Advance(LanSession s){
   switch(stage++){
    case 0:{
+    // La foto se toma al final del cuadro: primero el menú solo, y en la siguiente vuelta se abre la sala.
+    if(!menuShot){menuShot=true;ScreenCapture.CaptureScreenshot("Documentation/Menu-principal.png");stage--;return;}
     var music=UnityEngine.Object.FindAnyObjectByType<AmbientMusic>();var assets=Resources.Load<LanAssets>("Multiplayer/LanAssets");
     Check(music&&music.GetComponent<AudioSource>().clip==assets.tensionMusic,"The main menu plays the tension music");
     LanSession.Open();s=LanSession.Instance;s.PlayerName="Agente";s.Role=1;s.Host();break;}
@@ -69,5 +71,5 @@ public static class LanFxCheck {
    case 8:Check(sound.History.Skip(mark).Contains("radio"),"The radio announces reinforcements");Finish();break;
   }
  }
- static void Finish(){if(LanSession.Instance)LanSession.Instance.Leave();SessionState.SetBool("LanFxTest",false);EditorApplication.isPlaying=false;}
+ static void Finish(){menuShot=false;if(LanSession.Instance)LanSession.Instance.Leave();SessionState.SetBool("LanFxTest",false);EditorApplication.isPlaying=false;}
 }

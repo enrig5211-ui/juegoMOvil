@@ -1,10 +1,10 @@
 PASS: One human starts with seven bots
-INFO: Noche 1: Captured a los 59 s de noche · disparos 462 · bajas DEA 4 / Org 4 · refuerzos DEA 10 / Org 6
-INFO: Noche 2: Captured a los 75 s de noche · disparos 570 · bajas DEA 6 / Org 6 · refuerzos DEA 6 / Org 6
-INFO: Noche 3: DeaSpent a los 148 s de noche · disparos 1300 · bajas DEA 10 / Org 16 · refuerzos DEA 0 / Org 2
-INFO: Noche 4: Captured a los 109 s de noche · disparos 858 · bajas DEA 7 / Org 11 · refuerzos DEA 3 / Org 5
-INFO: Noche 5: Captured a los 170 s de noche · disparos 1059 · bajas DEA 10 / Org 11 · refuerzos DEA 2 / Org 3
-INFO: Noche 6: DeaSpent a los 210 s de noche · disparos 1163 · bajas DEA 8 / Org 16 · refuerzos DEA 0 / Org 3
+INFO: Noche 1: Captured a los 318 s de noche · disparos 652 · bajas DEA 4 / Org 7 · refuerzos DEA 6 / Org 7
+INFO: Noche 2: DeaSpent a los 184 s de noche · disparos 1226 · bajas DEA 9 / Org 16 · refuerzos DEA 0 / Org 1
+INFO: Noche 3: Captured a los 174 s de noche · disparos 1301 · bajas DEA 12 / Org 14 · refuerzos DEA 1 / Org 0
+INFO: Noche 4: Dawn a los 480 s de noche · disparos 1432 · bajas DEA 11 / Org 15 · refuerzos DEA 0 / Org 0
+INFO: Noche 5: DeaSpent a los 195 s de noche · disparos 1292 · bajas DEA 12 / Org 16 · refuerzos DEA 0 / Org 0
+INFO: Noche 6: Captured a los 64 s de noche · disparos 445 · bajas DEA 4 / Org 5 · refuerzos DEA 7 / Org 5
 PASS: Every night reaches an outcome
 PASS: Bots navigate, find enemies and fire
 PASS: Bots can reduce and handcuff the leader

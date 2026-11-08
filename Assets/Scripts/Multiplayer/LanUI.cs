@@ -131,7 +131,7 @@ namespace Valle.Lan {
    return $"{title}\n\n{verdict}\n\nBajas   DEA {session.BlueScore}   —   {session.RedScore}   Organización\n\nTus bajas: {slot.kills}    Muertes: {slot.deaths}\n\n<size=17>{next}</size>";
   }
   string Roster(int team){var s="";foreach(var slot in session.Slots)if(slot.team==team)s+=$"{slot.name}{(slot.id==session.LocalSlot?" (tú)":"")}\n<size=16>{(slot.id==session.Night.Leader?"LÍDER":LanClass.For(slot.team,slot.role).Name)} · {(slot.bot?"BOT":slot.ready?"LISTO":"Preparando…")}</size>\n\n";return s;}
-  GameObject Screen(string name){var r=Panel(root,name,Vector2.zero,new Vector2(4000,4000));r.GetComponent<Image>().color=new Color(.02f,.04f,.05f,.97f);return r.gameObject;}
+  GameObject Screen(string name){var r=Panel(root,name,Vector2.zero,new Vector2(4000,4000));r.GetComponent<Image>().color=new Color(.02f,.04f,.05f,1);return r.gameObject;}
   RectTransform Rect(string name,Transform parent,Vector2 pos,Vector2 size){var r=new GameObject(name,typeof(RectTransform)).GetComponent<RectTransform>();r.SetParent(parent,false);r.anchorMin=r.anchorMax=new Vector2(.5f,.5f);r.sizeDelta=size;r.anchoredPosition=pos;return r;}
   RectTransform Panel(Transform parent,string name,Vector2 pos,Vector2 size){var r=Rect(name,parent,pos,size);r.gameObject.AddComponent<Image>().color=Ink;return r;}
   Text Label(Transform parent,string text,Vector2 pos,Vector2 size,int fontSize,Color? color=null){var r=Rect("Texto",parent,pos,size);var t=r.gameObject.AddComponent<Text>();t.font=body;t.fontSize=fontSize;t.color=color??Paper;t.text=text;t.alignment=TextAnchor.MiddleCenter;t.verticalOverflow=VerticalWrapMode.Overflow;t.raycastTarget=false;return t;}

@@ -180,7 +180,7 @@ esposan al líder reducido.
 ## Verificación
 
 Validación del 2026-11-07, en el mapa hexagonal:
-**182 comprobaciones aprobadas**, sin errores en consola.
+**178 comprobaciones aprobadas**, sin errores en consola.
 
 | Archivo | Aprobadas | Qué cubre |
 |---|---:|---|
@@ -234,7 +234,8 @@ y [NavMesh Surface de Unity](https://docs.unity.cn/Packages/com.unity.ai.navigat
   Trampero (trampa que aturde y marca).
 - **Lanceros del líder:** 5 defensores, 35 de vida cada uno, golpe de 12 cuerpo a cuerpo,
   duran 25 s; recarga de 90 s. Interrumpen las esposas.
-- **Equilibrio:** la DEA ya no busca en los refugios y el Pulso alcanza 14 unidades con
-  recarga de 22 s. Con bots la DEA ganó 4 de 6 noches.
+- **Equilibrio:** la DEA ya no busca en los refugios ni en los puntos cercanos a ellos, y el
+  Pulso alcanza 14 unidades con recarga de 22 s. Con bots, la última tanda quedó 3 a 3:
+  3 capturas, 1 amanecer y 2 derrotas de la DEA por agotar refuerzos.
 - **Caminata a saltitos sin temblor**, retratos de selección nítidos, más naturaleza en el
   mapa y menú con vitrina, luciérnagas y fondo en movimiento.
