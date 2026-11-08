@@ -184,7 +184,7 @@ public static class ChapareSetup {
   foreach(var pair in map){
    var c=pair.Key;var p=World(c);float yaw=rng.Next(6)*60;
    switch(pair.Value){
-    case Kind.Grass:Place("tiles/base/hex_grass",ground,p).name=$"Hex [{c.x}, {c.y}]";if(Open(map,c))Scatter(c,p,detail,colliders);break;
+    case Kind.Grass:Place("tiles/base/hex_grass",ground,p).name=$"Hex [{c.x}, {c.y}]";if(Open(map,c))Scatter(c,p,detail,colliders);Clutter(map,c,p,detail);break;
     case Kind.Dirt:Place("buildings/neutral/building_dirt",paths,p).name=$"Pista [{c.x}, {c.y}]";break;
     case Kind.Forest:
      Place("tiles/base/hex_grass",ground,p).name=$"Hex [{c.x}, {c.y}]";
@@ -213,17 +213,26 @@ public static class ChapareSetup {
   }
   StaticFlags(root);
  }
+ // Detalles pequeños sin colisión: piedras y plantas que llenan el pasto, y plantas de orilla junto al río.
+ static void Clutter(Dictionary<Vector2Int,Kind> map,Vector2Int c,Vector3 p,Transform detail){
+  bool bank=Directions.Any(d=>map.TryGetValue(c+d,out var k)&&(k==Kind.River||k==Kind.Bridge));
+  if(rng.NextDouble()>(bank?.7:.3))return;
+  var offset=new Vector3((float)rng.NextDouble()*1.2f-.6f,0,(float)rng.NextDouble()*1.2f-.6f);
+  string model=bank?"decoration/nature/waterplant_"+"ABC"[rng.Next(3)]:rng.NextDouble()<.6?"decoration/nature/rock_single_"+"ABCDE"[rng.Next(5)]:"decoration/nature/waterplant_"+"ABC"[rng.Next(3)];
+  Place(model,detail,p+offset,rng.Next(12)*30,bank?1.4f:model.Contains("rock")?.9f+(float)rng.NextDouble()*.5f:1.2f);
+ }
  // Solo hay adornos con colisión donde los 6 vecinos son transitables: nunca cierran un pasillo.
  static bool Open(Dictionary<Vector2Int,Kind> map,Vector2Int c)=>Directions.All(d=>map.TryGetValue(c+d,out var k)&&(k==Kind.Grass||k==Kind.Road||k==Kind.Dirt));
  // Árboles sueltos y rocas: algo de cobertura en el pasto abierto.
  static void Scatter(Vector2Int c,Vector3 p,Transform detail,Transform colliders){
-  if(Dist(c)>=Radius-1||rng.NextDouble()>.07)return;
+  if(Dist(c)>=Radius-1||rng.NextDouble()>.2)return;
   var near=Entries.Select(e=>Cell(e.at)).Concat(Hideouts.Select(Cell)).Concat(ExtraZones.Select(Cell)).Concat(OrgSpawns.Select(Cell)).Concat(spotCells);
   if(near.Any(n=>Dist(n-c)<=1))return;
   var offset=new Vector3((float)rng.NextDouble()-.5f,0,(float)rng.NextDouble()-.5f);
-  bool tree=rng.NextDouble()<.6;
-  Place(tree?"decoration/nature/tree_single_"+(rng.Next(2)==0?"A":"B"):"decoration/nature/rock_single_"+"ABCDE"[rng.Next(5)],detail,p+offset,rng.Next(6)*60,tree?.9f:2.4f);
-  Box(colliders,tree?"Arbol":"Roca",p+offset+Vector3.up*.5f,tree?new Vector3(.45f,1,.45f):new Vector3(.6f,.6f,.6f),0);
+  double pick=rng.NextDouble();
+  if(pick<.45){Place("decoration/nature/tree_single_"+(rng.Next(2)==0?"A":"B"),detail,p+offset,rng.Next(6)*60,.8f+(float)rng.NextDouble()*.3f);Box(colliders,"Arbol",p+offset+Vector3.up*.5f,new Vector3(.45f,1,.45f),0);}
+  else if(pick<.8){Place("decoration/nature/trees_"+(rng.Next(2)==0?"A":"B")+"_small",detail,p+offset*.5f,rng.Next(6)*60,.6f);Box(colliders,"Matorral",p+offset*.5f+Vector3.up*.5f,new Vector3(.9f,1,.9f),0);}
+  else{Place("decoration/nature/rock_single_"+"ABCDE"[rng.Next(5)],detail,p+offset,rng.Next(6)*60,2.4f);Box(colliders,"Roca",p+offset+Vector3.up*.3f,new Vector3(.6f,.6f,.6f),0);}
  }
  static void CreateViewpoint(){
   var eye=new GameObject("Main Camera",typeof(Camera),typeof(AudioListener));eye.tag="MainCamera";

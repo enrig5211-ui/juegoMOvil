@@ -49,7 +49,12 @@ namespace Valle.Lan {
     case LanAbilities.Burst:return enemy&&distance<12;
     case LanAbilities.Guard:return enemy&&nearLeader;
     case LanAbilities.Watch:return nearLeader&&!world.Marks.Any(m=>m.kind==LanItems.AlarmMark&&m.team==pawn.Team&&Vector3.Distance(m.position,pawn.transform.position)<8);
-    case LanAbilities.Rally:return session.Night.OrgLeft>0&&world.Pawns.Values.Count(p=>p.Team==pawn.Team&&p!=pawn&&p.State.hp<=0)>=2;
+    case LanAbilities.Rally:return enemy;
+    case LanAbilities.Heal:return world.Pawns.Values.Any(p=>p.Team==pawn.Team&&p.State.hp>0&&p.State.hp<p.Class.Health*.7f&&Vector3.Distance(p.transform.position,pawn.transform.position)<=LanAbilities.HealRange);
+    case LanAbilities.Stun:return enemy&&distance>3&&distance<9;
+    case LanAbilities.Flare:return !enemy&&!session.Night.Deploying&&LanVision.Daylight(session)<.5f;
+    case LanAbilities.Ambush:return enemy&&distance<10;
+    case LanAbilities.Trap:return nearLeader&&!world.Marks.Any(m=>m.kind==LanItems.TrapMark&&m.team==pawn.Team&&Vector3.Distance(m.position,pawn.transform.position)<6);
    }
    return false;
   }
@@ -94,8 +99,9 @@ namespace Valle.Lan {
    if(!hasDestination||arrived||Now>=nextChoice){destination=ChooseZone();hasDestination=true;nextChoice=Now+SearchSeconds;}
    return destination;
   }
+  // La DEA no sabe dónde están los refugios: busca en zonas generales y puntos de items.
   Vector3 ChooseZone(){
-   var places=world.zones;
+   var places=world.zones.Where(z=>world.hideouts==null||!world.hideouts.Contains(z)).Concat(world.itemSpots??new Transform[0]).ToArray();
    if(places==null||places.Length==0)return pawn.transform.position;
    return places[Random.Range(0,places.Length)].position;
   }

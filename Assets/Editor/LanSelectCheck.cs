@@ -45,7 +45,7 @@ public static class LanSelectCheck {
    case 3:{
     Check(s.Phase=="select"&&s.Remaining>LanNightRules.SelectSeconds-2,"Starting opens the character selection");
     var leader=s.Night.Leader;Check(leader>=4&&s.Slots[leader].locked,"The leader is decided and needs no choice");
-    Check(s.Slots.Where(x=>x.bot).All(x=>x.role>=0&&x.role<=2),"Bots pick a character");
+    Check(s.Slots.Where(x=>x.bot).All(x=>x.role>=0&&x.role<LanClass.Roles),"Bots pick a character");
     Check(guest.Last!=null&&guest.Last.phase=="select","Clients enter the selection");
     guest.Send(new LanPacket{type="class",role=2});break;}
    case 4:Check(s.Slots[guest.Slot].role==2,"Clients change character during the selection");guest.Send(new LanPacket{type="lock"});break;
@@ -55,7 +55,7 @@ public static class LanSelectCheck {
    case 7:if(s.Slots.Where(x=>x.bot).Any(x=>!x.locked)&&++waits<14){stage--;return;}
     Check(s.Slots.Where(x=>x.bot).All(x=>x.locked),"Bots confirm on their own");
     Check(s.Phase=="select","The selection waits for the humans");
-    {var studio=UnityEngine.Object.FindAnyObjectByType<LanPortraits>();Check(studio&&studio.Texture(0)&&studio.Texture(1)&&studio.Texture(2)&&studio.Texture(0).filterMode==FilterMode.Point,"Three pixel-art portraits are drawn");}
+    {var studio=UnityEngine.Object.FindAnyObjectByType<LanPortraits>();Check(studio&&Enumerable.Range(0,LanClass.Roles).All(i=>studio.Texture(i)&&studio.Texture(i).filterMode==FilterMode.Bilinear&&studio.Texture(i).width>=256),"Six sharp portraits are drawn");}
     ScreenCapture.CaptureScreenshot("Documentation/Seleccion.png");break;
    case 8:s.LockCharacter();break;
    case 9:{if(!s.World){stage--;return;}

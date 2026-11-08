@@ -8,7 +8,7 @@ PASS: A confirmed character cannot change
 PASS: The host moves the cursor without confirming
 PASS: Bots confirm on their own
 PASS: The selection waits for the humans
-PASS: Three pixel-art portraits are drawn
+PASS: Six sharp portraits are drawn
 PASS: Confirming everyone starts the night
 PASS: The chosen characters reach the match
 PASS: Each pawn shows its character model

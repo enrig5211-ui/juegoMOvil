@@ -18,8 +18,10 @@ namespace Valle.Lan {
    return true;
   }
   public static bool Sees(LanWorld world,LanPawn viewer,LanPawn target){
-   if(target.State.marked>0&&target.Team!=viewer.Team)return true;
    var from=viewer.transform.position;var to=target.transform.position;var flat=to-from;flat.y=0;float distance=flat.magnitude;
+   // Emboscada: solo se ve desde muy cerca, aunque esté marcado o iluminado.
+   if(LanAbilities.Active(target,LanAbilities.Ambush))return distance<=LanAbilities.AmbushReveal;
+   if(target.State.marked>0&&target.Team!=viewer.Team)return true;
    float near=Mathf.Lerp(LanNightRules.NearVision,LanNightRules.BotVision,Daylight(world.Session));
    if(viewer.State.vision>0)near=Mathf.Max(near,LanNightRules.NightVisionRange);
    bool inRange=distance<=near

@@ -108,6 +108,8 @@ public static class LanNightCheck {
     late.Dispose();late=null;break;}
    case 8:{
     var agent=s.World.Pawns[1];var leader=s.World.LeaderPawn;
+    // Sin lanceros ni habilidad del líder: esta prueba mide solo las esposas.
+    s.World.Npcs.Clear();leader.State.ability=999;
     leader.State.down=15;Place(agent,leader.State.position+Vector3.left);
     Run(s,2);
     Check(s.Night.Capturer==agent.Id&&s.Night.Capture>.3f&&s.Night.Capture<.6f,"Holding next to the leader advances the handcuffs");

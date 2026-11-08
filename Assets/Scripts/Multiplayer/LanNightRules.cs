@@ -64,7 +64,6 @@ namespace Valle.Lan {
    else if(DeaLeft<=0&&!world.Pawns.Values.Any(p=>p.Team==LanNightRules.Dea&&p.State.hp>0))Outcome=LanOutcome.DeaSpent;
   }
   // Habilidad del líder: trae ya a los guardias caídos, gastando refuerzos.
-  public int Rally(LanWorld world){int count=0;foreach(var pawn in world.Pawns.Values){if(pawn.Team!=LanNightRules.Org||pawn.Id==Leader||pawn.State.hp>0||OrgLeft<=0)continue;OrgLeft--;world.Respawn(pawn.Id);count++;}return count;}
   // Recibir daño corta las esposas de quien las estaba poniendo.
   public void Interrupt(int pawn){if(pawn==Capturer){Capturer=-1;Capture=0;}}
   void ReleaseWave(LanWorld world){

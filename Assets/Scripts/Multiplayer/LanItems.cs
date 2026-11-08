@@ -4,7 +4,7 @@ namespace Valle.Lan {
  // Items del suelo: se recogen con F (un espacio) y se usan con C.
  public static class LanItems {
   public const int None=0,Medkit=1,Ammo=2,NightVision=3,Flare=4,Alarm=5;
-  public const int FlareMark=1,AlarmMark=2;
+  public const int FlareMark=1,AlarmMark=2,TrapMark=3,BlastMark=4;
   static readonly string[] names={"","Botiquín","Munición","Visor nocturno","Bengala","Alarma"};
   static readonly int[] weights={0,30,25,15,18,12};
   public static readonly Color[] Colors={Color.white,new Color(.95f,.3f,.3f),new Color(.95f,.8f,.3f),new Color(.35f,1,.45f),new Color(1,.55f,.2f),new Color(.6f,.6f,1)};

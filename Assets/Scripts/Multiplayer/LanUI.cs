@@ -17,7 +17,7 @@ namespace Valle.Lan {
    Label(card,"TU NOMBRE",new Vector2(-210,151),new Vector2(300,24),14,Gold);nameField=Field(card,new Vector2(-190,109),new Vector2(350,44),"Jugador");
    Label(card,"IP DEL ANFITRIÓN",new Vector2(190,151),new Vector2(350,24),14,Gold);ipField=Field(card,new Vector2(190,109),new Vector2(350,44),"192.168.1.20");ipField.characterLimit=15;
    teamLabel=Button(card,"Bando: DEA",new Vector2(-190,40),new Vector2(350,48),()=>{session.Team=1-session.Team;}).GetComponentInChildren<Text>();
-   Button(card,"Cambiar clase",new Vector2(190,40),new Vector2(350,48),()=>session.ChooseClass((session.Role+1)%3));
+   Button(card,"Cambiar clase",new Vector2(190,40),new Vector2(350,48),()=>session.ChooseClass((session.Role+1)%LanClass.Roles));
    roleLabel=Label(card,"",new Vector2(0,-24),new Vector2(760,70),20);
    Button(card,"Crear sala",new Vector2(-190,-115),new Vector2(350,52),()=>{session.PlayerName=nameField.text;session.Host();});Button(card,"Unirse por IP",new Vector2(190,-115),new Vector2(350,52),()=>{session.PlayerName=nameField.text;session.Join(ipField.text);});
    status=Label(card,"",new Vector2(0,-196),new Vector2(760,80),17);Button(card,"Volver",new Vector2(0,-270),new Vector2(240,44),()=>session.Leave());
@@ -25,7 +25,7 @@ namespace Valle.Lan {
    lobbyStatus=Label(room,"",new Vector2(0,227),new Vector2(950,40),18);
    var blue=Panel(room,"Azul",new Vector2(-245,30),new Vector2(460,320));var red=Panel(room,"Rojo",new Vector2(245,30),new Vector2(460,320));Title(blue,"DEA",125,new Color(.35f,.75f,1));Title(red,"ORGANIZACIÓN",125,new Color(1,.44f,.36f));
    rosterBlue=Label(blue,"",new Vector2(0,-25),new Vector2(410,238),21);rosterRed=Label(red,"",new Vector2(0,-25),new Vector2(410,238),21);rosterBlue.alignment=rosterRed.alignment=TextAnchor.UpperLeft;
-   lobbyClass=Label(room,"",new Vector2(-165,-168),new Vector2(600,40),16);leaderButton=Button(room,"Ser el líder",new Vector2(330,-168),new Vector2(250,40),()=>session.ChooseLeader());leaderLabel=leaderButton.GetComponentInChildren<Text>();Button(room,"Cambiar clase",new Vector2(-330,-225),new Vector2(250,46),()=>session.ChooseClass((session.Role+1)%3));
+   lobbyClass=Label(room,"",new Vector2(-165,-168),new Vector2(600,40),16);leaderButton=Button(room,"Ser el líder",new Vector2(330,-168),new Vector2(250,40),()=>session.ChooseLeader());leaderLabel=leaderButton.GetComponentInChildren<Text>();Button(room,"Cambiar clase",new Vector2(-330,-225),new Vector2(250,46),()=>session.ChooseClass((session.Role+1)%LanClass.Roles));
    start=Button(room,"Iniciar partida",new Vector2(0,-225),new Vector2(300,46),()=>session.BeginSelect());ready=Button(room,"Estoy listo",new Vector2(0,-225),new Vector2(300,46),()=>session.Ready());readyLabel=ready.GetComponentInChildren<Text>();
    Button(room,"Abandonar sala",new Vector2(330,-225),new Vector2(250,46),()=>session.Leave());Label(room,"Los puestos libres juegan como bots · Captura al líder antes del amanecer · Sin fuego amigo",new Vector2(0,-285),new Vector2(980,28),16);
    hud=Rect("HUD LAN",root,Vector2.zero,new Vector2(1280,720)).gameObject;

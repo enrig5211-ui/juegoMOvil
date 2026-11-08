@@ -4,10 +4,10 @@ namespace Valle.Lan {
  // Lee el estado de red, así que se ve igual en el anfitrión y en cada cliente.
  public sealed class LanCartoon {
   Transform visual;Vector3 basePosition,baseScale;
-  float phase,recoil,hurt,pop,spawn=1,lastHp=-1,lastCooldown,diedAt=-99;int lastShot;bool lastAlive;
+  float phase,recoil,hurt,pop,spawn=1,lastHp=-1,lastCooldown,diedAt=-99,air;int lastShot;bool lastAlive;Vector3 display;bool placed;
   public bool Dying=>Time.time-diedAt<DeathSeconds;
   public const float DeathSeconds=1.3f;
-  public void Bind(Transform model){visual=model;basePosition=model.localPosition;baseScale=model.localScale;}
+  public void Bind(Transform model){visual=model;basePosition=model.localPosition;baseScale=model.localScale;placed=false;}
   public void Pose(LanPawn pawn,float speed,bool celebrate,bool slump){
    if(!visual)return;
    var state=pawn.State;float dt=Time.deltaTime,t=Time.time+pawn.Id*.37f;bool alive=state.hp>0;
@@ -29,14 +29,17 @@ namespace Valle.Lan {
     float since=Time.time-diedAt,fall=Mathf.Clamp01(since/.35f),sink=Mathf.Clamp01((since-.8f)/.45f);
     pitch=BackOut(fall)*90;squash=Vector3.one*(1-sink);offset.y=-sink*.15f;
    }else{
-    if(speed>.3f){
-     phase+=dt*Mathf.Lerp(11,18,Mathf.InverseLerp(2,6.5f,speed));
-     float hop=Mathf.Abs(Mathf.Sin(phase)),stretch=hop*2-1;
-     offset.y=hop*.09f;squash=new Vector3(1-stretch*.06f,1+stretch*.1f,1-stretch*.06f);pitch=9;roll=Mathf.Sin(phase)*7;
+    if(speed>.6f){
+     // Caminata a saltitos: sube estirado y aterriza aplastado.
+     phase+=dt*Mathf.Lerp(8.5f,12.5f,Mathf.InverseLerp(2,6.5f,speed));
+     float hop=Mathf.Abs(Mathf.Sin(phase));
+     offset.y=Mathf.Pow(hop,.8f)*.17f;squash=new Vector3(Mathf.Lerp(1.1f,.95f,hop),Mathf.Lerp(.86f,1.1f,hop),Mathf.Lerp(1.1f,.95f,hop));pitch=10;roll=Mathf.Sin(phase)*4;
     }else{
+     phase=0;
      float breath=Mathf.Sin(t*2.4f);squash=new Vector3(1-breath*.018f,1+breath*.035f,1-breath*.018f);roll=Mathf.Sin(t*1.1f)*1.5f;
     }
-    if(!state.grounded)squash=new Vector3(.9f,1.15f,.9f);
+    air=state.grounded?0:air+dt;if(air>.12f)squash=new Vector3(.9f,1.15f,.9f);
+    if(state.stun>0){roll=Mathf.Sin(t*14)*12;pitch=6;}
     if(LanAbilities.Active(pawn,LanAbilities.Dash)){squash=new Vector3(.85f,.88f,1.4f);pitch=20;}
     if(celebrate){float jump=Mathf.Abs(Mathf.Sin(t*5.5f));offset.y=jump*.3f;yaw=t*300%360;squash=new Vector3(1-jump*.05f,1+jump*.12f,1-jump*.05f);}
     if(slump){pitch=28;squash=new Vector3(1.06f,.86f,1.06f);roll=Mathf.Sin(t*.8f)*4;}
@@ -45,7 +48,10 @@ namespace Valle.Lan {
     squash*=1+Elastic(pop)*.28f;
     squash*=BackOut(spawn);
    }
-   visual.localPosition=basePosition+offset;
+   // El anfitrión mueve al personaje 20 veces por segundo: el modelo lo sigue suavizado para no temblar.
+   if(!placed||(display-pawn.transform.position).sqrMagnitude>4){display=pawn.transform.position;placed=true;}
+   display=Vector3.Lerp(display,pawn.transform.position,1-Mathf.Exp(-18*dt));
+   visual.localPosition=basePosition+offset+(display-pawn.transform.position);
    visual.localRotation=Quaternion.LookRotation(aim)*Quaternion.Euler(pitch,yaw,roll);
    visual.localScale=Vector3.Scale(baseScale,squash);
   }

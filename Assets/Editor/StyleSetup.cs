@@ -70,7 +70,8 @@ public static class StyleSetup {
   var root=GameObject.Find("UI - Inicio");
   var view=root.transform.Find("Vista del valle").GetComponent<RawImage>();view.texture=AssetDatabase.LoadAssetAtPath<Texture2D>(MenuImage);
   root.transform.Find("Velo").GetComponent<Image>().color=new Color(.01f,.02f,.05f,.35f);
-  foreach(var image in root.GetComponentsInChildren<Image>(true))if(image.name=="Menu principal"||image.name=="Guia")image.color=new Color(.03f,.05f,.08f,.9f);
+  foreach(var image in root.GetComponentsInChildren<Image>(true))if(image.name=="Menu principal"||image.name=="Guia")image.color=new Color(.03f,.05f,.08f,image.name=="Guia"?.92f:.55f);
+  if(!root.GetComponent<MenuAmbience>())root.AddComponent<MenuAmbience>();
   void Say(string from,string to){foreach(var text in root.GetComponentsInChildren<Text>(true))if(text.text==from)text.text=to;}
   Say("U N A   A V E N T U R A","D E A   C O N T R A   E L   C A R T E L");
   Say("Tu viaje comienza aquí","Captura al líder antes del amanecer");

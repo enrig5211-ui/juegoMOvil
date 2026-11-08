@@ -180,7 +180,7 @@ esposan al líder reducido.
 ## Verificación
 
 Validación del 2026-11-07, en el mapa hexagonal:
-**170 comprobaciones aprobadas**, sin errores en consola.
+**182 comprobaciones aprobadas**, sin errores en consola.
 
 | Archivo | Aprobadas | Qué cubre |
 |---|---:|---|
@@ -190,7 +190,7 @@ Validación del 2026-11-07, en el mapa hexagonal:
 | `LAN-bots-check.txt` | 8 | Seis noches completas solo con bots, con despliegue real, y entrada tardía |
 | `LAN-fx-check.txt` | 12 | Efectos sin magia, sonidos de cada evento y estilo de la interfaz |
 | `LAN-vision-check.txt` | 38 | Luz, visión, linternas por red, items, bengalas, alarmas y qué se dibuja |
-| `LAN-ability-check.txt` | 21 | Personajes por bando, cada habilidad medida, activación por red y uso por bots |
+| `LAN-ability-check.txt` | 29 | Personajes por bando, cada habilidad medida, activación por red y uso por bots |
 | `LAN-select-check.txt` | 15 | Selección arcade por red, bots que eligen solos y modelos de cada personaje |
 
 Comandos en **Tools > Multijugador**: *Comprobar reglas de la noche*, *Comprobar noches
@@ -225,3 +225,16 @@ directamente y usan loopback.
 
 Referencias técnicas: [sockets TCP de .NET](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/tcp-classes)
 y [NavMesh Surface de Unity](https://docs.unity.cn/Packages/com.unity.ai.navigation%402.0/manual/NavMeshSurface.html).
+
+## Cambios del 2026-11-07 (tarde)
+
+- **Seis personajes por bando.** DEA: Paramédico (cura a aliados), Granadero (aturdidora) y
+  Explorador nocturno (bengala). Organización, con aspecto local (sombrero de paja, aguayo,
+  chuspa, machete, poncho, chullo, botas de goma): Cocalero (emboscada), Curandera (cura) y
+  Trampero (trampa que aturde y marca).
+- **Lanceros del líder:** 5 defensores, 35 de vida cada uno, golpe de 12 cuerpo a cuerpo,
+  duran 25 s; recarga de 90 s. Interrumpen las esposas.
+- **Equilibrio:** la DEA ya no busca en los refugios y el Pulso alcanza 14 unidades con
+  recarga de 22 s. Con bots la DEA ganó 4 de 6 noches.
+- **Caminata a saltitos sin temblor**, retratos de selección nítidos, más naturaleza en el
+  mapa y menú con vitrina, luciérnagas y fondo en movimiento.

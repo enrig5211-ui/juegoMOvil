@@ -82,11 +82,11 @@ public static class LanAbilityCheck {
     Check(front>0&&front<open*.3f,"The shield blocks most frontal damage");Check(Mathf.Approximately(back,open),"The shield does not cover the back");
     // Pulso
     var tracker=w.Pawns[2];var hidden=w.Pawns[7];var far=w.Pawns[4];
-    Place(tracker,Arena+Vector3.forward*4,Vector3.right);Place(hidden,Arena+Vector3.forward*4+Vector3.right*15,Vector3.left);Place(far,Arena+Vector3.forward*4+Vector3.right*25,Vector3.left);
+    Place(tracker,Arena+Vector3.forward*4,Vector3.right);Place(hidden,Arena+Vector3.forward*4+Vector3.right*12,Vector3.left);Place(far,Arena+Vector3.forward*4+Vector3.right*19,Vector3.left);
     var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);wall.transform.position=Arena+Vector3.forward*4+Vector3.right*6+Vector3.up;wall.transform.localScale=new Vector3(.3f,2,4);Physics.SyncTransforms();
     bool before=LanVision.Sees(w,tracker,hidden);LanAbilities.Trigger(w,tracker,new LanInput());
     Check(!before&&hidden.State.marked>0&&LanVision.Sees(w,tracker,hidden),"Pulse marks enemies behind cover");
-    Check(far.State.marked<=0,"Pulse only reaches 18 units");
+    Check(far.State.marked<=0,"Pulse only reaches 14 units");
     Check(LanVision.Sees(w,w.Pawns[0],hidden),"Marked enemies are visible to the whole DEA team");
     UnityEngine.Object.DestroyImmediate(wall);Physics.SyncTransforms();
     // Proteger al líder
@@ -103,14 +103,36 @@ public static class LanAbilityCheck {
     Check(alarm!=null&&alarm.team==LanNightRules.Org&&watcher.State.ability>0,"The lookout places an alarm without items");
     var intruder=w.Pawns[2];Place(intruder,alarm.position+Vector3.right*2,Vector3.left);Run(s,.15f);
     Check(alarm.fired&&intruder.State.marked>0,"A triggered alarm marks the intruder");
-    // Refuerzos del líder
-    var leader=w.LeaderPawn;leader.State.ability=0;leader.State.hp=leader.Class.Health;
-    // Los demás bots siguen peleando: se reanima a cualquier guardia caído para medir solo los de la prueba.
-    foreach(var p in w.Pawns.Values)if(p.Team==LanNightRules.Org&&!p.IsLeader&&p.State.hp<=0)p.ResetLife(w.Spawn(p.Id));
-    LanAbilities.Trigger(w,leader,new LanInput());Check(leader.State.ability==0,"Reinforcements are not spent with nobody down");
-    var a=w.Pawns[6];var b=w.Pawns[7];a.State.hp=0;a.Fall();b.State.hp=0;b.Fall();int left=s.Night.OrgLeft;
+    // Habilidades nuevas: se cambia el personaje de algunos bots para probarlas.
+    var medic=w.Pawns[3];s.Slots[3].role=3;var patient=w.Pawns[1];
+    Place(medic,Arena+Vector3.back*6,Vector3.right);Place(patient,Arena+Vector3.back*6+Vector3.right*2,Vector3.left);patient.State.hp=50;
+    LanAbilities.Trigger(w,medic,new LanInput());Check(medic.Ability==LanAbilities.Heal&&Mathf.Approximately(patient.State.hp,50+LanAbilities.HealAmount),"The paramedic heals nearby allies");
+    var grenadier=w.Pawns[2];s.Slots[2].role=4;var dazed=w.Pawns[7];
+    Place(grenadier,Arena+Vector3.back*12,Vector3.right);Place(dazed,Arena+Vector3.back*12+Vector3.right*8,Vector3.left);
+    LanAbilities.Trigger(w,grenadier,new LanInput());var stay=dazed.transform.position;
+    Check(grenadier.Ability==LanAbilities.Stun&&dazed.State.stun>0&&w.Marks.Any(m=>m.kind==LanItems.BlastMark),"The grenadier's grenade stuns enemies");
+    Run(s,.5f);Check(Vector3.Distance(stay,dazed.transform.position)<.05f,"Stunned enemies cannot move");dazed.State.stun=0;
+    var hider=w.Pawns[7];s.Slots[7].role=3;var seeker=w.Pawns[1];
+    Place(hider,Arena+Vector3.forward*8,Vector3.left);Place(seeker,Arena+Vector3.forward*8+Vector3.left*4,Vector3.right);seeker.State.lamp=true;
+    LanAbilities.Trigger(w,hider,new LanInput());bool hidden=!LanVision.Sees(w,seeker,hider);
+    Place(seeker,Arena+Vector3.forward*8+Vector3.left*1.5f,Vector3.right);
+    Check(hider.Ability==LanAbilities.Ambush&&hidden&&LanVision.Sees(w,seeker,hider),"Ambush hides the coca grower except up close");
+    var trapper=w.Pawns[6];s.Slots[6].role=5;Place(trapper,Arena+Vector3.forward*14,Vector3.right);w.Marks.Clear();
+    LanAbilities.Trigger(w,trapper,new LanInput());var trap=w.Marks.FirstOrDefault(m=>m.kind==LanItems.TrapMark);
+    var victim=w.Pawns[1];Place(victim,trapper.transform.position+Vector3.right*3,Vector3.left);Run(s,.05f);Place(victim,trap!=null?trap.position:Arena,Vector3.left);Run(s,.15f);
+    Check(trap!=null&&trap.fired&&victim.State.stun>0&&victim.State.marked>0,"The trapper's trap stuns and marks");
+    var scout=w.Pawns[1];s.Slots[1].role=5;Place(scout,Arena+Vector3.back*16,Vector3.right);int flares=w.Marks.Count(m=>m.kind==LanItems.FlareMark);
+    LanAbilities.Trigger(w,scout,new LanInput());Check(scout.Ability==LanAbilities.Flare&&w.Marks.Count(m=>m.kind==LanItems.FlareMark)==flares+1,"The night scout throws a flare");
+    // Lanceros del líder
+    var leader=w.LeaderPawn;leader.State.ability=0;w.Npcs.Clear();var post=Arena+new Vector3(-12,0,12);Place(leader,post,Vector3.right);
     LanAbilities.Trigger(w,leader,new LanInput());
-    Check(a.State.hp>0&&b.State.hp>0&&s.Night.OrgLeft==left-2&&leader.State.ability>0,"The leader brings fallen guards back early");
+    Check(w.Npcs.Count==LanWorld.SpearCount&&leader.State.ability>LanAbilities.Cooldown(LanAbilities.Rally)-1,"The leader summons five spearmen");
+    Run(s,.2f);var npc=w.Npcs[0];var gunner=w.Pawns[1];
+    var toward=npc.position-post;toward.y=0;Place(gunner,post+toward.normalized*5.5f,-toward.normalized);
+    float before=npc.hp;w.Fire(gunner,(npc.position-gunner.transform.position).normalized);Check(npc.hp<before,"Bullets hurt the spearmen");
+    var raider=w.Pawns[3];Place(raider,post+Vector3.right*2,Vector3.left);raider.State.hp=raider.Class.Health;float health=raider.State.hp;
+    Run(s,1.5f);Check(raider.State.hp<health,"Spearmen strike nearby DEA agents");
+    Run(s,LanWorld.SpearSeconds);Check(w.Npcs.Count==0,"Spearmen leave after their time");
     // Bots: noche acelerada en el mapa real
     foreach(var p in w.Pawns.Values){p.AbilityUses=0;p.ResetLife(w.Spawn(p.Id));}
     s.Slots[0].bot=true;s.Night.Wave=LanNightRules.WaveSeconds;Run(s,120);

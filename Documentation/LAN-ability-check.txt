@@ -6,7 +6,7 @@ PASS: Organization and leader abilities
 PASS: Right click triggers the ability over the network
 PASS: Burst doubles the fire rate
 PASS: Cooldown reaches the client
-INFO: Recarga de Ráfaga tras activarla: 11.7 s
+INFO: Recarga de Ráfaga tras activarla: 11.6 s
 PASS: Pressing again during cooldown does nothing
 INFO: Avance recorrió 4.0 unidades
 PASS: Dash moves a short distance fast
@@ -14,13 +14,21 @@ INFO: Daño al Pesado: sin escudo 11.4, de frente 2.3, por detrás 11.4
 PASS: The shield blocks most frontal damage
 PASS: The shield does not cover the back
 PASS: Pulse marks enemies behind cover
-PASS: Pulse only reaches 18 units
+PASS: Pulse only reaches 14 units
 PASS: Marked enemies are visible to the whole DEA team
 INFO: Daño al líder: sin protección 13.3, protegido 5.3
 PASS: A nearby bodyguard protects the leader
 PASS: The lookout places an alarm without items
 PASS: A triggered alarm marks the intruder
-PASS: Reinforcements are not spent with nobody down
-PASS: The leader brings fallen guards back early
-INFO: Habilidades usadas por bots en 2 min: Avance, Escudo, Pulso, Refuerzos, Alarma, Proteger · usos 25
+PASS: The paramedic heals nearby allies
+PASS: The grenadier's grenade stuns enemies
+PASS: Stunned enemies cannot move
+PASS: Ambush hides the coca grower except up close
+PASS: The trapper's trap stuns and marks
+PASS: The night scout throws a flare
+PASS: The leader summons five spearmen
+PASS: Bullets hurt the spearmen
+PASS: Spearmen strike nearby DEA agents
+PASS: Spearmen leave after their time
+INFO: Habilidades usadas por bots en 2 min: Avance, Bengala, Aturdidora, Curar, Lanceros, Trampa, Emboscada · usos 12
 PASS: Bots use their abilities
