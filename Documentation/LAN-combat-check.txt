@@ -1,0 +1,51 @@
+PASS: The host sets 8 against 8 in the lobby
+PASS: Teams stay between 2 and 8
+PASS: Players keep their side and seat after resizing
+PASS: An 8 against 8 night has 16 combatants and more reinforcements
+PASS: The scene has a tactical map image
+PASS: The DEA plans its entry on the tactical map
+PASS: The map has destructible forest, props, barrels and lamps
+INFO: Destructibles: 1078 · Forest 896, Tree 65, Rock 30, Bush 42, Crate 30, Tent 6, Lamp 4, Plane 1, Barrel 4
+PASS: Choosing an entry from the plan reaches the session
+PASS: The minimap replaces the plan when the night starts
+PASS: The minimap draws you and your allies
+PASS: M opens the large map
+PASS: Each life starts with grenades
+PASS: G throws a grenade over the network
+PASS: The grenade count reaches the client
+PASS: The grenade lands where the player aims
+INFO: Granada: expuesto 52.3, tras la caja 12.5, aliado 0.0
+PASS: The grenade explodes and hurts nearby enemies
+PASS: Cover absorbs most of the blast
+PASS: Grenades do not hurt allies
+PASS: The blast leaves fire that reaches clients
+PASS: Explosions draw fire, smoke and a scorch mark
+PASS: Standing in the fire burns
+PASS: Explosions break props and barrels explode in a chain
+PASS: A shell clears the jungle and opens the view
+PASS: Broken props leave falling trees and debris
+PASS: Shooting a lamp post turns its light off
+PASS: Clients receive the list of broken props
+PASS: Enemy gunfire shows on the minimap
+PASS: Taking a hit shows where it came from
+PASS: Standing in a marked strike zone shows a warning
+PASS: Tracking the leader shows an alert for the DEA
+PASS: With the grenade in hand, clicking does not fire the rifle
+PASS: The DEA has an armored vehicle near its entry
+PASS: The organization cannot board the DEA vehicle
+PASS: The organization drives its own chuto
+PASS: V boards the vehicle as driver
+INFO: Blindado: recorrió 3.8 unidades a 6.6 u/s
+PASS: The driver moves the vehicle and rides along
+PASS: Vehicles reach the clients
+PASS: The vehicle seats a single player
+INFO: Ametralladora: 10 disparos, vida del objetivo 160 → 74 · golpeó «Combatiente 10»
+PASS: The driver fires the machine gun with the mouse
+INFO: Blindado: vida 700 → 551; conductor 90 → 90
+PASS: Bullets and blasts hit the vehicle, not its driver
+PASS: V again gets off beside the vehicle
+PASS: Once free, someone else can take it
+PASS: A destroyed vehicle throws out its driver and comes back later
+PASS: The hitman can call the convoy on the east road
+INFO: Bots en 2 min: 58 explosiones, 72 objetos rotos, granadas que quedan 5,5,4,5,4,3,5,4,2,0,1,0,2,1,0,0
+PASS: Bots use grenades or explosives

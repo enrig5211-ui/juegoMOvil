@@ -6,29 +6,66 @@ PASS: Organization and leader abilities
 PASS: Right click triggers the ability over the network
 PASS: Burst doubles the fire rate
 PASS: Cooldown reaches the client
-INFO: Recarga de Ráfaga tras activarla: 11.7 s
+INFO: Recarga de Ráfaga tras activarla: 7.5 s
 PASS: Pressing again during cooldown does nothing
-INFO: Avance recorrió 4.0 unidades
-PASS: Dash moves a short distance fast
-INFO: Daño al Pesado: sin escudo 11.4, de frente 2.3, por detrás 11.4
+PASS: The assaulter calls a supply drop where he aims
+PASS: The crate is still falling
+PASS: The crate lands with a medkit, ammo, grenades and a rifle
+INFO: Daño al Pesado: sin escudo 11.4, de frente 1.1, por detrás 5.7
 PASS: The shield blocks most frontal damage
-PASS: The shield does not cover the back
-PASS: Pulse marks enemies behind cover
-PASS: Pulse only reaches 14 units
-PASS: Marked enemies are visible to the whole DEA team
-INFO: Daño al líder: sin protección 13.3, protegido 5.3
-PASS: A nearby bodyguard protects the leader
-PASS: The lookout places an alarm without items
-PASS: A triggered alarm marks the intruder
-PASS: The paramedic heals nearby allies
-PASS: The grenadier's grenade stuns enemies
-PASS: Stunned enemies cannot move
-PASS: Ambush hides the coca grower except up close
-PASS: The trapper's trap stuns and marks
-PASS: The night scout throws a flare
-PASS: The leader summons five spearmen
+PASS: From behind only the dome protects
+INFO: Cúpula: aliado dentro 7.3, fuera 14.5
+PASS: The heavy's dome halves damage for allies inside
+PASS: Tracking locates the leader anywhere on the map
+PASS: Tracking waits a minute between scans for the whole team
+PASS: The scan shows where the leader was, not where he goes
+PASS: The bodyguard raises a sandbag wall
+INFO: Daño al líder: sin muralla 9.3, tras la muralla 0.0, vida de la muralla 284
+PASS: The wall stops bullets and wears down
+PASS: Explosions break the wall and open the line of fire
+PASS: The organization learns its leader was tracked
+PASS: The recruiter calls villagers
+INFO: Reclutas: 2 kamikazes de 6
+PASS: Only one group of recruits at a time
+INFO: Kamikazes: 3 estallidos, vida del agente 110 → 0
+PASS: Kamikazes blow up when shot down and when they reach an agent
+INFO: Estación médica: herido 50 → 80 en 1 s
+PASS: The paramedic's station heals allies around it
+INFO: Andanada: 5 lanzadas en 4 s, 3 explosiones, aturdido True
+PASS: The grenadier's barrage throws grenades and flashbangs for 10 s
+PASS: The coca grower's frenzy doubles his damage and carries coca leaves
+PASS: Coca leaves raise the damage of whoever chews them
+PASS: The trapper lays a mine every 15 s
+PASS: The mine needs a second to arm
+INFO: Mina: vida del agente 126/160
+PASS: Stepping on the mine blows it up and marks the survivor
+PASS: The night scout marks a position for a strike
+PASS: The strike gives a few seconds of warning
+INFO: Bombardeo: 6 explosiones, vida del objetivo 0/100
+PASS: The strike drops several shells that hurt whoever stays
+INFO: Francotirador a 30 unidades: 30.6 de daño
+PASS: The sniper reaches far and hits hard without using his ability
+INFO: Helicóptero: 22 disparos, soldados 2, vida del objetivo 110 → 0
+PASS: The helicopter gives covering fire and drops two soldiers
+INFO: Helicóptero: siguió al objetivo hasta 1.4 unidades (llamado a 6)
+PASS: The helicopter chases its target
+INFO: Enjambre: 6 drones en el aire, quedan 32 en la base, 1 choques, vida del objetivo 100 → 0
+PASS: The drone base keeps six drones flying from its forty
+PASS: Drones crash into enemies they find
+PASS: A spotted enemy calls the rest of the swarm to its position
+PASS: The hitman has no silencer passive
+INFO: Convoy: 3 chutos, 3 estacionados, pistoleros 4, artillado con 2 a bordo
+PASS: Three chutos drive in as real vehicles
+PASS: Two chutos drop their gunmen and stay for the organization to drive
+PASS: The armed chuto's crew jumps out when it is destroyed
+PASS: Destroyed convoy chutos do not come back
+PASS: The healer's campfire heals allies with no time limit
+PASS: The campfire can be destroyed
+INFO: Humo: vista antes True, después False, marcado 0.0, humo (107.00, 0.05, 104.00), habilidad Humo, recarga 18.0
+PASS: The smuggler's smoke blocks the view
+PASS: The leader summons six spearmen and three armed escorts
 PASS: Bullets hurt the spearmen
 PASS: Spearmen strike nearby DEA agents
 PASS: Spearmen leave after their time
-INFO: Habilidades usadas por bots en 2 min: Avance, Bengala, Aturdidora, Curar, Lanceros, Trampa, Emboscada · usos 20
+INFO: Habilidades usadas por bots en 2 min: Suministro, Helicóptero, Enjambre, Estación médica, Lanceros, Chutos, Humo · usos 16
 PASS: Bots use their abilities

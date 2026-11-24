@@ -39,7 +39,7 @@ namespace Valle {
    studio=new GameObject("Vitrina del menu");studio.transform.position=new Vector3(0,-600,0);
    var light=new GameObject("Luz").AddComponent<Light>();light.transform.SetParent(studio.transform,false);light.transform.localPosition=new Vector3(0,3,3);light.type=LightType.Point;light.range=12;light.intensity=4;
    var rim=new GameObject("Contraluz").AddComponent<Light>();rim.transform.SetParent(studio.transform,false);rim.transform.localPosition=new Vector3(0,2,-3);rim.type=LightType.Point;rim.range=10;rim.intensity=3;rim.color=new Color(1,.6f,.3f);
-   int[] picks={0,1,3,9,12,10};
+   int[] picks={0,1,3,LanClass.Roles+3,LanClass.Roles*2,LanClass.Roles+4};
    for(int i=0;i<picks.Length;i++){
     bool dea=i<3;var model=Instantiate(assets.characters[picks[i]],studio.transform).transform;
     model.localPosition=new Vector3(dea?-1.05f+i*.42f:.21f+(i-3)*.42f,0,dea?(i==1?.15f:0):(i==4?.15f:0));model.localRotation=Quaternion.Euler(0,dea?120:240,0);

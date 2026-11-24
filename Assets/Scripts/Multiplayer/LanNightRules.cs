@@ -5,11 +5,12 @@ namespace Valle.Lan {
  public static class LanNightRules {
   public const string Scene="NocheChapare";
   public const int Dea=0,Org=1;
-  public const float DeploySeconds=90,NightSeconds=480;
+  public const float DeploySeconds=60,NightSeconds=480;
   public const float ReducedSeconds=20,RecoverFraction=.4f;
   public const float CuffSeconds=5,CuffRange=1.5f;
   public const float WaveSeconds=30;
-  public const int DeaReinforcements=12,OrgReinforcements=8;
+  // Refuerzos por integrante: con 4 contra 4 son 12 para la DEA y 8 para la organización.
+  public const int DeaReinforcements=12,OrgReinforcements=8,DeaPerAgent=3,OrgPerMember=2;
   public const float CameraSize=7,BotVision=14,SelectSeconds=20;
   // Luz y visión. De día se ve hasta BotVision.
   public const float DawnSeconds=90,DuskLight=.55f;
@@ -32,8 +33,8 @@ namespace Valle.Lan {
   public void Begin(LanSlot[] slots){
    Deploy=LanNightRules.DeploySeconds;
    Wave=LanNightRules.WaveSeconds;
-   DeaLeft=LanNightRules.DeaReinforcements;
-   OrgLeft=LanNightRules.OrgReinforcements;
+   DeaLeft=LanNightRules.DeaPerAgent*slots.Count(s=>s.team==LanNightRules.Dea);
+   OrgLeft=LanNightRules.OrgPerMember*slots.Count(s=>s.team==LanNightRules.Org);
    Capture=0;Capturer=-1;Clock=0;Outcome=LanOutcome.None;
    if(Leader<0){
     var slot=slots.FirstOrDefault(s=>s.team==LanNightRules.Org&&s.bot)??slots.First(s=>s.team==LanNightRules.Org);

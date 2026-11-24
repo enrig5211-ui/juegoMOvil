@@ -4,7 +4,7 @@ namespace Valle.Lan {
  // Sonido de la partida en cada cliente: noche y música de fondo, y avisos según lo que ocurre.
  public sealed class LanAudio:MonoBehaviour {
   LanSession session;LanWorld world;LanAssets art;AudioSource night,music,cues;
-  bool wasDeploying=true,leaderDown;float lastWave,lastCapture;readonly HashSet<int> alarms=new HashSet<int>();
+  bool wasDeploying=true,leaderDown;float lastWave,lastCapture;readonly HashSet<int> alarms=new HashSet<int>(),scans=new HashSet<int>();
   public string LastCue{get;private set;}
   public readonly List<string> History=new List<string>();
   public bool NightPlaying=>night&&night.isPlaying&&night.clip;
@@ -30,6 +30,8 @@ namespace Valle.Lan {
    if(state.Capture>0&&lastCapture<=0)Cue(art.cuffs,.8f,"esposas");lastCapture=state.Capture;
    int team=session.LocalSlot>=0?session.Slots[session.LocalSlot].team:-1;
    foreach(var mark in world.Marks)if(mark.kind==LanItems.AlarmMark&&mark.fired&&mark.team==team&&alarms.Add(mark.id))Cue(art.alarm,.4f,"alarma");
+   // Rastreo: los dos bandos oyen el pitido (la DEA lo lanzó; el líder sabe que lo ubicaron).
+   foreach(var mark in world.Marks)if(mark.kind==LanItems.ScanMark&&scans.Add(mark.id))Cue(art.scan,.6f,"rastreo");
   }
   void Cue(AudioClip clip,float volume,string name){LastCue=name;History.Add(name);if(clip)cues.PlayOneShot(clip,volume);}
  }

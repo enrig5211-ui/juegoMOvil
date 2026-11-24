@@ -3,30 +3,30 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 namespace Valle.Lan {
- // Pantalla de selección arcade: tres retratos del propio bando, compañeros en vivo y confirmación con pose.
+ // Pantalla de selección arcade: ocho retratos del propio bando en dos filas, compañeros en vivo y confirmación con pose.
  public sealed partial class LanUI {
   GameObject select;Text selectTitle,selectClock,selectHint,selectRival,lockLabel;Button lockButton;Image flash;AudioSource sfx;
-  const int Cards=LanClass.Roles;
+  const int Cards=LanClass.Roles,Columns=4;
   readonly GameObject[] cards=new GameObject[Cards];readonly Image[] frames=new Image[Cards];readonly RawImage[] portraits=new RawImage[Cards];
   readonly Text[] cardNames=new Text[Cards],cardInfo=new Text[Cards],cardTags=new Text[Cards];
   LanPortraits studio;bool wasLocked;int lastRole=-1;
   void BuildSelect(){
    select=Screen("Selección");
    selectTitle=Label(select.transform,"",new Vector2(0,300),new Vector2(900,60),40,Gold);selectTitle.font=body;selectTitle.fontStyle=FontStyle.Bold;
-   selectClock=Label(select.transform,"",new Vector2(540,300),new Vector2(140,70),50,Gold);selectClock.font=body;selectClock.fontStyle=FontStyle.Bold;
+   selectClock=Label(select.transform,"",new Vector2(560,300),new Vector2(140,70),50,Gold);selectClock.font=body;selectClock.fontStyle=FontStyle.Bold;
    selectRival=Label(select.transform,"",new Vector2(0,258),new Vector2(900,30),17);
    for(int i=0;i<Cards;i++){
-    int index=i;var card=Panel(select.transform,"Personaje "+i,new Vector2(-300+i%3*300,128-i/3*254),new Vector2(280,240));
+    int index=i;var card=Panel(select.transform,"Personaje "+i,new Vector2(-438+i%Columns*292,122-i/Columns*250),new Vector2(276,236));
     cards[i]=card.gameObject;frames[i]=card.GetComponent<Image>();
     var portrait=new GameObject("Retrato",typeof(RectTransform),typeof(RawImage)).GetComponent<RawImage>();
     portrait.rectTransform.SetParent(card,false);portrait.rectTransform.sizeDelta=new Vector2(128,150);portrait.rectTransform.anchoredPosition=new Vector2(-62,22);portraits[i]=portrait;
-    cardNames[i]=Label(card,"",new Vector2(64,72),new Vector2(160,52),15,Gold);cardNames[i].font=body;cardNames[i].fontStyle=FontStyle.Bold;
-    cardInfo[i]=Label(card,"",new Vector2(64,4),new Vector2(150,80),14);
+    cardNames[i]=Label(card,"",new Vector2(62,72),new Vector2(150,52),15,Gold);cardNames[i].font=body;cardNames[i].fontStyle=FontStyle.Bold;
+    cardInfo[i]=Label(card,"",new Vector2(62,4),new Vector2(144,90),14);
     cardTags[i]=Label(card,"",new Vector2(0,-100),new Vector2(260,36),14,new Color(.45f,.85f,1));
     var click=card.gameObject.AddComponent<Button>();click.transition=Selectable.Transition.None;click.onClick.AddListener(()=>session.ChooseClass(index));
    }
    lockButton=Button(select.transform,"¡LISTO!",new Vector2(0,-268),new Vector2(320,50),()=>session.LockCharacter());lockLabel=lockButton.GetComponentInChildren<Text>();
-   selectHint=Label(select.transform,"← →  o clic para elegir   ·   ENTER para confirmar",new Vector2(0,-310),new Vector2(900,30),17);
+   selectHint=Label(select.transform,"Flechas  o clic para elegir   ·   ENTER para confirmar",new Vector2(0,-310),new Vector2(900,30),17);
    flash=Panel(select.transform,"Destello",Vector2.zero,new Vector2(4000,4000)).GetComponent<Image>();flash.color=new Color(1,1,1,0);flash.raycastTarget=false;
    sfx=gameObject.AddComponent<AudioSource>();sfx.playOnAwake=false;sfx.spatialBlend=0;
   }
@@ -40,7 +40,7 @@ namespace Valle.Lan {
    if(keyboard!=null&&!leader&&!mine.locked){
     if(keyboard.leftArrowKey.wasPressedThisFrame||keyboard.aKey.wasPressedThisFrame)session.ChooseClass((mine.role+Cards-1)%Cards);
     if(keyboard.rightArrowKey.wasPressedThisFrame||keyboard.dKey.wasPressedThisFrame)session.ChooseClass((mine.role+1)%Cards);
-    if(keyboard.upArrowKey.wasPressedThisFrame||keyboard.wKey.wasPressedThisFrame||keyboard.downArrowKey.wasPressedThisFrame||keyboard.sKey.wasPressedThisFrame)session.ChooseClass((mine.role+3)%Cards);
+    if(keyboard.upArrowKey.wasPressedThisFrame||keyboard.wKey.wasPressedThisFrame||keyboard.downArrowKey.wasPressedThisFrame||keyboard.sKey.wasPressedThisFrame)session.ChooseClass((mine.role+Columns)%Cards);
     if(keyboard.enterKey.wasPressedThisFrame||keyboard.spaceKey.wasPressedThisFrame)session.LockCharacter();
    }
    selectTitle.text=leader?"ERES EL LÍDER":"¡ELIGE TU PERSONAJE!";

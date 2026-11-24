@@ -143,6 +143,104 @@ def select_confirm():
     for k, f in enumerate((523.25, 659.25, 783.99, 1046.5)): add(out, square(f, 0.2, decay=0.08), int(k * 0.075 * SR), 0.6)
     return fade(out, 0.002, 0.08)
 
+
+# ---------- Explosivos y destrucción ----------
+def explosion(seconds=2.2):
+    n = int(seconds * SR); out = silence(seconds)
+    body = lowpass(noise(n), 900); rumble = lowpass(noise(n), 140)
+    for i in range(n):
+        t = i / SR; env = math.exp(-t / 0.35); low = math.exp(-t / 0.9)
+        out[i] = body[i] * env * 1.4 + rumble[i] * low * 3.5 + math.sin(2 * math.pi * (55 - 25 * t) * t) * low * 0.5
+    crack = highpass(noise(int(0.03 * SR)), 1800); add(out, crack, 0, 0.8)
+    return fade(out, 0.001, 0.4)
+
+def whistle(seconds=1.6):
+    n = int(seconds * SR); out = []; phase = 0.0
+    for i in range(n):
+        t = i / SR; f = 1500 - 900 * (t / seconds) ** 1.4; phase += 2 * math.pi * f / SR
+        out.append(math.sin(phase) * (0.25 + 0.75 * t / seconds))
+    return fade(out, 0.15, 0.05)
+
+def scan_ping():
+    out = silence(1.3)
+    for k, f in enumerate((1318.5, 1760.0)):
+        add(out, tone(f, 0.5, harmonics=(1.0, 0.3), decay=0.18, attack=0.002), int(k * 0.16 * SR), 0.6)
+    sweep = []; phase = 0.0
+    for i in range(int(0.6 * SR)):
+        t = i / SR; f = 400 + 1600 * t; phase += 2 * math.pi * f / SR; sweep.append(math.sin(phase) * math.exp(-t / 0.3) * 0.3)
+    add(out, sweep, int(0.4 * SR))
+    return fade(out, 0.002, 0.2)
+
+def build():
+    out = silence(0.8)
+    for k in range(3):
+        thud = lowpass(noise(int(0.12 * SR)), 300)
+        thud = [s * math.exp(-i / SR / 0.05) for i, s in enumerate(thud)]
+        add(out, thud, int(k * 0.18 * SR), 1.0 - k * 0.15)
+        add(out, bandpass(noise(int(0.08 * SR)), 800, 3000), int(k * 0.18 * SR), 0.15)
+    return out
+
+def fire_loop(seconds=6):
+    n = int(seconds * SR); out = [s * 0.35 for s in lowpass(noise(n), 500)]
+    for _ in range(int(seconds * 40)):
+        pop = highpass(noise(int(0.004 * SR)), 2000); add(out, pop, random.randrange(n), random.uniform(0.2, 0.9), wrap=True)
+    return loop_crossfade(out, 0.3)
+
+def bounce():
+    out = silence(0.45)
+    for k, gain in enumerate((1.0, 0.5, 0.25)):
+        add(out, tone(2100 + k * 90, 0.07, harmonics=(1.0, 0.5, 0.25), decay=0.02, attack=0.001), int(k * 0.11 * SR), gain)
+    return out
+
+def crash(seconds=0.9):
+    n = int(seconds * SR); out = silence(seconds)
+    for k in range(9):
+        at = int(random.uniform(0, 0.35) * SR); length = int(random.uniform(0.03, 0.09) * SR)
+        snap = bandpass(noise(length), 300, 2500); snap = [s * math.exp(-i / SR / 0.03) for i, s in enumerate(snap)]
+        add(out, snap, at, random.uniform(0.4, 1.0))
+    add(out, [s * math.exp(-i / SR / 0.25) for i, s in enumerate(lowpass(noise(n), 200))], 0, 1.5)
+    return fade(out, 0.001, 0.2)
+
+
+# ---------- Vehículos ----------
+def engine_loop(seconds=4.0):
+    """Motor diésel en ralentí: pulsos graves a 28 Hz con ruido filtrado."""
+    n = int(seconds * SR); rumble = lowpass(noise(n), 180); out = []
+    for i in range(n):
+        t = i / SR; pulse = 0.55 + 0.45 * math.sin(2 * math.pi * 28 * t) ** 2
+        out.append(rumble[i] * 2.2 * pulse + 0.25 * math.sin(2 * math.pi * 56 * t))
+    return loop_crossfade(out, 0.25)
+
+def plane_loop(seconds=4.0):
+    """Avioneta de hélice: zumbido a 95 Hz con armónicos y aire."""
+    n = int(seconds * SR); air = bandpass(noise(n), 300, 1800); out = []
+    for i in range(n):
+        t = i / SR; buzz = sum(math.sin(2 * math.pi * 95 * k * t) / k for k in (1, 2, 3, 4))
+        out.append(buzz * 0.35 * (0.8 + 0.2 * math.sin(2 * math.pi * 6 * t)) + air[i] * 0.6)
+    return loop_crossfade(out, 0.25)
+
+
+def horn():
+    """Bocina de camioneta: dos tonos desafinados, dos toques."""
+    out = silence(0.95)
+    for at, length in ((0.0, 0.22), (0.32, 0.55)):
+        n = int(length * SR); blast = []
+        for i in range(n):
+            t = i / SR; env = min(1.0, t / 0.01) * min(1.0, (length - t) / 0.03)
+            blast.append(env * (math.sin(2 * math.pi * 410 * t) + 0.8 * math.sin(2 * math.pi * 517 * t) + 0.3 * math.sin(2 * math.pi * 820 * t)))
+        add(out, blast, int(at * SR), 0.6)
+    return out
+
+def skid(seconds=0.9):
+    """Derrape: chirrido de goma con ruido de grava."""
+    n = int(seconds * SR); squeal = []; phase = 0.0
+    for i in range(n):
+        t = i / SR; f = 1350 - 350 * t / seconds + 60 * math.sin(2 * math.pi * 23 * t); phase += 2 * math.pi * f / SR
+        squeal.append(math.sin(phase) * (1 - t / seconds) * 0.5)
+    gravel = [s * (1 - i / n) for i, s in enumerate(bandpass(noise(n), 500, 4000))]
+    add(squeal, gravel, 0, 0.9)
+    return fade(squeal, 0.01, 0.15)
+
 if __name__ == "__main__":
     write("noche_grillos", night(), 0.6)
     write("musica_tension", tension(), 0.8)
@@ -153,3 +251,14 @@ if __name__ == "__main__":
     write("esposas", cuffs())
     write("seleccion_mover", select_move(), 0.6)
     write("seleccion_confirmar", select_confirm(), 0.7)
+    write("explosion", explosion())
+    write("silbido", whistle(), 0.7)
+    write("rastreo", scan_ping(), 0.7)
+    write("muralla", build(), 0.8)
+    write("fuego", fire_loop(), 0.6)
+    write("granada_rebote", bounce(), 0.6)
+    write("destruccion", crash(), 0.8)
+    write("motor", engine_loop(), 0.7)
+    write("avion", plane_loop(), 0.7)
+    write("bocina", horn(), 0.7)
+    write("derrape", skid(), 0.7)

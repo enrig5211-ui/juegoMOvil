@@ -3,8 +3,9 @@
 Nombre de trabajo, pendiente de confirmar. Plan armado el 2026-11-06.
 
 **Estado (2026-11-07):** etapas 0 a 5 construidas, pendientes de prueba con personas.
-El mapa ya es hexagonal (ver "Cambio de mapa").
-La rama de trabajo es `etapa-1-reglas`.
+El mapa ya es hexagonal (ver "Cambio de mapa"). Fuera del plan original se agregaron
+explosivos, entorno destructible, minimapa y un plan de despliegue nuevo (ver "Combate y
+mapas"). La rama de trabajo es `etapa-2-noche`.
 
 ## El juego
 
@@ -186,6 +187,40 @@ retratos en pixel art. También se añadieron caballos al campamento.
 **Estado (2026-11-07):** construida y verificada (170 comprobaciones). El estilo medieval de
 KayKit se mantiene por decisión del usuario; lo que se quitó es la magia: efectos de
 combate propios, sonidos originales generados y menús con estilo de operación nocturna.
+
+### Combate y mapas (2026-11-07, a pedido del usuario)
+
+- **Plan de despliegue:** mapa táctico moderno para la DEA.
+- **Minimapa y mapa grande (M).**
+- **Avisos de disparos y de daño**, al estilo de Call of Duty.
+- **Explosivos:** granadas con fuego y entorno destructible.
+- **Habilidades nuevas:**
+  - Rastreo del líder en todo el mapa (el líder se entera).
+  - Bombardeo del Explorador nocturno.
+  - Muralla del Guardaespaldas.
+
+Verificado con 210 comprobaciones. Con bots, la DEA ganó 8 de 12 noches; el equilibrio
+queda para las partidas con personas. Detalle en `MultijugadorLAN.md`.
+
+El 2026-11-08, tras la primera prueba del usuario:
+
+- **Despliegue:** 60 s.
+- **Granadas:** 5 por agente de la DEA, con cambio por número.
+- **Habilidades:**
+  - Suministro aéreo del Asaltante.
+  - Cúpula del Pesado.
+  - Reclutador con comuneros y kamikazes.
+  - Mina del Trampero.
+  - Recargas más cortas para la organización.
+- **Blindado** de una plaza, a escala de los personajes.
+- **Bombardeo:** recarga de 50 s.
+- **Pista decorada.**
+
+Verificado con 228 comprobaciones.
+
+Después llegaron bandos de 2 a 8, ocho personajes por bando con aspecto de agentes, vehículos para los
+dos bandos, un campamento con arquitectura boliviana y habilidades de apoyo (helicóptero, chutos, enjambre de
+drones, estación médica y fogata). Verificado con 242 comprobaciones; detalle en `MultijugadorLAN.md`.
 
 ### Etapa 6 · Cierre
 

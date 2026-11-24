@@ -4,11 +4,11 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 namespace Valle.Lan {
  public sealed partial class LanUI:MonoBehaviour {
-  LanSession session;LanAssets art;Font body;Transform root;GameObject connection,lobby,hud,pause,results,deployment,statsPanel,ammoPanel;InputField nameField,ipField;
+  LanSession session;LanAssets art;Font body;Transform root;GameObject connection,lobby,hud,pause,results,statsPanel,ammoPanel;InputField nameField,ipField;
   Sprite fillSprite;
   Text status,abilityLabel,roleLabel,teamLabel,rosterBlue,rosterRed,lobbyClass,lobbyStatus,score,health,stamina,ammo,hint,resultText;
+  readonly Text[] sizeLabels=new Text[2];readonly Button[] sizeButtons=new Button[4];
   Image healthBar,staminaBar,nightVision;Text alarmMark,leaderMark;Button start,ready,resultLobby,leaderButton;Text readyLabel,leaderLabel;string previousPhase;
-  readonly Button[] entryButtons=new Button[4];readonly Text[] entryLabels=new Text[4];
   // Estilo de operación nocturna: azul noche, ámbar y texto en negrita.
   static readonly Color Gold=new Color(1,.72f,.25f),Paper=new Color(.93f,.94f,.95f),Ink=new Color(.03f,.05f,.08f,.96f),Slate=new Color(.13f,.17f,.24f),AmberDeep=new Color(.85f,.52f,.1f);
   void Start(){session=GetComponent<LanSession>();art=Resources.Load<LanAssets>("Multiplayer/LanAssets");body=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");Build();}
@@ -24,7 +24,10 @@ namespace Valle.Lan {
    lobby=Screen("Sala");var room=Panel(lobby.transform,"Equipos",Vector2.zero,new Vector2(1050,660));Title(room,"PREPARA TU EQUIPO",278);
    lobbyStatus=Label(room,"",new Vector2(0,227),new Vector2(950,40),18);
    var blue=Panel(room,"Azul",new Vector2(-245,30),new Vector2(460,320));var red=Panel(room,"Rojo",new Vector2(245,30),new Vector2(460,320));Title(blue,"DEA",125,new Color(.35f,.75f,1));Title(red,"ORGANIZACIÓN",125,new Color(1,.44f,.36f));
-   rosterBlue=Label(blue,"",new Vector2(0,-25),new Vector2(410,238),21);rosterRed=Label(red,"",new Vector2(0,-25),new Vector2(410,238),21);rosterBlue.alignment=rosterRed.alignment=TextAnchor.UpperLeft;
+   rosterBlue=Label(blue,"",new Vector2(0,-48),new Vector2(420,200),17);rosterRed=Label(red,"",new Vector2(0,-48),new Vector2(420,200),17);rosterBlue.alignment=rosterRed.alignment=TextAnchor.UpperLeft;
+   // Tamaño de cada bando: el anfitrión lo cambia con − y +.
+   for(int t=0;t<2;t++){int team=t;var panel=t==0?blue:red;sizeLabels[t]=Label(panel,"",new Vector2(0,88),new Vector2(220,30),16,Paper);
+    sizeButtons[t*2]=Button(panel,"−",new Vector2(-130,88),new Vector2(48,34),()=>session.ResizeTeam(team,-1));sizeButtons[t*2+1]=Button(panel,"+",new Vector2(130,88),new Vector2(48,34),()=>session.ResizeTeam(team,1));}
    lobbyClass=Label(room,"",new Vector2(-165,-168),new Vector2(600,40),16);leaderButton=Button(room,"Ser el líder",new Vector2(330,-168),new Vector2(250,40),()=>session.ChooseLeader());leaderLabel=leaderButton.GetComponentInChildren<Text>();Button(room,"Cambiar clase",new Vector2(-330,-225),new Vector2(250,46),()=>session.ChooseClass((session.Role+1)%LanClass.Roles));
    start=Button(room,"Iniciar partida",new Vector2(0,-225),new Vector2(300,46),()=>session.BeginSelect());ready=Button(room,"Estoy listo",new Vector2(0,-225),new Vector2(300,46),()=>session.Ready());readyLabel=ready.GetComponentInChildren<Text>();
    Button(room,"Abandonar sala",new Vector2(330,-225),new Vector2(250,46),()=>session.Leave());Label(room,"Los puestos libres juegan como bots · Captura al líder antes del amanecer · Sin fuego amigo",new Vector2(0,-285),new Vector2(980,28),16);
@@ -34,23 +37,23 @@ namespace Valle.Lan {
    var stats=Panel(hud.transform,"Estado",new Vector2(-435,-252),new Vector2(360,155));statsPanel=stats.gameObject;health=Label(stats,"",new Vector2(0,47),new Vector2(320,28),19);healthBar=Bar(stats,24,new Color(.8f,.23f,.27f));stamina=Label(stats,"",new Vector2(0,-4),new Vector2(320,28),17);staminaBar=Bar(stats,-27,new Color(.24f,.75f,.53f));abilityLabel=Label(stats,"",new Vector2(0,-52),new Vector2(330,26),16,Gold);
    var weapons=Panel(hud.transform,"Munición",new Vector2(445,-264),new Vector2(360,130));ammoPanel=weapons.gameObject;ammo=Label(weapons,"",new Vector2(0,4),new Vector2(340,116),21);
    hint=Label(hud.transform,"",new Vector2(0,-275),new Vector2(470,100),20);Label(hud.transform,"ESC  ·  Opciones",new Vector2(500,320),new Vector2(220,30),17);
-   deployment=Panel(hud.transform,"Puntos de entrada",new Vector2(510,-20),new Vector2(230,340)).gameObject;Label(deployment.transform,"PUNTO DE ENTRADA",new Vector2(0,136),new Vector2(214,30),17,Gold);for(int i=0;i<entryButtons.Length;i++){int point=i;entryButtons[i]=Button(deployment.transform,"",new Vector2(0,80-i*64),new Vector2(190,52),()=>session.ChoosePoint(point));entryLabels[i]=entryButtons[i].GetComponentInChildren<Text>();}
    alarmMark=Label(hud.transform,"",Vector2.zero,new Vector2(240,30),19,new Color(1,.4f,.35f));leaderMark=Label(hud.transform,"",Vector2.zero,new Vector2(240,30),17,Gold);
    pause=Screen("Opciones de partida");var options=Panel(pause.transform,"Opciones",Vector2.zero,new Vector2(580,540));Title(options,"EN PARTIDA",211);Label(options,"La partida continúa mientras consultas este menú.",new Vector2(0,158),new Vector2(530,42),17);
-   Label(options,"WASD / Flechas   Mover      Shift   Correr\nEspacio   Saltar      Q / E   Girar cámara\nClic   Disparar      R   Recargar\nF   Recoger / cambiar      G   Soltar\nMantener F   Esposar al líder\nT   Linterna      C   Usar item      Clic derecho   Habilidad",new Vector2(0,34),new Vector2(530,150),20);Button(options,"Continuar",new Vector2(0,-112),new Vector2(320,48),()=>session.MenuOpen=false);Button(options,"Salir de la partida",new Vector2(0,-181),new Vector2(320,48),()=>session.Leave());
+   Label(options,"WASD / Flechas   Mover      Shift   Correr\nEspacio   Saltar      Q / E   Girar cámara\nClic   Disparar      R   Recargar      G   Granada\n1 / 2   Arma o granada      X   Soltar arma\nF   Recoger      Mantener F   Esposar      M   Mapa\nT   Linterna   C   Item   V   Blindado   Clic der.   Habilidad",new Vector2(0,34),new Vector2(530,150),19);Button(options,"Continuar",new Vector2(0,-112),new Vector2(320,48),()=>session.MenuOpen=false);Button(options,"Salir de la partida",new Vector2(0,-181),new Vector2(320,48),()=>session.Leave());
    results=Screen("Resultado");var end=Panel(results.transform,"Fin de partida",Vector2.zero,new Vector2(680,580));Title(end,"FIN DE LA PARTIDA",230);resultText=Label(end,"",new Vector2(0,50),new Vector2(610,275),23);resultLobby=Button(end,"Volver a la sala",new Vector2(0,-155),new Vector2(330,48),()=>{if(session.IsHost)session.ReturnLobby();});Button(end,"Salir al inicio",new Vector2(0,-222),new Vector2(330,44),()=>session.Leave());
    BuildSelect();
+   BuildMaps();
   }
-  void Update(){if(!session||!connection)return;string phase=session.Phase;connection.SetActive(phase=="offline"||phase=="connecting");lobby.SetActive(phase=="lobby");UpdateSelect();hud.SetActive(phase=="match");deployment.SetActive(phase=="match"&&session.Night.Deploying&&session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==LanNightRules.Dea);statsPanel.SetActive(!deployment.activeSelf);ammoPanel.SetActive(!deployment.activeSelf);pause.SetActive(phase=="match"&&session.MenuOpen);results.SetActive(phase=="result");resultLobby.interactable=session.IsHost;
+  void Update(){if(!session||!connection)return;string phase=session.Phase;connection.SetActive(phase=="offline"||phase=="connecting");lobby.SetActive(phase=="lobby");UpdateSelect();hud.SetActive(phase=="match");bool planning=phase=="match"&&session.Night.Deploying&&session.LocalSlot>=0&&session.Slots[session.LocalSlot].team==LanNightRules.Dea;bool covered=planning||phase=="match"&&session.MapOpen;statsPanel.SetActive(!covered);ammoPanel.SetActive(!covered);pause.SetActive(phase=="match"&&session.MenuOpen);results.SetActive(phase=="result");resultLobby.interactable=session.IsHost;
    status.text=session.Status;var chosen=LanClass.For(session.Team,session.Role);roleLabel.text=chosen.Name+"\n"+chosen.Description;teamLabel.text="Bando: "+(session.Team==LanNightRules.Dea?"DEA":"Organización");
-   if(phase=="lobby"&&session.Slots!=null){rosterBlue.text=Roster(0);rosterRed.text=Roster(1);lobbyStatus.text=session.IsHost?"Comparte tu IP: "+session.LocalAddress+"  ·  Puerto 7777":"Conectado · "+(session.LocalSlot<4?"DEA":"Organización");lobbyClass.text=LobbyRole();UpdateLeaderButton();start.gameObject.SetActive(session.IsHost);start.interactable=session.CanStart;ready.gameObject.SetActive(!session.IsHost);readyLabel.text=session.Slots[session.LocalSlot].ready?"Listo ✓ (cambiar)":"Estoy listo";}
-   if((phase=="match"||phase=="result")&&session.World&&session.LocalSlot>=0){var pawn=session.World.Pawns[session.LocalSlot];var state=pawn.State;var role=pawn.Class;score.text=Clock();if(deployment.activeSelf)UpdateEntries();
+   if(phase=="lobby"&&session.Slots!=null){rosterBlue.text=Roster(0);rosterRed.text=Roster(1);for(int t=0;t<2;t++){int size=session.TeamSize(t);sizeLabels[t].text=$"{size} {(t==0?"agentes":"integrantes")}  ·  de {LanSession.MinTeam} a {LanSession.MaxTeam}";sizeButtons[t*2].gameObject.SetActive(session.IsHost);sizeButtons[t*2+1].gameObject.SetActive(session.IsHost);sizeButtons[t*2].interactable=size>LanSession.MinTeam;sizeButtons[t*2+1].interactable=size<LanSession.MaxTeam;}lobbyStatus.text=session.IsHost?"Comparte tu IP: "+session.LocalAddress+"  ·  Puerto 7777":"Conectado · "+(session.Slots[session.LocalSlot].team==LanNightRules.Dea?"DEA":"Organización");lobbyClass.text=LobbyRole();UpdateLeaderButton();start.gameObject.SetActive(session.IsHost);start.interactable=session.CanStart;ready.gameObject.SetActive(!session.IsHost);readyLabel.text=session.Slots[session.LocalSlot].ready?"Listo ✓ (cambiar)":"Estoy listo";}
+   if((phase=="match"||phase=="result")&&session.World&&session.LocalSlot>=0){var pawn=session.World.Pawns[session.LocalSlot];var state=pawn.State;var role=pawn.Class;score.text=Clock();if(phase=="match")UpdateMaps(pawn);
     health.text=$"{role.Name.ToUpper()}  ·  VIDA {state.hp:0}/{role.Health:0}";stamina.text=$"ESTAMINA {state.stamina:0}   ·   DEF {role.Defense:0}";abilityLabel.text=AbilityText(pawn);healthBar.fillAmount=state.hp/role.Health;staminaBar.fillAmount=state.stamina/role.Stamina;
-    ammo.text=AmmoText(state);
+    ammo.text=AmmoText(pawn);
     hint.text=Hint(pawn);UpdateNight(pawn);
     if(phase=="result")resultText.text=ResultText();
    }
-   if(phase!=previousPhase){previousPhase=phase;if(EventSystem.current)EventSystem.current.SetSelectedGameObject(null);if(phase=="offline")nameField.Select();if(phase=="lobby"){if(session.IsHost)start.Select();else ready.Select();}}
+   if(phase!=previousPhase){previousPhase=phase;primed=false;lastHp=-1;shots.Clear();hits.Clear();if(EventSystem.current)EventSystem.current.SetSelectedGameObject(null);if(phase=="offline")nameField.Select();if(phase=="lobby"){if(session.IsHost)start.Select();else ready.Select();}}
   }
   void OnDestroy(){if(fillSprite)Destroy(fillSprite);}
   string LobbyRole(){
@@ -63,18 +66,6 @@ namespace Valle.Lan {
    leaderButton.gameObject.SetActive(mine.team==LanNightRules.Org);
    leaderButton.interactable=leader<0||leader==mine.id;
    leaderLabel.text=leader==mine.id?"Dejar de ser líder":leader<0?"Ser el líder":"Líder ocupado";
-  }
-  void UpdateEntries(){
-   var entries=session.World.deaEntries;
-   var mine=session.Slots[session.LocalSlot];
-   for(int i=0;i<entryButtons.Length;i++){
-    bool used=i<entries.Length;
-    entryButtons[i].gameObject.SetActive(used);
-    if(!used)continue;
-    int count=session.Slots.Count(s=>s.team==LanNightRules.Dea&&s.point==i);
-    entryLabels[i].text=$"{entries[i].name} ({count})";
-    entryLabels[i].color=mine.point==i?Gold:Paper;
-   }
   }
   string Clock(){
    var night=session.Night;
@@ -96,13 +87,20 @@ namespace Valle.Lan {
    if(dea&&leader&&leader.State.down>0&&Vector3.Distance(leader.transform.position,pawn.transform.position)<=LanNightRules.CuffRange)return "[ Mantén F ]  Esposar al líder";
    var drop=session.World.Nearest(pawn);
    if(drop!=null)return drop.item>0?$"[ F ]  Recoger {LanItems.Name(drop.item).ToLower()}":"[ F ]  Recoger / cambiar arma";
+   if(!night.Deploying&&state.ride==0&&state.hp>0){var near=session.World.Vehicles.FirstOrDefault(v=>v.team==pawn.Team&&v.respawn<=0&&Vector3.Distance(v.position,pawn.transform.position)<=LanWorld.VehicleBoard);if(near!=null&&near.driver<0)return near.kind==LanWorld.Truck?"[ V ]  Subir al chuto":"[ V ]  Subir al blindado";}
    return state.shield>0&&!night.Deploying?"Protección":"";
   }
   string AbilityText(LanPawn pawn){var state=pawn.State;string name=LanAbilities.Name(pawn.Ability).ToUpper();string status=state.active>0?"activa":state.ability>0?$"{Mathf.CeilToInt(state.ability)} s":"lista";return $"CLIC DER · {name} · {status}";}
-  string AmmoText(LanActorState state){
-   string weapon=state.weapon==0?"SIN ARMA\n<size=16>F · Recoger del suelo</size>":$"{(state.weapon==1?"PISTOLA":"RIFLE")}   {state.ammo} / {state.reserve}\n<size=16>{(state.reload>0?"Recargando…":"CLIC Disparar   R Recargar   G Soltar")}</size>";
+  // Ranuras: 1 arma y 2 granadas; la activa va en ámbar. En el blindado, su vida y el puesto.
+  string AmmoText(LanPawn pawn){
+   var state=pawn.State;var vehicle=session.World.VehicleOf(pawn);
+   if(vehicle!=null)return $"{LanWorld.KindName(vehicle.kind)}   {Mathf.Max(0,vehicle.hp):0} / {LanWorld.MaxHealth(vehicle.kind):0}\n<size=16>WASD Conducir   ·   CLIC Ametralladora\nV · Bajar</size>";
+   bool grenade=state.equip==1||session.Equipped==1&&state.grenades>0;
+   string gun=state.weapon==0?"SIN ARMA":$"{(state.weapon==1?"PISTOLA":"RIFLE")} {state.ammo}/{state.reserve}";
+   string slots=$"{(grenade?"":"<color=#FFB840>")}1 · {gun}{(grenade?"":"</color>")}    {(grenade?"<color=#FFB840>":"")}2 · GRANADAS ×{state.grenades}{(grenade?"</color>":"")}";
+   string help=grenade?"CLIC Lanzar granada   G también lanza":state.weapon==0?"F · Recoger del suelo":state.reload>0?"Recargando…":"CLIC Disparar   R Recargar   X Soltar";
    string item=state.item>0?$"C · {LanItems.Name(state.item)}":"Sin item";
-   return $"{weapon}\n<size=16>{item}   ·   T · Linterna {(state.lamp?"encendida":"apagada")}</size>";
+   return $"<size=19>{slots}</size>\n<size=16>{help}\n{item}   ·   T · Linterna {(state.lamp?"encendida":"apagada")}</size>";
   }
   // Visor nocturno, aviso de alarma del equipo y, para los guardias, dónde está el líder.
   void UpdateNight(LanPawn pawn){
@@ -118,7 +116,7 @@ namespace Valle.Lan {
    var view=camera.WorldToViewportPoint(target.Value);var offset=new Vector2(view.x-.5f,view.y-.5f);
    bool inside=view.z>0&&Mathf.Abs(offset.x)<.44f&&Mathf.Abs(offset.y)<.4f;
    if(onlyOffscreen&&inside){mark.gameObject.SetActive(false);return;}
-   if(view.z<0)offset=-offset;offset/=Mathf.Max(Mathf.Abs(offset.x)/.44f,Mathf.Abs(offset.y)/.4f,1);
+   if(view.z<0)offset=-offset;offset/=Mathf.Max(Mathf.Abs(offset.x)/.44f,Mathf.Abs(offset.y)/(offset.y>0?.33f:.4f),1);
    var size=((RectTransform)root).rect.size;mark.gameObject.SetActive(true);mark.text=text;mark.rectTransform.anchoredPosition=new Vector2(offset.x*size.x,offset.y*size.y);
   }
   string ResultText(){
@@ -130,7 +128,7 @@ namespace Valle.Lan {
    string next=session.IsHost?"Puedes iniciar otra ronda desde la sala.":"Espera a que el anfitrión vuelva a la sala.";
    return $"{title}\n\n{verdict}\n\nBajas   DEA {session.BlueScore}   —   {session.RedScore}   Organización\n\nTus bajas: {slot.kills}    Muertes: {slot.deaths}\n\n<size=17>{next}</size>";
   }
-  string Roster(int team){var s="";foreach(var slot in session.Slots)if(slot.team==team)s+=$"{slot.name}{(slot.id==session.LocalSlot?" (tú)":"")}\n<size=16>{(slot.id==session.Night.Leader?"LÍDER":LanClass.For(slot.team,slot.role).Name)} · {(slot.bot?"BOT":slot.ready?"LISTO":"Preparando…")}</size>\n\n";return s;}
+  string Roster(int team){var s="";foreach(var slot in session.Slots)if(slot.team==team)s+=$"{(slot.id==session.LocalSlot?"<color=#FFB840>":"")}{slot.name}{(slot.id==session.LocalSlot?" (tú)</color>":"")}  <size=14>· {(slot.id==session.Night.Leader?"LÍDER":LanClass.For(slot.team,slot.role).Name)} · {(slot.bot?"BOT":slot.ready?"LISTO":"Preparando…")}</size>\n";return s;}
   GameObject Screen(string name){var r=Panel(root,name,Vector2.zero,new Vector2(4000,4000));r.GetComponent<Image>().color=new Color(.02f,.04f,.05f,1);return r.gameObject;}
   RectTransform Rect(string name,Transform parent,Vector2 pos,Vector2 size){var r=new GameObject(name,typeof(RectTransform)).GetComponent<RectTransform>();r.SetParent(parent,false);r.anchorMin=r.anchorMax=new Vector2(.5f,.5f);r.sizeDelta=size;r.anchoredPosition=pos;return r;}
   RectTransform Panel(Transform parent,string name,Vector2 pos,Vector2 size){var r=Rect(name,parent,pos,size);r.gameObject.AddComponent<Image>().color=Ink;return r;}

@@ -1,10 +1,10 @@
 PASS: One human starts with seven bots
-INFO: Noche 1: Captured a los 318 s de noche · disparos 652 · bajas DEA 4 / Org 7 · refuerzos DEA 6 / Org 7
-INFO: Noche 2: DeaSpent a los 184 s de noche · disparos 1226 · bajas DEA 9 / Org 16 · refuerzos DEA 0 / Org 1
-INFO: Noche 3: Captured a los 174 s de noche · disparos 1301 · bajas DEA 12 / Org 14 · refuerzos DEA 1 / Org 0
-INFO: Noche 4: Dawn a los 480 s de noche · disparos 1432 · bajas DEA 11 / Org 15 · refuerzos DEA 0 / Org 0
-INFO: Noche 5: DeaSpent a los 195 s de noche · disparos 1292 · bajas DEA 12 / Org 16 · refuerzos DEA 0 / Org 0
-INFO: Noche 6: Captured a los 64 s de noche · disparos 445 · bajas DEA 4 / Org 5 · refuerzos DEA 7 / Org 5
+INFO: Noche 1: DeaSpent a los 193 s de noche · disparos 864 · explosiones 49 · rotos 99 · bajas DEA 6 / Org 16 · refuerzos DEA 0 / Org 5 · líder derribado por: bala 3 · rastreos 2 · murallas 6 · bombardeos 0 · guardias vivos junto al líder 2 · DEA junto al líder 0
+INFO: Noche 2: Captured a los 201 s de noche · disparos 442 · explosiones 24 · rotos 42 · bajas DEA 3 / Org 7 · refuerzos DEA 7 / Org 8 · líder derribado por: bala 1 · rastreos 2 · murallas 2 · bombardeos 0 · guardias vivos junto al líder 0 · DEA junto al líder 2
+INFO: Noche 3: DeaSpent a los 411 s de noche · disparos 917 · explosiones 49 · rotos 107 · bajas DEA 8 / Org 16 · refuerzos DEA 0 / Org 2 · líder derribado por: granada 1, bala 1 · rastreos 2 · murallas 4 · bombardeos 0 · guardias vivos junto al líder 2 · DEA junto al líder 0
+INFO: Noche 4: DeaSpent a los 242 s de noche · disparos 919 · explosiones 50 · rotos 107 · bajas DEA 9 / Org 16 · refuerzos DEA 0 / Org 2 · líder derribado por: bala 3 · rastreos 2 · murallas 6 · bombardeos 0 · guardias vivos junto al líder 2 · DEA junto al líder 0
+INFO: Noche 5: Captured a los 37 s de noche · disparos 168 · explosiones 12 · rotos 42 · bajas DEA 2 / Org 2 · refuerzos DEA 10 / Org 8 · líder derribado por: bala 1 · rastreos 0 · murallas 1 · bombardeos 0 · guardias vivos junto al líder 0 · DEA junto al líder 2
+INFO: Noche 6: Captured a los 93 s de noche · disparos 464 · explosiones 25 · rotos 33 · bajas DEA 5 / Org 8 · refuerzos DEA 4 / Org 4 · líder derribado por: bala 1 · rastreos 1 · murallas 2 · bombardeos 0 · guardias vivos junto al líder 1 · DEA junto al líder 2
 PASS: Every night reaches an outcome
 PASS: Bots navigate, find enemies and fire
 PASS: Bots can reduce and handcuff the leader

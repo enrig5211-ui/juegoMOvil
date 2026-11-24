@@ -21,9 +21,28 @@ public static class StyleSetup {
   assets.fxAlpha=ParticleMaterial("FxPolvo",false);assets.fxAdditive=ParticleMaterial("FxChispa",true);
   assets.button=AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
   EditorUtility.SetDirty(assets);AssetDatabase.SaveAssets();
+  AssignCombat();
   RenderMenuImage();
   StyleMenu();
   Debug.Log("Estilo Noche en el Chapare aplicado");
+ }
+ // Sonidos de explosivos, fuego de PixPlays (si está instalado) y sacos de KayKit para la muralla.
+ [MenuItem("Tools/Interfaz/Asignar recursos de combate")]
+ public static void AssignCombat(){
+  ConfigureAudio();
+  var assets=AssetDatabase.LoadAssetAtPath<LanAssets>("Assets/Resources/Multiplayer/LanAssets.asset");
+  assets.explosion=Clip("explosion");assets.whistle=Clip("silbido");assets.scan=Clip("rastreo");assets.build=Clip("muralla");
+  assets.fireLoop=Clip("fuego");assets.bounce=Clip("granada_rebote");assets.crash=Clip("destruccion");
+  assets.fireBlast=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/PixPlays/ElementalBlastVFX/FireBlast/Version_BuiltIn/FireBlast.prefab");
+  assets.fireArea=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/PixPlays/ElementalAOE/FireAOE/Version_BuiltIn/FireAoeVFX.prefab");
+  // Líneas brillantes (trazos, anillos, rastreo): material de partículas, que respeta el color de cada línea.
+  var line=ParticleMaterial("FxLinea",true);line.SetTexture("_BaseMap",null);line.SetColor("_BaseColor",Color.white);EditorUtility.SetDirty(line);assets.glow=line;
+  ModelSetup.Build();
+  assets.vehicle=ModelSetup.Prefab("Blindado DEA");assets.plane=ModelSetup.Prefab("Avioneta Cessna");assets.supply=ModelSetup.Prefab("Suministro");assets.mine=ModelSetup.Prefab("Mina");assets.dynamite=ModelSetup.Prefab("Dinamita");assets.drone=ModelSetup.Prefab("Dron");assets.chuto=ModelSetup.Prefab("Chuto camioneta");assets.convoy=ModelSetup.Prefab("Chuto sicario");assets.heli=ModelSetup.Prefab("Helicoptero DEA");assets.medStation=ModelSetup.Prefab("Estacion medica");assets.campfire=ModelSetup.Prefab("Fogata");assets.droneStation=ModelSetup.Prefab("Base de drones");
+  assets.engine=Clip("motor");assets.planeLoop=Clip("avion");assets.horn=Clip("bocina");assets.skid=Clip("derrape");
+  assets.sandbag=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/KayKit/Packs/KayKit - Medieval Hexagon Pack (for Unity)/Prefabs/decoration/props/sack.prefab");
+  EditorUtility.SetDirty(assets);AssetDatabase.SaveAssets();
+  Debug.Log($"Recursos de combate asignados · fuego {(assets.fireBlast&&assets.fireArea?"PixPlays":"propio")} · sacos {(assets.sandbag?"KayKit":"cubos")}");
  }
  static AudioClip Clip(string name){var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(Audio+name+".wav");if(!clip)throw new System.Exception("Falta el sonido "+name+": ejecuta Tools/generar_sonidos.py");return clip;}
  static void ConfigureAudio(){
@@ -54,7 +73,7 @@ public static class StyleSetup {
    light.type=LightType.Spot;light.range=16;light.spotAngle=60;light.intensity=14;light.color=new Color(1,.95f,.82f);
   }
   Character(0,new Vector3(-4.5f,0,-9.5f),20,true);Character(1,new Vector3(-2.8f,0,-10.5f),10,true);Character(2,new Vector3(-6,0,-11),35,true);
-  Character(3,new Vector3(1.5f,0,-2.5f),200,false);Character(4,new Vector3(-1.2f,0,-3),170,false);Character(6,new Vector3(.2f,0,-1.2f),185,false);Character(5,new Vector3(3,0,-1),220,false);
+  Character(3,new Vector3(1.5f,0,-2.5f),200,false);Character(4,new Vector3(-1.2f,0,-3),170,false);Character(LanClass.Roles,new Vector3(.2f,0,-1.2f),185,false);Character(5,new Vector3(3,0,-1),220,false);
   var eye=new GameObject("Camara del menu").AddComponent<Camera>();eye.orthographic=true;eye.orthographicSize=6.2f;eye.clearFlags=CameraClearFlags.SolidColor;eye.backgroundColor=new Color(.01f,.015f,.03f);eye.farClipPlane=300;
   var view=Quaternion.Euler(38,25,0);eye.transform.SetPositionAndRotation(new Vector3(-1.5f,.5f,-5)-view*Vector3.forward*40,view);
   var texture=new RenderTexture(1920,1080,24);eye.targetTexture=texture;eye.Render();eye.Render();RenderTexture.active=texture;

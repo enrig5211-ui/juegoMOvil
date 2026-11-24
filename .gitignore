@@ -33,3 +33,4 @@
 # Escenas que Unity recupera tras un cierre inesperado
 /Assets/_Recovery/
 /Assets/_Recovery.meta
+/*.app/

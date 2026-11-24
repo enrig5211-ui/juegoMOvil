@@ -71,7 +71,7 @@ public static class LanBotCheck {
   var outcome=s.Night.Outcome;
   if(outcome==LanOutcome.Captured)captures++;if(outcome==LanOutcome.Dawn)dawns++;if(outcome==LanOutcome.DeaSpent)spent++;
   int fired=s.World.Pawns.Values.Sum(p=>p.State.shot);shots+=fired;
-  Line($"INFO: Noche {night+1}: {outcome} a los {LanNightRules.NightSeconds-s.Remaining:0} s de noche · disparos {fired} · bajas DEA {s.BlueScore} / Org {s.RedScore} · refuerzos DEA {s.Night.DeaLeft} / Org {s.Night.OrgLeft}");
+  Line($"INFO: Noche {night+1}: {outcome} a los {LanNightRules.NightSeconds-s.Remaining:0} s de noche · disparos {fired} · explosiones {s.World.Explosions} · rotos {s.World.Broken.Count} · bajas DEA {s.BlueScore} / Org {s.RedScore} · refuerzos DEA {s.Night.DeaLeft} / Org {s.Night.OrgLeft} · líder derribado por: {string.Join(", ",s.World.LeaderDowns.Select(d=>d.Key+" "+d.Value))} · rastreos {s.World.Scans} · murallas {s.World.Walls} · bombardeos {s.World.Strikes} · guardias vivos junto al líder {s.World.Pawns.Values.Count(p=>p.Team==LanNightRules.Org&&!p.IsLeader&&p.State.hp>0&&s.World.LeaderPawn&&Vector3.Distance(p.transform.position,s.World.LeaderPawn.transform.position)<10)} · DEA junto al líder {s.World.Pawns.Values.Count(p=>p.Team==LanNightRules.Dea&&p.State.hp>0&&s.World.LeaderPawn&&Vector3.Distance(p.transform.position,s.World.LeaderPawn.transform.position)<10)}");
  }
  static void Summarize(){
   Check(captures+dawns+spent==Nights,"Every night reaches an outcome");

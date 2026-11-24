@@ -40,7 +40,6 @@ namespace Valle.Lan {
     }
     air=state.grounded?0:air+dt;if(air>.12f)squash=new Vector3(.9f,1.15f,.9f);
     if(state.stun>0){roll=Mathf.Sin(t*14)*12;pitch=6;}
-    if(LanAbilities.Active(pawn,LanAbilities.Dash)){squash=new Vector3(.85f,.88f,1.4f);pitch=20;}
     if(celebrate){float jump=Mathf.Abs(Mathf.Sin(t*5.5f));offset.y=jump*.3f;yaw=t*300%360;squash=new Vector3(1-jump*.05f,1+jump*.12f,1-jump*.05f);}
     if(slump){pitch=28;squash=new Vector3(1.06f,.86f,1.06f);roll=Mathf.Sin(t*.8f)*4;}
     pitch-=recoil*16;

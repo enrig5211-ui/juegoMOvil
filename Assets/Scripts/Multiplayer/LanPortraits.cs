@@ -29,7 +29,7 @@ namespace Valle.Lan {
    float t=Time.unscaledTime;
    for(int i=0;i<Count;i++){
     var model=models[i];if(!model)continue;
-    float since=t-confirmedAt[i];Vector3 offset=Vector3.zero,squash=Vector3.one;float yaw=Mathf.Sin(t*.8f+i)*20;
+    float since=t-confirmedAt[i];Vector3 offset=Vector3.zero,squash=Vector3.one;float yaw=Mathf.Sin(t*.6f+i)*115;
     if(confirmed[i]&&since<.7f){float k=since/.7f;offset.y=Mathf.Sin(k*Mathf.PI)*.25f;yaw=k*360;squash=new Vector3(1,1+Mathf.Sin(k*Mathf.PI)*.15f,1);}
     else if(confirmed[i]){float bounce=Mathf.Abs(Mathf.Sin(t*4));offset.y=bounce*.04f;squash=new Vector3(1+bounce*.03f,1-bounce*.03f,1+bounce*.03f);yaw=0;}
     else if(hovered[i]){float hop=Mathf.Abs(Mathf.Sin(t*6));offset.y=hop*.08f;squash=new Vector3(1-hop*.05f,1+hop*.1f,1-hop*.05f);}

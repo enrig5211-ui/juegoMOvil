@@ -38,7 +38,7 @@ public static class LanFxCheck {
     LanSession.Open();s=LanSession.Instance;s.PlayerName="Agente";s.Role=1;s.Host();break;}
    case 1:{
     var ui=GameObject.Find("UI - Multijugador");var assets=Resources.Load<LanAssets>("Multiplayer/LanAssets");
-    var buttons=ui.GetComponentsInChildren<Button>(true).Where(b=>!b.name.StartsWith("Personaje")).ToArray();
+    var buttons=ui.GetComponentsInChildren<Button>(true).Where(b=>!b.name.StartsWith("Personaje")&&b.name!="Entrada").ToArray();
     Check(buttons.Length>0&&buttons.All(b=>b.GetComponent<Image>().sprite==assets.button&&b.GetComponent<Outline>()),"Interface buttons use the night style");
     s.StartMatch();break;}
    case 2:{if(!s.World){stage--;return;}
@@ -65,8 +65,12 @@ public static class LanFxCheck {
     s.Night.Wave=9999;leader.ResetLife(new Vector3(0,.05f,-8));leader.State.shield=0;leader.State.hp=0;mark=sound.History.Count;leader.Fall();
     break;}
    case 5:Check(sound.History.Skip(mark).Contains("radio"),"The radio reports the reduced leader");mark=sound.History.Count;
+    // Sin granadas, comuneros ni habilidades de la organización: solo se mide el sonido de las esposas.
+    s.World.Marks.Clear();s.World.Npcs.Clear();foreach(var p in s.World.Pawns.Values){p.State.grenades=0;if(p.Team==LanNightRules.Org)p.State.ability=999;}
+    foreach(var spear in UnityEngine.Object.FindObjectsByType<LanSpearman>())if(spear.Body)spear.Body.enabled=false;
     agent.ResetLife(leader.transform.position+Vector3.left);Physics.SyncTransforms();break;
-   case 6:Check(sound.History.Skip(mark).Contains("esposas"),"Handcuffs click when the capture starts");mark=sound.History.Count;s.Night.Wave=.9f;break;
+   case 6:if(!sound.History.Skip(mark).Contains("esposas"))log.AppendLine($"INFO: esposas · líder caído {leader.State.down:0.0} vida {leader.State.hp:0} · agente {agent.Id} vida {agent.State.hp:0} a {Vector3.Distance(agent.transform.position,leader.transform.position):0.00} sujeta {agent.Holding} · captura {s.Night.Capture:0.00} por {s.Night.Capturer} · npcs {s.World.Npcs.Count} · marcas {string.Join(",",s.World.Marks.Select(m=>m.kind))} · aturdido {agent.State.stun:0.0} montado {agent.State.ride}");
+    Check(sound.History.Skip(mark).Contains("esposas"),"Handcuffs click when the capture starts");mark=sound.History.Count;s.Night.Wave=.9f;break;
    case 7:break;
    case 8:Check(sound.History.Skip(mark).Contains("radio"),"The radio announces reinforcements");Finish();break;
   }

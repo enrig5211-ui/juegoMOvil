@@ -18,7 +18,7 @@ MonoBehaviour:
   rifle: {fileID: 3711343463117511529, guid: 391e6545f7d3145238883d33f2bef9ca, type: 3}
   blueMaterial: {fileID: 2100000, guid: 6baee04a7294e4a988347aa1ac0e4e09, type: 2}
   redMaterial: {fileID: 2100000, guid: 3364aea66f9da46d0ba7d0692bbd6cb2, type: 2}
-  glow: {fileID: 2100000, guid: ef68a75b6c69c4efeacc0d63deb9c328, type: 2}
+  glow: {fileID: 2100000, guid: d64c96935131c40659c93c6ab3710442, type: 2}
   pistolShots:
   - {fileID: 8300000, guid: 99348524f0ef5b3469b6d1976f17370c, type: 3}
   - {fileID: 8300000, guid: 0910b552636052c42a5d5fb6d168dc27, type: 3}
@@ -45,12 +45,16 @@ MonoBehaviour:
   - {fileID: 6552776722882332210, guid: dccfb906f5b364a0fa4b5c61ee09e7f6, type: 3}
   - {fileID: 3973526586740643410, guid: b7f2295b69d3949e89284fc044528c03, type: 3}
   - {fileID: 6997235511399286353, guid: daf50f201b2ab4bbd83a6639baaf4f73, type: 3}
+  - {fileID: 2842658962102797830, guid: 3187bd29786e84034bfe5c3b0da9b5db, type: 3}
+  - {fileID: 287634089148247286, guid: d0ecb414031444daca2d9105e1e535e1, type: 3}
   - {fileID: 8485313903115140095, guid: 3bd25801b1c60427ca211c9eb3fa7d49, type: 3}
   - {fileID: 6865588330744859199, guid: bb5e70fa81b134524ae4ba35b8baeffc, type: 3}
-  - {fileID: 7402366843715608579, guid: 66ec3285d8e634b03aecd5bee85ef68c, type: 3}
+  - {fileID: 3646651660333096433, guid: 9d5c42d33fb5647afaa6fb775f51d417, type: 3}
   - {fileID: 6437272406878804304, guid: d3075519efe81465ebea9dcbae89d005, type: 3}
   - {fileID: 1324248450174655797, guid: fb1ba0aa3b63e4cd897d7245097a87a1, type: 3}
   - {fileID: 6597240302680429540, guid: 2621a0b33197642599bd4edddab5d4d0, type: 3}
+  - {fileID: 2161054355123241949, guid: 583fcc8d2b4534ee2add6f1191b69f31, type: 3}
+  - {fileID: 4197422749416766582, guid: 17814c66eb1644d53b4eb84df125f979, type: 3}
   - {fileID: 5288878223670047512, guid: 2c89044a0ba314ba0bc1e0477e79948f, type: 3}
   - {fileID: 5963038973757353081, guid: 80813574fd5dd49a3889c8e5324dacc6, type: 3}
   fxAlpha: {fileID: 2100000, guid: 40036a6efc10f4ef88f293d41865efee, type: 2}
@@ -64,3 +68,29 @@ MonoBehaviour:
   cuffs: {fileID: 8300000, guid: bb427e7f662544d8a95c225d197dd3d1, type: 3}
   selectMove: {fileID: 8300000, guid: 67983154e178e4fb3b84ecef79cfeb49, type: 3}
   selectConfirm: {fileID: 8300000, guid: c2f8ab679c9954b29a2214762feca498, type: 3}
+  explosion: {fileID: 8300000, guid: eed8affff38b64b759012f57adc220a1, type: 3}
+  whistle: {fileID: 8300000, guid: 03d08fb595a60449db1c457e158f8541, type: 3}
+  scan: {fileID: 8300000, guid: 4a76c15c254d549508cfdb76c9ddec1d, type: 3}
+  build: {fileID: 8300000, guid: b3eeb8775bdd5470f92ca7a72f66abae, type: 3}
+  fireLoop: {fileID: 8300000, guid: 9b653eb0593974041a72b0383f01e09c, type: 3}
+  bounce: {fileID: 8300000, guid: efe64ba778966438b8a6c331903d40a0, type: 3}
+  crash: {fileID: 8300000, guid: 4755ea5725e434aa99e2cc0cbb079b0f, type: 3}
+  fireBlast: {fileID: 5971203435228136222, guid: 3223bec477ea3f44eb28a6c62236e3da, type: 3}
+  fireArea: {fileID: 2427901435903505602, guid: 8a915dbbc4b23bf4f931629039cfbf6f, type: 3}
+  sandbag: {fileID: 919132149155446097, guid: 734b1a870d3f361489e6a1e13e3e959a, type: 3}
+  vehicle: {fileID: 6927075520341611420, guid: cf679e02dff634fc6bcf7f383b8d0e6b, type: 3}
+  plane: {fileID: 8076496253847867762, guid: ee49753975593496d8ed27ea77f19269, type: 3}
+  supply: {fileID: 3293241678371289935, guid: 88bb5bb5a29af4d54bc366c54d6d9ef4, type: 3}
+  mine: {fileID: 6787003102472643723, guid: bddbbad32498f4451906950009a4ea3f, type: 3}
+  dynamite: {fileID: 8203756879372239988, guid: 14973ec3775d740d0b8c136e6d3011c1, type: 3}
+  drone: {fileID: 965849696957990558, guid: a9fd012e84dc14d19ae98b3bd53f2f77, type: 3}
+  chuto: {fileID: 3854554360533972430, guid: 9a3a2367910e94ad6a35c1260473036f, type: 3}
+  heli: {fileID: 314160357155473601, guid: c084d0d37ed1247668d40944075a53aa, type: 3}
+  medStation: {fileID: 6516718907928484400, guid: ad46edeaaa37a41c6be31961501f267d, type: 3}
+  campfire: {fileID: 207031536403638888, guid: ec35f35ff06bf42e6bed1aa33ff45a34, type: 3}
+  droneStation: {fileID: 8204701317661804303, guid: ce673382e4ac44224b62eaab8da9f049, type: 3}
+  convoy: {fileID: 7671057046448318297, guid: 73fac0e0f4556419594406a6230a2e3f, type: 3}
+  engine: {fileID: 8300000, guid: 756e1c17bb2204b549ce6332b92a38dc, type: 3}
+  planeLoop: {fileID: 8300000, guid: 5d1098c32df0e4522949730d057c7afd, type: 3}
+  horn: {fileID: 8300000, guid: d5f0ef4f74bf24ce3b434a8a3b1c5f86, type: 3}
+  skid: {fileID: 8300000, guid: ff8856e3d14704d3ba3d3888a54040fb, type: 3}

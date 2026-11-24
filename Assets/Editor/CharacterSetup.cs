@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Valle.Lan;
-// Crea los accesorios 3D propios y arma los 7 personajes con las unidades y piezas de KayKit.
+// Crea los accesorios 3D propios y arma los 18 personajes (8 por bando, líder y lancero) con las unidades y piezas de KayKit.
 // Medidas de la unidad (escala 1): cabeza esfera r=0,081 centrada en y=0,26; cuerpo cono r=0,10 (y=0,05) a r=0,03 (y=0,18).
 // El frente del personaje es +Z.
 public static class CharacterSetup {
@@ -40,21 +40,42 @@ public static class CharacterSetup {
   var medic=Accessory("Casco medico",Sphere(new Vector3(0,.29f,0),new Vector3(.178f,.13f,.178f),"Blanco"),Cube(new Vector3(0,.33f,.07f),new Vector3(.05f,.014f,.01f),"Rojo"),Cube(new Vector3(0,.33f,.07f),new Vector3(.014f,.05f,.01f),"Rojo"));
   var grenades=Accessory("Granadas",Torus(new Vector3(0,.088f,0),Quaternion.identity,.098f,.007f,"Negro"),Sphere(new Vector3(-.05f,.088f,.087f),new Vector3(.03f,.034f,.03f),"Oliva"),Sphere(new Vector3(0,.088f,.1f),new Vector3(.03f,.034f,.03f),"Oliva"),Sphere(new Vector3(.05f,.088f,.087f),new Vector3(.03f,.034f,.03f),"Oliva"));
   var goggles=Accessory("Vision nocturna",Cylinder(new Vector3(-.022f,.325f,.07f),Quaternion.Euler(70,0,0),new Vector3(.024f,.022f,.024f),"Negro"),Cylinder(new Vector3(.022f,.325f,.07f),Quaternion.Euler(70,0,0),new Vector3(.024f,.022f,.024f),"Negro"),Sphere(new Vector3(-.022f,.33f,.092f),new Vector3(.018f,.018f,.008f),"Verde"),Sphere(new Vector3(.022f,.33f,.092f),new Vector3(.018f,.018f,.008f),"Verde"));
+  // Agentes de la DEA: chaqueta azul marino con DEA en amarillo, gorra negra, placa, auricular y equipo táctico.
+  var jacket=Accessory("Chaqueta DEA",new[]{Frustum(.106f,.058f,.07f,.175f,"Azul marino"),Frustum(.0605f,.057f,.168f,.178f,"Negro")}.Concat(Letters("DEA",.115f,.0088f,.106f,.058f,.07f,.175f,true,"Amarillo")).Concat(Letters("DEA",.142f,.0045f,.106f,.058f,.07f,.175f,false,"Amarillo")).ToArray());
+  var deaCap=Accessory("Gorra DEA",new[]{Sphere(new Vector3(0,.285f,0),new Vector3(.172f,.12f,.172f),"Negro"),Cylinder(new Vector3(0,.3f,.075f),new Vector3(.14f,.006f,.1f),"Negro")}.Concat(CapLetters("DEA",new Vector3(0,.318f,.072f),.0042f,"Amarillo")).ToArray());
+  var badge=Accessory("Placa",Cube(new Vector3(-.036f,.128f,.075f),new Vector3(.02f,.026f,.006f),"Oro"),Cube(new Vector3(-.036f,.128f,.079f),new Vector3(.01f,.012f,.003f),"Azul marino"));
+  var earpiece=Accessory("Auricular",Sphere(new Vector3(.079f,.258f,.005f),new Vector3(.016f,.022f,.016f),"Negro"),Cylinder(new Vector3(.072f,.215f,-.01f),Quaternion.Euler(-10,0,8),new Vector3(.004f,.04f,.004f),"Negro"));
+  var holster=Accessory("Pistolera",Torus(new Vector3(0,.062f,0),Quaternion.identity,.104f,.006f,"Negro"),Cube(new Vector3(.098f,.05f,.012f),new Vector3(.024f,.055f,.04f),"Negro"),Cube(new Vector3(.098f,.08f,.018f),new Vector3(.02f,.02f,.03f),"Gris"));
+  var plate=Accessory("Chaleco tactico",new[]{Frustum(.114f,.07f,.06f,.162f,"Negro"),Cube(new Vector3(-.04f,.085f,.098f),new Vector3(.03f,.035f,.018f),"Oliva"),Cube(new Vector3(0,.085f,.1f),new Vector3(.03f,.035f,.018f),"Oliva"),Cube(new Vector3(.04f,.085f,.098f),new Vector3(.03f,.035f,.018f),"Oliva")}.Concat(Letters("DEA",.112f,.0088f,.114f,.07f,.06f,.162f,true,"Amarillo")).ToArray());
+  var tactical=Accessory("Casco tactico",Sphere(new Vector3(0,.29f,0),new Vector3(.182f,.14f,.182f),"Negro"),Cylinder(new Vector3(0,.268f,0),new Vector3(.186f,.008f,.186f),"Negro"),Cube(new Vector3(0,.33f,.072f),new Vector3(.03f,.025f,.014f),"Gris"));
+  var medkit=Accessory("Botiquin",Cube(new Vector3(0,.12f,-.09f),new Vector3(.08f,.07f,.04f),"Blanco"),Cube(new Vector3(0,.12f,-.111f),new Vector3(.05f,.014f,.004f),"Rojo"),Cube(new Vector3(0,.12f,-.111f),new Vector3(.014f,.05f,.004f),"Rojo"));
+  var boonie=Accessory("Sombrero boonie",Cylinder(new Vector3(0,.302f,0),new Vector3(.25f,.006f,.25f),"Oliva"),Cylinder(new Vector3(0,.33f,0),new Vector3(.135f,.03f,.135f),"Oliva"),Cylinder(new Vector3(0,.318f,0),new Vector3(.138f,.007f,.138f),"Negro"));
+  var sniper=Accessory("Rifle de precision",Cylinder(new Vector3(-.02f,.14f,-.092f),Quaternion.Euler(0,0,38),new Vector3(.013f,.15f,.013f),"Negro"),Cylinder(new Vector3(-.035f,.17f,-.1f),Quaternion.Euler(0,0,38),new Vector3(.016f,.035f,.016f),"Gris"),Cube(new Vector3(.03f,.09f,-.09f),new Vector3(.03f,.05f,.02f),"Caqui"));
+  var remote=Accessory("Control de dron",Cube(new Vector3(0,.115f,.092f),new Vector3(.07f,.04f,.012f),"Negro"),Cube(new Vector3(0,.118f,.099f),new Vector3(.05f,.026f,.003f),"Verde"),Cylinder(new Vector3(.03f,.15f,.09f),new Vector3(.003f,.03f,.003f),"Negro"));
+  // Organización: capucha del sicario y bulto del contrabandista.
+  var hood=Accessory("Capucha",Sphere(new Vector3(0,.27f,-.012f),new Vector3(.19f,.16f,.19f),"Negro"),Cylinder(new Vector3(0,.2f,0),new Vector3(.115f,.02f,.115f),"Negro"));
+  var bundle=Accessory("Bulto",Cube(new Vector3(0,.13f,-.095f),new Vector3(.12f,.12f,.07f),"Caqui"),Cube(new Vector3(0,.13f,-.095f),new Vector3(.124f,.016f,.074f),"Cuero"),Torus(new Vector3(0,.17f,0),Quaternion.Euler(-30,0,0),.065f,.005f,"Cuero"));
+  var pants=Accessory("Pantalon tactico",Frustum(.108f,.105f,0,.074f,"Negro"),Torus(new Vector3(0,.072f,0),Quaternion.identity,.106f,.005f,"Gris"));
+  var riot=Accessory("Escudo balistico",Cube(new Vector3(-.035f,.135f,.115f),new Vector3(.14f,.21f,.014f),"Negro"),Cube(new Vector3(-.035f,.2f,.121f),new Vector3(.08f,.025f,.004f),"Azul marino"),Cube(new Vector3(-.035f,.1f,.121f),new Vector3(.11f,.016f,.004f),"Amarillo"));
   var none=(Vector3.zero,Vector3.zero,1f);
   (GameObject,Vector3,Vector3,float) Use(GameObject prefab)=>(prefab,none.Item1,none.Item2,none.Item3);
   var characters=new[]{
-   Character("Asaltante","blue",Use(cap),Use(vest)),
-   Character("Pesado","blue",Use(vest),(Kit("blue/helmet_blue_full"),new Vector3(0,.25f,0),Vector3.zero,1f),(Kit("blue/shield_blue_full"),new Vector3(-.05f,.12f,.105f),new Vector3(0,180,0),.85f)),
-   Character("Rastreador","blue",Use(cap),Use(vest),Use(pack)),
-   Character("Paramedico","blue",Use(medic),Use(vest)),
-   Character("Granadero","blue",Use(cap),Use(vest),Use(grenades)),
-   Character("Explorador nocturno","blue",Use(cap),Use(vest),Use(goggles)),
+   Character("Asaltante","blue",Use(pants),Use(jacket),Use(deaCap),Use(glasses),Use(holster),Use(badge)),
+   Character("Pesado","blue",Use(pants),Use(jacket),Use(plate),Use(tactical),Use(riot)),
+   Character("Rastreador","blue",Use(pants),Use(jacket),Use(deaCap),Use(pack),Use(earpiece),Use(badge)),
+   Character("Paramedico","blue",Use(pants),Use(jacket),Use(medic),Use(medkit),Use(badge)),
+   Character("Granadero","blue",Use(pants),Use(jacket),Use(plate),Use(tactical),Use(grenades)),
+   Character("Explorador nocturno","blue",Use(pants),Use(jacket),Use(tactical),Use(goggles),Use(holster)),
+   Character("Francotirador","blue",Use(pants),Use(jacket),Use(boonie),Use(glasses),Use(sniper)),
+   Character("Operador de dron","blue",Use(pants),Use(jacket),Use(deaCap),Use(earpiece),Use(remote),Use(badge)),
    Character("Pistolero","red",Use(straw),Use(bandana),Use(glasses)),
    Character("Guardaespaldas","red",Use(poncho),Use(glasses),Use(boots)),
-   Character("Vigia","red",Use(straw),Use(binoculars),(Kit("red/banner_red_full"),new Vector3(0,.04f,-.09f),Vector3.zero,.8f)),
+   Character("Reclutador","red",Use(straw),Use(binoculars),(Kit("red/banner_red_full"),new Vector3(0,.04f,-.09f),Vector3.zero,.8f)),
    Character("Cocalero","red",Use(straw),Use(chuspa),Use(machete),Use(boots)),
    Character("Curandera","red",Use(straw),Use(aguayo),Use(chuspa)),
    Character("Trampero","red",Use(chullo),Use(boots),(Kit("red/bow_red_full"),new Vector3(0,.16f,-.1f),new Vector3(0,90,25),.9f)),
+   Character("Sicario","red",Use(suit),Use(hood),Use(glasses),Use(chain)),
+   Character("Contrabandista","red",Use(straw),Use(bandana),Use(bundle),Use(boots)),
    Character("Lider","red",Use(hat),Use(chain)),
    Character("Lancero","neutral",Use(straw),(Kit("red/spear_red_full"),new Vector3(.12f,.02f,.03f),new Vector3(0,0,-8),1f),Use(boots))};
   var assets=AssetDatabase.LoadAssetAtPath<LanAssets>("Assets/Resources/Multiplayer/LanAssets.asset");
@@ -65,7 +86,10 @@ public static class CharacterSetup {
  // ---------- Personajes ----------
  static GameObject Character(string name,string color,params (GameObject prefab,Vector3 position,Vector3 euler,float scale)[] items){
   var root=new GameObject(name);root.transform.localScale=Vector3.one*Scale;
-  var body=(GameObject)PrefabUtility.InstantiatePrefab(Kit(color=="neutral"?"neutral/unit":$"{color}/unit_{color}_full"),root.transform);body.name="Cuerpo";
+  // Si existe el modelo hecho en Blender (DEA … / Org …), se usa ese cuerpo completo, con el equipo de su clase ya puesto.
+  var modeled=AssetDatabase.LoadAssetAtPath<GameObject>($"{ModelSetup.Art}/{(color=="blue"?"DEA":"Org")} {name}.prefab");
+  if(modeled){var model=(GameObject)PrefabUtility.InstantiatePrefab(modeled,root.transform);model.name="Cuerpo";model.transform.localScale=Vector3.one/Scale;items=new (GameObject,Vector3,Vector3,float)[0];}
+  else{var body=(GameObject)PrefabUtility.InstantiatePrefab(Kit(color=="neutral"?"neutral/unit":$"{color}/unit_{color}_full"),root.transform);body.name="Cuerpo";}
   foreach(var item in items){
    var part=(GameObject)PrefabUtility.InstantiatePrefab(item.prefab,root.transform);
    // Sin cambios propios heredados: la pieza usa siempre la malla actual de su prefab.
@@ -79,6 +103,28 @@ public static class CharacterSetup {
  }
  static GameObject Kit(string path){var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(Units+path+".prefab");if(!prefab)throw new Exception("Falta "+path);return prefab;}
 
+ // ---------- Letras de píxeles (DEA) ----------
+ static readonly Dictionary<char,string[]> Font=new Dictionary<char,string[]>{
+  {'D',new[]{"XX.","X.X","X.X","X.X","XX."}},{'E',new[]{"XXX","X..","XX.","X..","XXX"}},{'A',new[]{".X.","X.X","XXX","X.X","X.X"}}};
+ // Sobre la superficie de un tronco de cono (espalda o pecho de la chaqueta), siguiendo su curva e inclinación.
+ static IEnumerable<Part> Letters(string text,float y,float pixel,float bottom,float top,float y0,float y1,bool back,string color){
+  float slope=(bottom-top)/(y1-y0);int columns=text.Length*4-1;
+  for(int c=0;c<text.Length;c++){var rows=Font[text[c]];for(int row=0;row<5;row++)for(int col=0;col<3;col++){
+   if(rows[row][col]!='X')continue;
+   float u=((c*4+col)-(columns-1)*.5f)*pixel,v=y+(2-row)*pixel,r=bottom-(v-y0)*slope+.0035f,angle=u/r;
+   var outward=new Vector3(Mathf.Sin(angle)*(back?1:-1),0,Mathf.Cos(angle)*(back?-1:1));
+   var normal=(outward+Vector3.up*slope).normalized;var tangent=(Vector3.up-outward*slope).normalized;
+   yield return Primitive(PrimitiveType.Cube,outward*r+Vector3.up*v,Quaternion.LookRotation(normal,tangent),new Vector3(pixel,pixel,.004f),color);
+  }}
+ }
+ // Letras planas al frente de la gorra.
+ static IEnumerable<Part> CapLetters(string text,Vector3 center,float pixel,string color){
+  int columns=text.Length*4-1;
+  for(int c=0;c<text.Length;c++){var rows=Font[text[c]];for(int row=0;row<5;row++)for(int col=0;col<3;col++){
+   if(rows[row][col]!='X')continue;float u=((c*4+col)-(columns-1)*.5f)*pixel;
+   yield return Primitive(PrimitiveType.Cube,center+new Vector3(-u,(2-row)*pixel,0),Quaternion.Euler(-20,0,0),new Vector3(pixel,pixel,.004f),color);
+  }}
+ }
  // ---------- Accesorios: varias piezas combinadas en una sola malla con un material por color ----------
  static GameObject Accessory(string name,params Part[] parts){
   var groups=parts.GroupBy(p=>p.material).ToList();
@@ -123,7 +169,7 @@ public static class CharacterSetup {
  }
  static Material Mat(string name){
   if(materials.TryGetValue(name,out var cached))return cached;
-  var colors=new Dictionary<string,Color>{{"Paja",new Color(.86f,.7f,.38f)},{"Verde",new Color(.12f,.55f,.25f)},{"Magenta",new Color(.85f,.15f,.5f)},{"Azul",new Color(.15f,.35f,.85f)},{"Acero",new Color(.7f,.72f,.75f)},{"Azul marino",new Color(.1f,.13f,.24f)},{"Amarillo",new Color(.98f,.8f,.15f)},{"Negro",new Color(.05f,.05f,.06f)},{"Blanco",new Color(.92f,.92f,.9f)},{"Rojo oscuro",new Color(.45f,.08f,.08f)},{"Rojo",new Color(.9f,.15f,.12f)},{"Oro",new Color(1,.78f,.25f)},{"Cuero",new Color(.62f,.45f,.26f)},{"Oliva",new Color(.3f,.36f,.18f)}};
+  var colors=new Dictionary<string,Color>{{"Paja",new Color(.86f,.7f,.38f)},{"Verde",new Color(.12f,.55f,.25f)},{"Magenta",new Color(.85f,.15f,.5f)},{"Azul",new Color(.15f,.35f,.85f)},{"Acero",new Color(.7f,.72f,.75f)},{"Azul marino",new Color(.1f,.13f,.24f)},{"Amarillo",new Color(.98f,.8f,.15f)},{"Negro",new Color(.05f,.05f,.06f)},{"Blanco",new Color(.92f,.92f,.9f)},{"Rojo oscuro",new Color(.45f,.08f,.08f)},{"Rojo",new Color(.9f,.15f,.12f)},{"Oro",new Color(1,.78f,.25f)},{"Cuero",new Color(.62f,.45f,.26f)},{"Oliva",new Color(.3f,.36f,.18f)},{"Gris",new Color(.45f,.47f,.5f)},{"Caqui",new Color(.58f,.52f,.36f)}};
   string path=$"{Art}/Materiales/{name}.mat";
   var material=AssetDatabase.LoadAssetAtPath<Material>(path);
   if(!material){material=new Material(Shader.Find("Universal Render Pipeline/Lit"));AssetDatabase.CreateAsset(material,path);}

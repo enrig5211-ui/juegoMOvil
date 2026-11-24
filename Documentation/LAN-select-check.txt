@@ -12,4 +12,4 @@ PASS: Six sharp portraits are drawn
 PASS: Confirming everyone starts the night
 PASS: The chosen characters reach the match
 PASS: Each pawn shows its character model
-PASS: Characters are drawn with their accessories
+PASS: Characters are drawn with their class outfit

@@ -61,8 +61,8 @@ public static class LanSelectCheck {
    case 9:{if(!s.World){stage--;return;}
     var w=s.World;
     Check(s.Phase=="match","Confirming everyone starts the night");
-    Check(w.Pawns[0].Ability==LanAbilities.Shield&&w.Pawns[guest.Slot].Ability==LanAbilities.Watch,"The chosen characters reach the match");
-    Check(w.Pawns[0].transform.Find("Pesado(Clone)")&&w.Pawns[guest.Slot].transform.Find("Vigia(Clone)")&&w.LeaderPawn.transform.Find("Lider(Clone)"),"Each pawn shows its character model");
+    Check(w.Pawns[0].Ability==LanAbilities.Shield&&w.Pawns[guest.Slot].Ability==LanAbilities.Recruit,"The chosen characters reach the match");
+    Check(w.Pawns[0].transform.Find("Pesado(Clone)")&&w.Pawns[guest.Slot].transform.Find("Reclutador(Clone)")&&w.LeaderPawn.transform.Find("Lider(Clone)"),"Each pawn shows its character model");
     // Escena para la captura: los siete personajes en fila, quietos y mirando a la cámara.
     s.Night.Deploy=0;s.Remaining=30;s.MenuOpen=true;
     var camera=Quaternion.Euler(45,35,0);var right=camera*Vector3.right;right.y=0;right.Normalize();var toward=-(camera*Vector3.forward);toward.y=0;toward.Normalize();
@@ -73,7 +73,8 @@ public static class LanSelectCheck {
    case 10:{var w=s.World;var order=w.Pawns.Values.OrderBy(p=>p.Team).ThenBy(p=>p.IsLeader?9:p.Role).ToList();
     Camera.main.orthographicSize=2.6f;foreach(var p in order)p.State.shield=0;order[1].State.shot++;order[2].State.hp-=20;order[4].State.ability=LanAbilities.Cooldown(order[4].Ability);break;}
    case 11:ScreenCapture.CaptureScreenshot("Documentation/Personajes-partida.png");
-    Check(UnityEngine.Object.FindObjectsByType<LanPawn>().All(p=>p.GetComponentsInChildren<MeshRenderer>().Length>1),"Characters are drawn with their accessories");
+    // Los personajes de Blender son una sola malla con un material por color: uniforme, piel y equipo de su clase.
+    Check(UnityEngine.Object.FindObjectsByType<LanPawn>().All(p=>p.GetComponentsInChildren<MeshRenderer>(true).Any(r=>r.sharedMaterials.Length>=4)),"Characters are drawn with their class outfit");
     Finish();break;
   }
  }

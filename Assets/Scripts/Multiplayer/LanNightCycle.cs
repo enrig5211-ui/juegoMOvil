@@ -20,7 +20,7 @@ namespace Valle.Lan {
   }
   void Update(){if(session)Apply();}
   void Apply(){
-   float level=Mathf.SmoothStep(0,1,world.Tactical?1:LanVision.Daylight(session));Level=level;
+   float level=Mathf.SmoothStep(0,1,LanVision.Daylight(session));Level=level;
    if(sun){sun.color=Color.Lerp(MoonColor,daySun,level);sun.intensity=Mathf.Lerp(MoonIntensity,dayIntensity,level);}
    if(eye)eye.backgroundColor=Color.Lerp(NightBack,dayBack,level);
    RenderSettings.ambientSkyColor=Color.Lerp(NightSky,daySky,level);
